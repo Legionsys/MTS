@@ -1,0 +1,103 @@
+html {
+  font-size: 62.5%;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background-image: url("/img/Orange-wp.jpg");
+  background-size: cover;
+  background-position:center;
+  background-color: #cccccc;
+  min-height: 99.5vh;
+  /*background-color: #fcfcfc;*/
+  margin: 0px;
+  font-family: "segoe ui";
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: "Roboto", sans-serif;
+  color: #111;
+  line-height: 2.4rem;
+}
+
+nav {
+  height: 4rem;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  /*background-color: #d3d3d3;*/
+  background-color: rgb(195, 195, 195,0.55);
+  backdrop-filter: blur(10px);
+  position: relative;
+  /*left: 10%;*/
+  font-family: "Roboto", sans-serif;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-radius:1.5rem;
+}
+
+nav > .nav-header {
+  display: inline;
+  position: relative;
+  left: 5%;
+}
+
+nav > .nav-header > .nav-title {
+  display: inline-block;
+  font-size: 2.2rem;
+  color: #353535;
+  padding: 1rem 1rem 1rem 1rem;
+}
+
+nav > .nav-btn {
+  display: none;
+}
+
+nav > .nav-links {
+  display: inline;
+  float: right;
+  font-size: 1.8rem;
+}
+
+nav > .nav-links > a {
+  display: inline-block;
+  padding: 1.1rem 1rem 1.1rem 1rem;
+  text-decoration: none;
+  color: #353535;
+  position: relative;
+  right: 5%;
+}
+
+nav > .nav-links > a:hover {
+  background-color: rgb(59, 59, 59);
+  color: #a7a7a7;
+  border-radius: 1.5rem 1.5rem 0rem 0rem;
+}
+
+nav > #nav-check {
+  display: none;
+}
+
+.wrapper {
+  width: 98%;
+  height: 100%;
+  left:1%;
+  /*background-color: rgba(199, 199, 199, 0.1);*/
+  position: relative;
+  /*left: 2.3%;*/
+  /*margin: 0.1% 1%;*/
+  /*text-align: center;*/
+}

@@ -1,0 +1,408 @@
+#boscr {
+    position: absolute;
+    width: calc(100vw - 0.1rem);
+    height: calc(100vh - 6.5%);
+    left: -1%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+  }
+  #cn_ind {
+    position: relative;
+    width: 12%;
+    margin-top: 1rem;
+    margin-left: 1rem;
+  }
+  
+  #cn-frame {
+    position: relative;
+    width: 95%;
+    height: 95%;
+    margin: 1% 2.5%;
+    background-color: blanchedalmond;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+
+  }
+  .cnblock {
+    position: relative;
+    border-radius: 0.25rem;
+    background-color: lightgray;
+    height: 20rem;
+    margin: 0.25rem;
+  }
+  .addframe {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    height: 20rem;
+  }
+  #cn_Sender,
+  #cn_Rec, #cn_oth {
+    width: 28%;
+    margin-top: 1rem;
+  }
+  #cn_oth {
+    right: 1rem;
+  }
+  #paysels {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+  }
+  #bill_p {
+    font-size: 1.5rem;
+    width: 30%;
+    display: inline;
+  }
+  #bill_r {
+      display: flex;
+      margin-bottom: 5px;
+      overflow: hidden;
+  }
+  
+  #bill_r input {
+      position: absolute !important;
+      clip: rect(0, 0, 0, 0);
+      height: 1px;
+      width: 1px;
+      border: 0;
+      overflow: hidden;
+  }
+  
+  #bill_r label {
+      background-color: #e4e4e4;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 14px;
+      line-height: 1;
+      text-align: center;
+      padding: 8px 16px;
+      margin-right: -1px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+      transition: all 0.1s ease-in-out;
+  }
+  
+  #bill_r label:hover {
+      cursor: pointer;
+    background-color: #a6dc8677;
+  
+  }
+  
+  #bill_r input:checked + label {
+      background-color: #a5dc86;
+      box-shadow: none;
+  }
+  
+  #bill_r label:first-of-type {
+      border-radius: 4px 0 0 4px;
+  }
+  
+  #bill_r label:last-of-type {
+      border-radius: 0 4px 4px 0;
+  }
+  
+  .spacer {
+    width: 100%;
+    height: 0.6rem;
+  }
+  
+  #cn-frame input[type="text"] {
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    width: 100%;
+  }
+  #cn-frame .addframe input[type="text"] {
+    font-size: 1.5rem;
+    padding: 0.5rem;
+  }
+  #frtdet {
+    background-color: lightgray;
+    width: 100%;
+    Height: 300px;
+    margin: 1rem;
+  }
+  #onspco {
+    width: 30%;
+    margin-left: 1rem;
+    height: 10rem;
+  }
+  #onspco textarea {
+    width: 100%;
+    padding: 0.25rem;
+  }
+  #cnadmin {
+    width: 30%;
+    right: 1rem;
+    height: 10rem;
+  }
+  .bg_box {
+    width: 100%;
+    background-color: white;
+    display:flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    height:10rem;
+  }
+  .cnac{
+    height: 7rem;
+    width: 7rem;
+    border: 2px solid #CC5500;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 2rem;
+    color: #CC5500;
+  }
+  .cnac:hover{
+    border:none;
+    color: #fff;
+    background-color: #CC5500;
+  }
+  .cnal{
+    font-size: 4.5rem;
+  }
+  .cnaw{
+    font-size: 1.5rem;
+  }
+
+
+  .cn_scph {
+    width: 25%;
+    margin-bottom: 2rem;
+  }
+  .cn_cn {
+    width: 75%;
+    margin-bottom: 2rem;
+  }
+  .cn_name {
+    margin-top: 1.5rem;
+  }
+  .ind_r {
+    width: 100%;
+    display: flex;
+  }
+  .ind_inp {
+    width: 45%;
+  }
+  .ind_inp input {
+    text-align: right;
+    padding-right: 1rem;
+  }
+  .ind_labs{
+    width: 55%;
+    background-color: #fff;
+    font-size: 1.5rem;
+    padding: 0.4rem;
+    border: 1px solid rgb(192, 192, 192);
+    line-height: 1;
+  }
+  .cn_cname,
+  .cn_add1,
+  .cn_add2 {
+    width: 100%;
+  }
+  .cn_add3 {
+    width: 75%;
+  }
+  .cn_stat {
+    width: 10%;
+  }
+  .cn_pc {
+    width: 15%;
+  }
+  
+  
+  .cntitle {
+    background-color: orangered;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-indent: 1rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    width: 100%;
+  }
+
+
+
+  /*Con note table*/
+
+  #cn_tots thead th {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+  }
+  
+
+/*  #cn_tots {
+
+  }*/
+#cnt_add {
+    margin-top: 0.5rem;
+}
+#frt_ctnr{
+    overflow-y:scroll;
+    height: 200px;
+    margin-top: 1rem;
+}
+.cnt_frt_tbl {
+    position: relative;
+    width: 99.5%;
+    left: 0.2%;
+}
+.cnt_frt_tblout {
+    position: relative;
+    width: calc(99.5% - 15px);
+    left: 0.2%;
+}
+
+#frt_head{
+    position: sticky;
+    top: 0;
+    font-size: 2.25rem;
+    background-color: #999;
+}
+
+  #cnt_body tr {
+      
+      border-bottom: 1px solid #9c9c9c;
+      width:99%;
+  }
+  #cnt_body tr td {
+    border-left: 0.1rem solid #9c9c9c;
+    border-right: 0.1rem solid #9c9c9c;
+    font-size: 1.75rem;
+  }
+  #cnt_body tr td div{
+    font-size: 1.75rem;
+  }
+  #cnt_head tr th {
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  }
+  #cnt_add tr td {
+    border-left: 0.1rem solid #9c9c9c;
+    border-right: 0.1rem solid #9c9c9c;
+  }
+  #cnt_body {
+    max-height: 265px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width:100%;
+  }
+  #cnt_head {
+    background-color: #999;
+    color: whitesmoke;
+  }
+#cnspacer {
+    height: 7.5%;
+}
+  #cnt_head 
+  .nbut {
+    cursor: pointer;
+  }
+  #cnt_head .unNum,
+  #cnt_head .class,
+  #cnt_head .sRisk,
+  #cnt_head .pkGr,
+  #cnt_head .pkDes {
+    background-color: darkred;
+  }
+  .cntrt {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+  }
+  .cn_ctrls {
+    width: 3%;
+  }
+.bkpsn{
+    flex-grow: 2;
+}
+  .noItem,
+  .itWgt,
+  .itLen,
+  .itWid,
+  .itHei,
+  .itQty,
+  .unNum,
+  .class,
+  .sRisk,
+  .pkGr,
+  .pkDes {
+    width: 3.5%;
+
+    text-align: center;
+  }
+  #cn_add {
+    background-color: seashell;
+    text-align: center;
+  }
+
+  
+  #cn_add .unNum,
+  #cn_add .class,
+  #cn_add .sRisk,
+  #cn_add .pkGr,
+  #cn_add .pkDes {
+    background-color: rgb(138, 100, 100);
+  }
+  
+  .senRef {
+    width: 16%;
+  }
+  .senRef, .psn {
+    padding-left:1rem;
+  }
+  div.psn{
+      padding-left: 0rem;
+  }
+/*  .cntr,
+  .cntrt {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;  
+  }
+  .cntr {
+    border: 1px solid #9c9c9c;
+  }
+  .cntd {
+    font-size: 1.5rem;
+    border-left: 1px solid #9c9c9c;
+    
+  }*/
+
+  #ncn td {
+    font-size: 1.5rem;
+    padding: 0.25rem;
+    vertical-align: middle;
+  }
+  
+  #sttr td {
+    font-size: 2rem;
+    padding: 0.25rem;
+  }
+  .sttr {
+    background-color: orangered;
+    text-align: right;
+  }
+  .sttrl {
+    background-color: rgb(255, 177, 148);
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+  }
+  .sttrd {
+    border: none;
+    background-color: rgb(128, 34, 0);
+  }
+  .sttrm {
+    background-color: rgb(255, 177, 148);
+    text-align: right;
+  }
+  /*.sttrs{
+    width: 3.8%;
+  }*/
+

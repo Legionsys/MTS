@@ -1,0 +1,246 @@
+html {
+  background-color: #090909;
+  font-family: "Roboto";
+  font-size: 62.5%;
+}
+
+/* LOGIN */
+.box {
+  position: relative;
+  margin: auto;
+  top: 5rem;
+  left: 0;
+  z-index: 20rem;
+  right: 0;
+  width: 40rem;
+  color: #666;
+  border-radius: 0.3rem;
+  background: #fff;
+  margin-bottom: 10rem;
+  box-shadow: 0 1rem 2rem rgba(3, 3, 3, 0.281),
+    0 0.6rem 0.6rem rgba(0, 0, 0, 0.23);
+  overflow: hidden;
+}
+
+.response {
+  font-family: "Roboto";
+  font-weight: 50rem;
+  color: coral;
+}
+
+#header {
+  background: #343838a4;
+  position: relative;
+  height: 10rem;
+  width: 100%;
+  margin-bottom: 3rem;
+}
+
+#cont-lock {
+  width: 100%;
+  height: 6.5rem;
+  position: relative;
+}
+
+.lock {
+  text-align: center;
+  color: whitesmoke;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  top: 0;
+  bottom: 0;
+  line-height: 6.5rem;
+  font-size: 2.8rem;
+}
+
+#bottom-head {
+  position: relative;
+  background-color: #44424296;
+  height: 3.5rem;
+}
+
+#bottom-head::after {
+  content: "";
+  width: 0rem;
+  height: 0rem;
+  display: block;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-bottom: 0.7rem solid white;
+  border-right: 0.7rem solid rgba(0, 0, 0, 0);
+  border-left: 0.7rem solid rgba(0, 0, 0, 0);
+  border-top: 0.7rem solid rgba(0, 0, 0, 0);
+}
+
+.box h1 {
+  margin-left: 2rem;
+  margin-top: 0;
+  font-size: 2.4rem;
+  font-weight: 30rem;
+  color: #cfd8dc;
+  line-height: 3.5rem;
+}
+
+.box button {
+  background: #cfd8dc;
+  border: 0;
+  color: #44424296;
+  padding: 1rem;
+  font-size: 1.6rem;
+  font-weight: 30rem;
+  width: 33rem;
+  margin: 2rem auto;
+  display: block;
+  cursor: pointer;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  border-radius: 2.5rem;
+}
+
+.box button:active {
+  background: radial-gradient(circle, red, orange,yellow);
+  color: #263238;
+}
+
+.box button:hover {
+  background: radial-gradient(circle, red, orange,yellow);
+  /*background: linear-gradient(to bottom right,yellow, orange, red, orange,yellow);*/
+  color: #fff;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+}
+
+.box p {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.group {
+  position: relative;
+  margin-bottom: 3.5rem;
+  margin-left: 4rem;
+}
+
+.inputMaterial {
+  font-size: 1.8rem;
+  padding: 1rem 1rem 1rem 0.5rem;
+  display: block;
+  width: 30rem;
+  border: none;
+  border-bottom: 0.1rem solid #757575;
+}
+
+.inputMaterial:focus {
+  outline: none;
+}
+
+/* LABEL ======================================= */
+
+label {
+  color: #999;
+  font-size: 1.4rem;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 0.5rem;
+  top: 1rem;
+  transition: 0.2s ease all;
+  -moz-transition: 0.2s ease all;
+  -webkit-transition: 0.2s ease all;
+}
+
+/* active state */
+.inputMaterial:focus ~ label,
+.inputMaterial:valid ~ label {
+  top: -2rem;
+  font-size: 1.4rem;
+  color: #44424296;
+}
+
+/* active state */
+.inputMaterial:focus ~ .bar:before,
+.inputMaterial:focus ~ .bar:after {
+  width: 50%;
+}
+
+/* active state */
+.inputMaterial:focus ~ .highlight {
+  -webkit-animation: inputHighlighter 0.3s ease;
+  -moz-animation: inputHighlighter 0.3s ease;
+  animation: inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+  from {
+    background: #5264ae;
+  }
+  to {
+    width: 0;
+    background: transparent;
+  }
+}
+@-moz-keyframes inputHighlighter {
+  from {
+    background: #5264ae;
+  }
+  to {
+    width: 0;
+    background: transparent;
+  }
+}
+@keyframes inputHighlighter {
+  from {
+    background: #5264ae;
+  }
+  to {
+    width: 0;
+    background: transparent;
+  }
+}
+
+#footer-box {
+  width: 100%;
+  height: 5rem;
+  background: #343838a4;
+  position: absolute;
+  bottom: 0;
+}
+
+.footer-text {
+  color: #cfd8dc;
+  padding: 1.6rem 0rem;
+  line-height: 1rem;
+}
+
+body {
+  background: #090909;
+}
+
+.sign-up {
+  display: none;
+  z-index: 2rem;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.sign-up span {
+  font-family: "Roboto";
+  font-size: 3.2rem;
+  color: white;
+  text-align: center;
+  line-height: 6rem;
+  margin: auto;
+  left: 0;
+  right: 0;
+  position: absolute;
+  cursor: pointer;
+}
+.base-box {
+  width: 60%;
+}
