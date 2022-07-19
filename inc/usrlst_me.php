@@ -13,11 +13,21 @@ if (mysqli_num_rows($resultData) > 0){
     while ($row = mysqli_fetch_assoc($resultData)) {
 
             echo '<div class="actusrcard" data-id="'.$row['usersId'].'">';
-            echo '<input type-"text" name="usrnam" class="au_name" value="'.$row['usersName'].'">';
-            echo '<input type-"text" name="usreml" class="au_email" value="'.$row['usersEmail'].'">';
-            echo '<input type-"text" name="usrscrn" class="au_id" value="'.$row['usersUid'].'">';
-            echo '<div class="usract active">ACTIVE</div>';
-            echo '<div class="pwdchange">CHANGE PASSWORD</div></div>';
+            echo '<div class="me_cont">';
+            echo '<input id="my_name" type="text" name="usrnam" class="me_input" value="'.$row['usersName'].'" placeholder=" ">';
+            echo '<label for="my_name" class="my_label">Name</label>';
+            echo '</div>';
+            echo '<div class="me_cont">';
+            echo '<input id="my_email" type="text" name="usreml" class="me_input" value="'.$row['usersEmail'].'" placeholder=" ">';
+            echo '<label for="my_email" class="my_label">Email</label>';
+            echo '</div>';
+            echo '<div class="me_cont">';
+            echo '<input id="my_scrn" type="text" name="usrscrn" class="me_input" value="'.$row['usersUid'].'" placeholder=" ">';
+            echo '<label for="my_scrn" class="my_label">Login Name</label>';
+            echo '</div>';
+            echo '<div class="me_butts">';
+            echo '<div class="usract active me_but">ACTIVE</div>';
+            echo '<div class="pwdchange me_but">CHANGE PASSWORD</div></div></div>';
 
         }
  } else {

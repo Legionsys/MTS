@@ -49,10 +49,18 @@
             </div>
         </div>
         <form action="/inc/uriel.php" method="post">
-            <div class="group"><input class="inputMaterial" name="name" type="text" required /><span
-                    class="highlight"></span><span class="bar"></span><label>Username</label></div>
-            <div class="group"><input class="inputMaterial" name="pwd" type="password" required /><span
-                    class="highlight"></span><span class="bar"></span><label>Password</label></div>
+            <div class="group">
+                <input class="inputMaterial" name="name" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>Username</label>
+            </div>
+            <div class="group">
+                <input class="inputMaterial" name="pwd" type="password" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>Password</label>
+            </div>
             <div class="response"><?php if (isset($_GET["error"])) {
         if ($_GET["error"]=="emptyinput") {
             echo "<p>Fill in all Fields!</p>";

@@ -3,99 +3,214 @@
     width: 95%;
     left: 2.5%;
     /*background-color: blueviolet;*/
-  }
-  .titlebar {
-    width: 100%;
-    position: relative;
-    left: 0%;
-    /*height: 2.5rem;
-    background-color: rgb(240, 240, 240);*/
-    display: flex;
-    flex-flow: row wrap;
-    justify-content:flex-start;
-    border-radius: 1rem 1rem 0rem 0rem;
-    background-color: rgb(180, 180, 180, 0.25);
-    backdrop-filter: blur(5px);
-    border-bottom: #fff solid 1px;
-    padding: 0.5rem;
-    padding-left: 5%;
-    z-index: 5;
-    font-size:3.5rem;
-    font-family: "Roboto", sans-serif;
-  }
-  
-  #usrbody {
-    background-color: rgb(185, 185, 185, 0.15);
-    backdrop-filter: blur(5px);
-    border-radius: 0rem 0rem 1.5rem 1.5rem;
-  }
-  #usrlist {
-    position:relative;
-    display: flex;
-    flex-flow:column nowrap;
-    justify-content: flex-start;
-    width:90%;
-    left:5%;
-    height: calc(calc(100vh - 11rem) * 0.7);
-  }
-  #usrfunction {
-    height: calc(calc(100vh - 11rem) * 0.3);
-  }
-  .usrcrd {
-    position:relative;
-    width:90%;
-    left:5%;
-    background-color: aquamarine;
-    margin:0.25rem;
-    Padding: 0.5rem;
-    border-radius: 0.5rem;
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-  }
-  .usrcrd div{
-    display:block;
-    font-size: 2.5rem;
-    font-family: "Roboto", sans-serif;
-    padding: 0.5rem;
-  }
-  .usrnam{
-    width:22.5%;
-    background-color: blueviolet;
-  }
-  .usreml {
-    width:35%;
-    background-color: beige;
-  }
-  .usrscrn {
-    width:10%;
-  }
-.usract{
-    width: 10%;
-    background-color: blue;
 }
+.titlebar {
+  width: 100%;
+  position: relative;
+  left: 0%;
+  /*height: 2.5rem;
+  background-color: rgb(240, 240, 240);*/
+  display: flex;
+  flex-flow: row wrap;
+  justify-content:flex-start;
+  border-radius: 1rem 1rem 0rem 0rem;
+  background-color: rgb(180, 180, 180, 0.25);
+  backdrop-filter: blur(5px);
+  border-bottom: #fff solid 1px;
+  padding: 0.5rem;
+  padding-left: 5%;
+  z-index: 5;
+  font-size:3.25rem;
+  font-family: "Roboto", sans-serif;
+}
+
+#usrbody {
+  /*background-color: rgb(185, 185, 185, 0.15);*/
+  backdrop-filter: blur(5px);
+  border-radius: 0rem 0rem 1.5rem 1.5rem;
+}
+#usrlist,
+#usrhead {
+  position:relative;
+  display: flex;
+  flex-flow:column nowrap;
+  justify-content: flex-start;
+  width:90%;
+  left:5%;
+}
+#usrhead {
+  height: 6rem;
+}
+#usrlist {
+  height: calc(calc(100vh - 11rem) * 0.7);
+  height: 27rem;
+  /*background: rgb(180, 180, 180, 0.25);;*/
+}
+#usrfunction {
+  height: 15rem;
+  background-color: rgb(185, 185, 185, 0.05);
+  padding-top: 1.25rem;
+}
+.usrcrd,
+.head_usrcrd {
+  position:relative;
+  width:90%;
+  left:5%;
+  background: none;
+  border: 1px solid #CC5500;
+  margin:0.25rem;
+  Padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+.head_usrcrd {
+  margin-top: 1.5rem;
+  background: #CC5500;
+  color: #fff;
+}
+.usrcrd:hover{
+  box-shadow: 0 6px 20px 0 rgba(204, 85, 0, 0.75);
+  cursor: pointer;
+  background-color: rgb(204, 85, 0, 0.1);
+}
+.usrcrd div,
+.head_usrcrd div {
+  display:block;
+  font-size: 2rem;
+  font-family: "Roboto", sans-serif;
+  padding: 0.5rem;
+  padding-left: 1rem;
+}
+.head_usrcrd div {
+  font-size: 2.5rem;
+}
+.usrnam,
+.head_usrnam {
+  width:22.5%;
+}
+.usreml,
+.head_usreml {
+  width:35%;
+}
+.usrscrn,
+.head_usrscrn {
+  width:10%;
+}
+.usract,
+.head_usract {
+    width: 10%;
+    font-size: 2.5rem;
+    padding: 0.5rem;
+    border-radius:0.75rem;
+    text-align: center;
+}
+.usract,
 .pwdchange,
 .pwdreset {
-    width: 17.5%;
-    background-color: pink;
+  background: none;
+  cursor: pointer;
+  color: #CC5500;
+  border: 2px solid #CC5500;
 }
-#spacer {
+.pwdchange,
+.pwdreset,
+.head_pwdreset {
+    width: 17.5%;
+    font-size: 2.5rem;
+    padding: 0.5rem;
+    border-radius:0.75rem;
+    text-align: center;
+}
+
+.usract:hover,
+.pwdchange:hover,
+.pwdreset:hover {
+  border: none;
+  color: #fff;
+  background-color: #CC5500;
+}
+.spacer {
   height: 30%;
   width:100%;
-  background-color: burlywood;
+  font-size: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto";
+  
 }
 #usrdet{
   width:100%;
   height: 70%;
   padding: auto;
-  background-color: aqua;
+  
 }
 .actusrcard {
   position: relative;
   width:70%;
-  background-color: beige;
   left:15%;
   top: 15%;
   height: 70%;
 
+}
+.me_cont {
+  position: relative;
+  width: 30%;
+  height: 3.5rem;
+  margin-left: 2.5%;
+  margin-top: 1rem;
+  display:inline-block;
+}
+.me_cont input {
+  position: absolute;
+  width: 100%;
+  font-size: 1.75rem;
+  padding: 0.5rem;
+  border: 1px solid rgb(185, 185, 185, 0.5);
+  border-radius: 0.75rem;
+  background-color: rgb(5, 5, 5, 0.001);
+  backdrop-filter: blur(5px);
+}
+.me_cont label {
+  position: absolute;
+  top:0.75rem;
+  left: 0.5rem;
+  width: 25%;
+  font-size: 1.75rem;
+
+  font: white;
+  border-radius: 0.25rem;
+  
+}
+
+.me_input:focus ~ label,
+.me_input:not(:placeholder-shown) ~ label {
+  top: -1.25rem;
+  left: 0.75rem;
+  font-size: 1.25rem;
+  color: Black;
+}
+.me_but{
+  width:30%;
+  display: inline-block;
+  margin-left: 13.5%;
+  margin-top:1.5rem;
+  font-size: 2.5rem;
+  padding: 0.5rem;
+  border-radius:0.75rem;
+  text-align: center;
+  color: #CC5500;
+  border: 2px solid #CC5500;
+  background: none;
+}
+.me_but:hover {
+  border: none;
+  color: #fff;
+  background-color: #CC5500;
+}
+#usredit{
+  height:15rem;
+  background-color: aliceblue;
 }
