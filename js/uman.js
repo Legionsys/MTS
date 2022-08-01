@@ -9,10 +9,29 @@ function useridchk(){
     $.get("/inc/usrlst_me.php", function (data, status) {
         $('#usrdet').html(data);
       });
-
   };  
+  function usrclr(){
+    $("#upd_name").val('');
+    $("#upd_email").val('');
+    $("#upd_scrn").val('');
+    $("#usract").html('ACTIVE');
+    $("#pwdchange").html('ADD USER');
+    $(".actusrcard").attr("data-id","0");
+    }
 $(document).ready(function () {
-    useridchk();
-    mechk();
+    
+  useridchk();
+  mechk();
+
   
-  });
+  $("#usrlist").on("click", ".usrcrd", function(){
+    usrclr();
+    $(".actusrcard").attr("data-id",$(this).attr("data-id"));
+    $("#upd_name").val($(this).children(".usrnam").html());
+    $("#upd_email").val('');
+    $("#upd_scrn").val('');
+    $("#usract").html('ACTIVE');
+    $("#pwdchange").html('ADD USER');
+        
+  })
+});

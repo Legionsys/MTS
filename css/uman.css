@@ -123,7 +123,7 @@
 .head_usrscrn {
   width:10%;
 }
-.usract,
+#usract,
 .head_usract {
     width: 10%;
     font-size: 2.5rem;
@@ -131,15 +131,15 @@
     border-radius:0.75rem;
     text-align: center;
 }
-.usract,
-.pwdchange,
+#usract,
+#pwdchange,
 .pwdreset {
   background: none;
   cursor: pointer;
   color: #CC5500;
   border: 2px solid #CC5500;
 }
-.pwdchange,
+#pwdchange,
 .pwdreset,
 .head_pwdreset {
     width: 17.5%;
@@ -149,8 +149,8 @@
     text-align: center;
 }
 
-.usract:hover,
-.pwdchange:hover,
+#usract:hover,
+#pwdchange:hover,
 .pwdreset:hover {
   border: none;
   color: #fff;

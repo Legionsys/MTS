@@ -97,11 +97,8 @@ function cnotUpd(){
       $("#contlst").html(data);
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
-
     });
-
-  }  
-
+  }
 };
 function cnotCHK(){
   $('input:checkbox.mcnprnt').each(function (){
