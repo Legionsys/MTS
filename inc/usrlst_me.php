@@ -27,6 +27,7 @@ if (mysqli_num_rows($resultData) > 0){
             echo '</div>';
             echo '<div class="me_butts">';
             echo '<div class="usract active me_but">ACTIVE</div>';
+            echo '<div class="usrupdme me_but no-change">UPDATE</div>';
             echo '<div class="pwdchange me_but">CHANGE PASSWORD</div></div></div>';
 
         }

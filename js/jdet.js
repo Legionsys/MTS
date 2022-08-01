@@ -261,9 +261,9 @@ $(document).ready(function () {
       $("#cliContact").val($(this).children(".lstNam").html());
       $("#cliContPh").val($(this).children(".lstPh").html());
       $("#cliContEm").val($(this).children(".lstEm").html());
-      updstr = updstr + 'contd="' + $(this).children(".lstNam").html().replace(/\,/g,"''") + '",'
-      updstr = updstr + 'contPh="' + $(this).children(".lstPh").html().replace(/\,/g,"''") + '",'
-      updstr = updstr + 'contEm="' + $(this).children(".lstEm").html().replace(/\,/g,"''") + '"'
+      updstr = updstr + 'contd="' + $(this).children(".lstNam").html().replace(/\'/g,"''") + '",'
+      updstr = updstr + 'contPh="' + $(this).children(".lstPh").html().replace(/\'/g,"''") + '",'
+      updstr = updstr + 'contEm="' + $(this).children(".lstEm").html().replace(/\'/g,"''") + '"'
       updstr = updstr.replace('=""','=NULL')
       console.log("ln 910 - " + updstr + " -- " + jbno);
       $.post(
@@ -280,7 +280,7 @@ $(document).ready(function () {
       $("#cliContEm").val($(this).children(".lstctc").html());
       $("#cliContEm2").val($(this).children(".lstctc2").html());
       console.log("Transpoint Marker");
-      var client = $(this).children(".lstcli").html().replace(/\,/g,"''");
+      var client = $(this).children(".lstcli").html().replace(/\'/g,"''");
       //var jbno = $("#jbnum").text();
       console.log("ln929 - " + client + " - " + jbno);
       //debugger;
@@ -313,18 +313,18 @@ $(document).ready(function () {
         console.log("Error: " + response.responseText);
       }); 
       //var jbno = $("#jbnum").text();
-      updstr = updstr + 'contd="' + $(this).children(".lstcont").html().replace(/\,/g,"''") + '",'
-      updstr = updstr + 'contPh="' + $(this).children(".lstcph").html().replace(/\,/g,"''") + '",'
-      updstr = updstr + 'contEm="' + $(this).children(".lstctc").html().replace(/\,/g,"''") + '",'
-      updstr = updstr + 'contEm2="' + $(this).children(".lstctc2").html().replace(/\,/g,"''") + '"'
+      updstr = updstr + 'contd="' + $(this).children(".lstcont").html().replace(/\'/g,"''") + '",'
+      updstr = updstr + 'contPh="' + $(this).children(".lstcph").html().replace(/\'/g,"''") + '",'
+      updstr = updstr + 'contEm="' + $(this).children(".lstctc").html().replace(/\'/g,"''") + '",'
+      updstr = updstr + 'contEm2="' + $(this).children(".lstctc2").html().replace(/\'/g,"''") + '"'
       updstr = updstr.replace('=""','=NULL')
 
 
     } else {
       $("#"+ mrkr +"Ctc").val($(this).children(".lstNam").html());
       $("#"+ mrkr +"Ph").val($(this).children(".lstPh").html());
-      updstr = updstr + "#"+ mrkr +"Ctc='" + $(this).children(".lstNam").html().replace(/\,/g,"''") + "',"
-      updstr = updstr + "#"+ mrkr +"Ph='" + $(this).children(".lstPh").html().replace(/\,/g,"''") + "'"
+      updstr = updstr + "#"+ mrkr +"Ctc='" + $(this).children(".lstNam").html().replace(/\'/g,"''") + "',"
+      updstr = updstr + "#"+ mrkr +"Ph='" + $(this).children(".lstPh").html().replace(/\'/g,"''") + "'"
       updstr = updstr.replace('=""','=NULL')
       //console.log ("markertest: " + mrkr);
       if (mrkr == 'r' || mrkr == 'c'){
@@ -971,7 +971,7 @@ $(document).ready(function () {
         if (chg == "") {
           updstr = updstr + fld + "=Null,"
         } else {
-          updstr = updstr + fld + "='" + chg.replace(/\,/g,"''").replace("'","''") + "',";
+          updstr = updstr + fld + "='" + chg.replace(/\'/g,"''").replace("'","''") + "',";
         }        
 
       });
@@ -1180,7 +1180,7 @@ $(document).ready(function () {
         if (chg == "") {
           updstr = updstr + fld + "=Null,"
         } else {
-          updstr = updstr + fld + "='" + chg.replace(/\,/g,"''") + "',";
+          updstr = updstr + fld + "='" + chg.replace(/\'/g,"''") + "',";
         }
       }        
     });

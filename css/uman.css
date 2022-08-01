@@ -44,6 +44,8 @@
 #usrlist {
   height: calc(calc(100vh - 11rem) * 0.7);
   height: 27rem;
+  overflow-y: scroll;
+  width:calc(90% + 15px);
   /*background: rgb(180, 180, 180, 0.25);;*/
 }
 #usrfunction {
@@ -54,26 +56,49 @@
 .usrcrd,
 .head_usrcrd {
   position:relative;
-  width:90%;
-  left:5%;
-  background: none;
-  border: 1px solid #CC5500;
-  margin:0.25rem;
-  Padding: 0.5rem;
-  border-radius: 0.5rem;
+  width:95%;
+  left:2.5%;  
+  Padding: 0.25rem;
+
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
 }
 .head_usrcrd {
+  margin:0.25rem;
   margin-top: 1.5rem;
   background: #CC5500;
   color: #fff;
+  border: 1px solid #CC5500;
+  border-radius: 0.5rem;
 }
+.usrcrd{
+  margin:0.25rem;
+  margin-top:0.05rem;
+  margin-bottom:0.05rem;
+  background-color: rgba(72, 255, 0, 0.75);
+  border: 1px solid none;
+}
+.usrcrd:nth-child(odd){
+  background-color:  rgba(255, 255, 255, 0.25);
+  border: 1px solid   rgba(0, 0, 0, 0.05);
+}
+.usrcrd:nth-child(even){
+  background-color:  rgba(0, 0, 0, 0.05);
+  border: 1px solid  rgba(255, 255, 255, 0.25);
+}
+
 .usrcrd:hover{
   box-shadow: 0 6px 20px 0 rgba(204, 85, 0, 0.75);
+  border: 1px solid #CC5500;
   cursor: pointer;
-  background-color: rgb(204, 85, 0, 0.1);
+  background-color: #fff;
+  color:black;
+  border-radius: 0.5rem;
+}
+.act_card {
+  background-color: rgb(180, 180, 180, 1);
+  color:#fff;
 }
 .usrcrd div,
 .head_usrcrd div {
@@ -179,10 +204,9 @@
   left: 0.5rem;
   width: 25%;
   font-size: 1.75rem;
-
   font: white;
   border-radius: 0.25rem;
-  
+  transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
 }
 
 .me_input:focus ~ label,
@@ -192,10 +216,10 @@
   font-size: 1.25rem;
   color: Black;
 }
-.me_but{
+.me_but,
+.upd_but{
   width:30%;
   display: inline-block;
-  margin-left: 13.5%;
   margin-top:1.5rem;
   font-size: 2.5rem;
   padding: 0.5rem;
@@ -205,12 +229,29 @@
   border: 2px solid #CC5500;
   background: none;
 }
-.me_but:hover {
+.me_but{
+  margin-left: 2.5%;
+}
+.upd_but{
+  margin-left: 13.5%;
+}
+.me_but:hover,
+.upd_but:hover{
   border: none;
   color: #fff;
   background-color: #CC5500;
 }
 #usredit{
   height:15rem;
-  background-color: aliceblue;
+}
+.no-change{
+  color: rgb(185, 185, 185);
+  border: 2px solid rgb(185, 185, 185);
+  cursor:not-allowed;
+}
+.no-change:hover{
+  background-color: rgb(185, 185, 185);
+  color: #fff;
+  border: 2px solid rgb(185, 185, 185);
+  cursor:not-allowed;
 }

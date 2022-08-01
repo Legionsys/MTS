@@ -15,7 +15,7 @@ if (mysqli_num_rows($resultData) > 0){
             if (is_null($row['active'])) {
                 echo '<div class="usract active">ACTIVE</div>';
             } else {
-                echo '<div class="usract inactive">DEACTIVATED</div>';
+                echo '<div class="usract inactive">INACTIVE</div>';
             }
             echo '<div class="pwdreset">RESET PASSWORD</div></div>';
     }
