@@ -42,8 +42,8 @@
                         <label for="upd_scrn" class="my_label">Login Name</label>
                     </div>
                     <div class="me_butts">
-                        <div ID="usract" class="upd_but">ACTIVE</div>
-                        <div ID="pwdchange" class="upd_but">ADD USER</div>
+                        <div ID="usract" class="usract upd_but">ACTIVE</div>
+                        <div ID="pwdchange" class="pwdchange upd_but">ADD USER</div>
                     </div>
                 </div>
             </div>

@@ -43,7 +43,7 @@ function pwdMatch($pwd, $pwd2) {
 }
 
 function uidExists($conn,$uid,$email) {
-    $sql = "SELECT * FROM users WHERE usersUid = ? OR usersEmail = ?;";
+    $sql = "SELECT * FROM users WHERE usersUid = ? OR usersEmail = ? and active is null;";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt,$sql)) {
         header("location: ../signup.php?error=uidtaken");
@@ -64,7 +64,7 @@ function uidExists($conn,$uid,$email) {
 }
 
 function createUser($conn, $name, $email, $uid, $pwd) {
-    $sql = "INSERT INTO users (usersName,usersEmail,usersUid,usersPwd) VALUES (?, ?, ?, ?);";
+    $sql = "INSERT INTO users (usersName,usersEmail,usersUid,usersPwd,active) VALUES (?, ?, ?, ?, null);";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt,$sql)) {
         header("location: ../signup.php?error=uidtaken");
