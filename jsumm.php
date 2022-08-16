@@ -3,7 +3,7 @@
     include_once 'header.php';
     $pName = "";
 ?>
-<script src="/js/jsumm.js?ver=1"></script>
+
 <section>
     <div class="jsum-head">
         <div>
@@ -100,7 +100,7 @@
         </div>
     </div>
 </section>
-
+<script src="/js/jsumm.js?ver=1"></script>
 <?php 
     include_once 'footer.php'
 ?>

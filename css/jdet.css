@@ -174,17 +174,21 @@
 .lstEm{
   width: 100%;
 }
-.add3,
-.Ctc,
+.add3{
+  width: 70%;
+}
 .lstPh{
   width: 80%;
 }
+.Ctc{
+  width: 74.5%;
+}
 .st,
 .pc{
-  width: 9.5%;
+  width: 14.5%;
 }
 .Ph{
-  width: 19.5%;
+  width: 25%;
 }
 .lstcont,
 .lstcph{
@@ -1275,3 +1279,20 @@ button.print-button:hover .print-icon::after {
   top:0.1rem;
 }
 
+.add_trash {
+  position: absolute;
+  height: 4rem;
+  width: 4rem;
+  top: 0.25rem;
+  right: 0.25rem;
+  padding: 0.25rem;
+  /*border:rgba(0, 0, 0, 0.75) solid;*/
+  background: rgba(255, 0, 0, 0.15);
+  border-radius: 1.5rem;
+  Padding-top: 0.55rem;
+}
+.img_trash {
+  display: block;
+  margin: auto;
+  cursor: pointer;
+}

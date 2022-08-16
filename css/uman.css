@@ -132,14 +132,13 @@
     text-align: center;
 }
 .usract,
-.pwdchange,
 .pwdreset {
   background: none;
   cursor: pointer;
   color: #CC5500;
   border: 2px solid #CC5500;
 }
-.pwdchange,
+
 .pwdreset,
 .head_pwdreset {
     width: 17.5%;
@@ -172,7 +171,8 @@
   padding: auto;
   
 }
-.actusrcard {
+.actusrcard,
+.editusrcard {
   position: relative;
   width:70%;
   left:15%;
@@ -219,6 +219,7 @@
 .me_but,
 .upd_but{
   width:30%;
+  margin-left: 2.5%;
   display: inline-block;
   margin-top:1.5rem;
   font-size: 2.5rem;
@@ -228,13 +229,9 @@
   color: #CC5500;
   border: 2px solid #CC5500;
   background: none;
+  cursor: pointer;
 }
-.me_but{
-  margin-left: 2.5%;
-}
-.upd_but{
-  margin-left: 13.5%;
-}
+
 .me_but:hover,
 .upd_but:hover{
   border: none;
@@ -254,4 +251,30 @@
   color: #fff;
   border: 2px solid rgb(185, 185, 185);
   cursor:not-allowed;
+}
+.obscr {
+  position: absolute;
+  width: calc(100vw - 0.1rem);
+  height: calc(100vh - 6.5%);
+  left: -1%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+.passwrd_reset_splash{
+  position: relative;
+  width:40rem;
+  height:20rem;
+  background-color: whitesmoke;
+  border-radius:0.75rem;
+  left:calc(50% - 20rem);
+  top:calc(40% - 10rem);
+}
+.pwdresalrt {
+  position:relative;
+  width:80%;
+  left:10%;
+  top: 10%;
+  font-size: 4.5rem;
+  color: black;
+  text-align: center;
 }

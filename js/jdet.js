@@ -991,6 +991,44 @@ $(document).ready(function () {
       $("#dd").addClass("hideme");
       clrDd();        
   });
+  $("#slist").on('click',".img_trash", function (event) {
+    event.stopPropagation();
+    var addCard = $(this).parent().parent();
+    var adBuild = new Object();
+    adBuild.nam = addCard.children(".nam").html();
+    adBuild.add1 = addCard.children(".add1").html();
+    adBuild.add2 = addCard.children(".add2").html();
+    adBuild.add3 = addCard.children(".add3").html();
+    adBuild.st = addCard.children(".st").html();
+    adBuild.pc = addCard.children(".pc").html();
+    adBuild.Ctc = addCard.children(".Ctc").html();
+    adBuild.Ph = addCard.children(".Ph").html();
+    
+    var senBuild = JSON.stringify(adBuild);
+    console.log(senBuild);
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function(){
+      if(xhr.readyState == 4 && xhr.status == 200){
+        console.log(xhr.responseText);
+        if (xhr.responseText.search('Error') > 0) {
+          alert('Address Card Removal Error');
+        } else {
+          addCard.remove();
+        }
+      }
+
+    };
+
+    xhr.open("POST", "/inc/adrem.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(senBuild);
+
+
+  });
+
+
+
 
   //dropdown contacts
   $("#cliContact").on({

@@ -15,12 +15,11 @@ function joblstUpd(){
 };
 $(window).on("load", function () {
   //Check session data and update search information.
-  
+
   if (sessionStorage.getItem('search-all') != "null") {
     $("#search-all").val(sessionStorage.getItem('search-all'));
-  
   };
-
+  
   if (sessionStorage.getItem('Inv') == "null") {
     sessionStorage.setItem('Inv','All');
   };
@@ -29,24 +28,22 @@ $(window).on("load", function () {
   if (sessionStorage.getItem('job') == "null") {
     sessionStorage.setItem('job','All');
   };
+  console.log(sessionStorage.getItem('job'));
   $("input[name='job_Tog'][value='"+sessionStorage.getItem('job')+"']").prop('checked', true);  
   
   $.get("/inc/cli-list-upd.php", function (data, status) {
     $("#cli-fil").html(data);
+  }).done(function(){
+    if (sessionStorage.getItem('cli-fil') != "null") {
+      $("#cli-fil").val(sessionStorage.getItem('cli-fil'));
+    };
+    joblstUpd();
   });
-
-  if (!sessionStorage.getItem('cli-fil') == "null") {
-    $("#cli-fil").val(sessionStorage.getItem('cli-fil'));
-  };
-  
   //update Client list
-
-
-  joblstUpd();
-
-  
+  joblstUpd();  
 });
 $(document).ready(function () {
+
   //search update
   $("#search-all").keyup(function () {
     sessionStorage.setItem('search-all',$("#search-all").val());
@@ -62,6 +59,9 @@ $(document).ready(function () {
     sessionStorage.setItem('job',$("input[name='job_Tog']:checked").val());
     joblstUpd();
   });
-
+  $("#cli-fil").on("dblclick",function(){
+    $("#cli-fil").val(sessionStorage.getItem('cli-fil'));
+    console.log($("#cli-fil").val());
+  })
 
 });

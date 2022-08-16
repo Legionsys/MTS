@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div id="usredit">
-                <div class="actusrcard" data-id="0">
+                <div class="editusrcard" data-id="0">
                     <div class="me_cont">
                         <input id="upd_name" type="text" name="usrnam" class="me_input" placeholder=" ">
                         <label for="upd_name" class="my_label">Name</label>
@@ -43,6 +43,7 @@
                     </div>
                     <div class="me_butts">
                         <div ID="usract" class="usract upd_but">ACTIVE</div>
+                        <div ID="usrupd" class="usrupd upd_but no-change">UPDATE</div>
                         <div ID="pwdchange" class="pwdchange upd_but">ADD USER</div>
                     </div>
                 </div>
