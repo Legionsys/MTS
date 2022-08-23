@@ -5,7 +5,7 @@ if ($builtJSON === FALSE) {
     echo 'Error JSON Build Fail';
 }
 
-$add_arr = json_decode($builtJSON, true);
+$arr = json_decode($builtJSON, true);
 
 //Database connection
 require_once 'dbh.inc.php';

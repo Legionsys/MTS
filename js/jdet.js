@@ -962,15 +962,16 @@ $(document).ready(function () {
     var mrkr = $("#dd").data('marker');
 
     $(this).children().each(function() {
-        fld = $("#dd").data('marker') + $(this).attr("class");
-        chg = $(this).html();
-        $("#" + fld).val(chg);
-        if (chg == "") {
-          updstr = updstr + fld + "=Null,"
-        } else {
-          updstr = updstr + fld + "='" + chg.replace(/\'/g,"''").replace("'","''") + "',";
-        }        
-
+        if ($(this).attr("class") != 'add_trash'){
+          fld = $("#dd").data('marker') + $(this).attr("class");
+          chg = $(this).html();
+          $("#" + fld).val(chg);
+          if (chg == "") {
+            updstr = updstr + fld + "=Null,"
+          } else {
+            updstr = updstr + fld + "='" + chg.replace(/\'/g,"''").replace("'","''") + "',";
+          }        
+      }
       });
       updstr = updstr.substring(0,(updstr.length - 1));
       //console.log ("markertest: " + mrkr);
@@ -984,7 +985,6 @@ $(document).ready(function () {
           console.log("Error: " + response.responseText);
         });        
       } else {
-
         cnDetUpd(updstr,cno);
       }
       $("#dd").removeAttr('marker');
@@ -995,14 +995,14 @@ $(document).ready(function () {
     event.stopPropagation();
     var addCard = $(this).parent().parent();
     var adBuild = new Object();
-    adBuild.nam = addCard.children(".nam").html();
-    adBuild.add1 = addCard.children(".add1").html();
-    adBuild.add2 = addCard.children(".add2").html();
-    adBuild.add3 = addCard.children(".add3").html();
-    adBuild.st = addCard.children(".st").html();
-    adBuild.pc = addCard.children(".pc").html();
-    adBuild.Ctc = addCard.children(".Ctc").html();
-    adBuild.Ph = addCard.children(".Ph").html();
+    adBuild.nam = addCard.children(".nam").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.add1 = addCard.children(".add1").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.add2 = addCard.children(".add2").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.add3 = addCard.children(".add3").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.st = addCard.children(".st").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.pc = addCard.children(".pc").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.Ctc = addCard.children(".Ctc").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    adBuild.Ph = addCard.children(".Ph").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
     
     var senBuild = JSON.stringify(adBuild);
     console.log(senBuild);
