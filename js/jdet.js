@@ -430,7 +430,7 @@ $(document).ready(function () {
       var val = $(this).val();
       //var jbno = $("#jbnum").text();
       var col = $(this).attr("name")
-      /*console.log (val + " " + jbno + " " + col);*/
+      console.log (val + " " + jbno + " " + col);
       $.post(
         "/inc/job_add_upd.php",
         { col: col, val: val, jno: jbno },
@@ -964,7 +964,7 @@ $(document).ready(function () {
     $(this).children().each(function() {
         if ($(this).attr("class") != 'add_trash'){
           fld = $("#dd").data('marker') + $(this).attr("class");
-          chg = $(this).html();
+          chg = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
           $("#" + fld).val(chg);
           if (chg == "") {
             updstr = updstr + fld + "=Null,"

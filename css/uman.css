@@ -23,7 +23,19 @@
   font-size:3.25rem;
   font-family: "Roboto", sans-serif;
 }
-
+.approved {
+  border:1px solid lawngreen;
+}
+.rejected {
+  border:2px solid red;
+}
+.lab_approved {
+  color:green;
+  
+}
+.lab_rejected{
+  color:red;
+}
 #usrbody {
   /*background-color: rgb(185, 185, 185, 0.15);*/
   backdrop-filter: blur(5px);
@@ -180,6 +192,10 @@
   height: 70%;
 
 }
+.editusrcard {
+  width:90%;
+  left:5%;
+}
 .me_cont {
   position: relative;
   width: 30%;
@@ -188,23 +204,34 @@
   margin-top: 1rem;
   display:inline-block;
 }
-.me_cont input {
+.usr_cont {
+  position: relative;
+  width: 25%;
+  height: 3.5rem;
+  margin-left: 2.5%;
+  margin-top: 1rem;
+  display:inline-block;
+}
+.me_input,
+.usr_input {
   position: absolute;
   width: 100%;
   font-size: 1.75rem;
   padding: 0.5rem;
-  border: 1px solid rgb(185, 185, 185, 0.5);
   border-radius: 0.75rem;
   background-color: rgb(5, 5, 5, 0.001);
   backdrop-filter: blur(5px);
 }
-.me_cont label {
+.inp_std{
+  border: 1px solid rgb(185, 185, 185, 0.5);
+}
+
+.my_label {
   position: absolute;
   top:0.75rem;
   left: 0.5rem;
-  width: 25%;
+  width: 95%;
   font-size: 1.75rem;
-  font: white;
   border-radius: 0.25rem;
   transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
 }
@@ -214,6 +241,16 @@
   top: -1.25rem;
   left: 0.75rem;
   font-size: 1.25rem;
+  color: Black;
+}
+.usr_input:focus ~ label,
+.usr_input:not(:placeholder-shown) ~ label {
+  top: -1.5rem;
+  left: 0.75rem;
+  font-size: 1.25rem;
+ 
+}
+.my_lab{
   color: Black;
 }
 .me_but,
@@ -231,7 +268,9 @@
   background: none;
   cursor: pointer;
 }
-
+.usr_butts{
+  width:85%;
+}
 .me_but:hover,
 .upd_but:hover{
   border: none;
@@ -241,17 +280,7 @@
 #usredit{
   height:15rem;
 }
-.no-change{
-  color: rgb(185, 185, 185);
-  border: 2px solid rgb(185, 185, 185);
-  cursor:not-allowed;
-}
-.no-change:hover{
-  background-color: rgb(185, 185, 185);
-  color: #fff;
-  border: 2px solid rgb(185, 185, 185);
-  cursor:not-allowed;
-}
+
 .obscr {
   position: absolute;
   width: calc(100vw - 0.1rem);
@@ -260,6 +289,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 100;
 }
+
 .passwrd_reset_splash{
   position: relative;
   width:40rem;
@@ -277,4 +307,174 @@
   font-size: 4.5rem;
   color: black;
   text-align: center;
+}
+.clr_but {
+  position:absolute;
+  width: 10%;
+  right: 6%;
+  height: 90%;
+  top: 5%; 
+}
+.clr{
+  position:relative;
+  height:7rem;
+  Width:7rem;
+  left: 5%;
+  top: calc((100% - 7rem) /2);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 2rem;
+  color: #CC5500;
+  border: 2px solid #CC5500;
+}
+.cnal{
+  font-size: 4.5rem;
+}
+.cnaw{
+  font-size: 1.5rem;
+}
+.clr:hover{
+  border:none;
+  color: #fff;
+  background-color: #CC5500;
+}
+.passwrd_chg_splash{
+  position: relative;
+  width:40rem;
+  height:50rem;
+  background-color: whitesmoke;
+  border-radius:0.75rem;
+  left:calc(50% - 20rem);
+  top:calc(40% - 25rem);
+}
+.p_upd {
+  position:relative;
+  height:6rem;
+  width: 100%;
+}
+.passChg_input {
+  margin-top: 2.5rem;
+  position: relative;
+  width: 95%;
+  left: 2.5%;
+  font-size: 1.75rem;
+  padding: 0.5rem;
+  border: 1px solid rgb(185, 185, 185, 0.5);
+  border-radius: 0.75rem;
+  background-color: rgb(5, 5, 5, 0.001);
+  backdrop-filter: blur(5px);
+}
+.passChg_label {
+  position: relative;
+  top:-2.5rem;
+  left: 1.5rem;
+  width: auto;
+  font-size: 1.75rem;
+  font: white;
+  border-radius: 0.25rem;
+  transition: top 200ms ease-in, left 200ms ease-in, font-size 200ms ease-in;
+}
+
+.passChg_input:focus ~ label,
+.passChg_input:not(:placeholder-shown) ~ label {
+top: -5rem;
+left: 1.75rem;
+font-size: 1.5rem;
+
+}
+.vpas {
+  margin-top: 2.5rem;
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
+.Updbut{
+  position:absolute;
+  bottom:3rem;
+  width: 80%;
+  left: 10%;
+  font-size: 1.75rem;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+.Updbut{
+  display: inline-block;
+  margin-top:1.5rem;
+  font-size: 2.5rem;
+  padding: 0.5rem;
+  border-radius:0.75rem;
+  text-align: center;
+  color: #CC5500;
+  border: 2px solid #CC5500;
+  background: none;
+  cursor: pointer;
+}
+.Updbut:hover{
+  border: none;
+  color: #fff;
+  background-color: #CC5500;
+}
+.hide {
+  display:none;
+}
+.pwd_reqs li {
+  margin: 10px 20px;
+  font-size: 1.5rem;
+  list-style-type:none;
+}
+.pwd_reqs li strong {
+  font-size: 1.5rem;
+}
+/*.pwd_reqs li:last-child{
+  text-align:center;
+  margin:20px 0 25px 0;
+}*/
+#pswd_info {
+  position:absolute;
+  /*bottom:-75px;*/
+  /*bottom: -115px\9; /* IE Specific */
+  right:2.5%;
+  width:95%;
+  height:45%;
+  padding:15px;
+  /*background:#fefefe;*/
+  font-size:3.75em;
+  /*box-shadow:0 1px 3px #ccc;
+  border-radius:5px;
+  border:1px solid #ddd;*/
+}
+#pswd_info h4 {
+  margin:0 0 10px 0;
+  padding:0;
+  font-weight:normal;
+  font-size: 2rem;
+}
+.invalid {
+  background:url(../img/invalid.svg) no-repeat 2.5% 55%;
+  background-size: 5%;
+  padding-left:10%;
+  line-height:24px;
+  color:#ec3f41;
+}
+.valid {
+  background:url(../img/valid.svg) no-repeat 2.5% 55%;
+  background-size: 5%;
+  padding-left:10%;
+  line-height:24px;
+  color:#3a7d34;
+}
+.no-change{
+  color: rgb(185, 185, 185);
+  border: 2px solid rgb(185, 185, 185);
+  cursor:not-allowed;
+}
+.no-change:hover{
+  background-color: rgb(185, 185, 185);
+  color: #fff;
+  border: 2px solid rgb(185, 185, 185);
+  cursor:not-allowed;
 }
