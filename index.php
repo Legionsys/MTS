@@ -76,7 +76,7 @@
 
     else {}
 
-    ?></div><button id="buttonlogintoregister" type="submit" name="submit">Login </button>
+    ?></div><button id="buttonlogintoregister" type="submit" name="submit">GITT </button>
         </form>
         <div id="footer-box">
             <p class="footer-text">Need access? Please speak to the team at MTS</p>
