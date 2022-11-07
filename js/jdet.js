@@ -1049,7 +1049,7 @@ $(document).ready(function () {
       this.parentNode.appendChild(document.querySelector('#dd'));
       $("#dd").removeClass("hideme");
       $("#dd").data('marker',"client");
-      console.log("dd pop value - " + $(this).val());
+      //console.log("dd pop value - " + $(this).val());
       ddConPop($(this).val());
       event.stopPropagation();
     },
