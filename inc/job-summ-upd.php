@@ -86,10 +86,22 @@ if (mysqli_num_rows($resultData) > 0){
     while ($row = mysqli_fetch_assoc($resultData)) {
         $jnum = $row['jobID'];
         $fjobno = substr("000000$jnum",-5);
-        echo '<a href="/jdet.php?job_no='.$jnum.'"><div class="jcard" id="'.$jnum.'"><div class="jnum">'.$fjobno.'</div>';
+/*        echo '<a href="/jdet.php?job_no='.$jnum.'"><div class="jcard" id="'.$jnum.'"><div class="jnum">'.$fjobno.'</div>';
         echo '<div class="pud">'.date_format(date_create($row['jobDate']),"d-m-Y").'</div>';
         echo '<div class="jcli">'.$row['clientName'].'</div>';
-        echo '<div class="jref">'.$row['jobRef'].'</div></div></a>';
+        echo '<div class="jref">'.$row['jobRef'].'</div></div></a>';*/
+
+        echo '<a href="/jdet.php?job_no='.$jnum.'"><div class="jcard" id="'.$jnum.'"><div class="jnum">'.$fjobno.'</div>';
+        echo '<div class="pud">'.date_format(date_create($row['jobDate']),"d-m-Y").'</div>';
+        if (is_null($row['invNum'])) {
+            
+        } else {
+            echo '<div class="inum">INV: '.$row['invNum'].'</div>';
+        }
+        echo '<div class="jcli">'.$row['clientName'].'</div>';
+        echo '<div class="jref">'.$row['jobRef'].'</div>';
+
+        echo '</div></a>';
 }
 
 } else {

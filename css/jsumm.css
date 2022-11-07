@@ -135,6 +135,15 @@ a {
   margin-top: 0.5rem;
   cursor: pointer;
 }
+.inum {
+  font-size: 1.5rem;
+  position: relative;
+  left: 2.5%;
+  width: 95%;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  color: green;
+}
 .jcard:hover {
   box-shadow: 0 6px 20px 0 rgba(245, 202, 123, 0.75);
   border: darkgrey solid 0.1rem;
@@ -142,7 +151,7 @@ a {
 }
 #njdiv{
   border: rgb(150, 150, 150) solid 0.1rem;
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   display: flex;
   align-items: center;
   padding: 0.25rem;
@@ -151,7 +160,7 @@ a {
   border-radius: 1rem;
   background-color: #FAF83F;
   color:#63666A;
-
+  height: 100%;
 }
 #njdiv:hover{
   box-shadow: 0 6px 20px 0 rgba(245, 202, 123, 0.75);
@@ -217,7 +226,7 @@ a {
   height: 100%;
   width: 100%;
   color: #63666A;
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   margin: auto;
   display:grid;
   place-items:center;
