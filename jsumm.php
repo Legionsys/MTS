@@ -31,9 +31,8 @@
         <div id="filters">
             <!--<div id="filt_start"></div>-->
             <input id="search-all" type="text" placeholder="Search for...">
-            <select name="cli-fil" id="cli-fil">
-
-            </select>
+            <!-- <input id="Client Search" type="text" placeholder="Client List"> -->
+            <select name="cli-fil" id="cli-fil"></select>
             <div class="filt_box">
                 <div class="selectors">
                     <input type="radio" id="all-job" name="job_Tog" value="All" class="radios">
@@ -100,7 +99,7 @@
         </div>
     </div>
 </section>
-<script src="/js/jsumm.js?ver=1"></script>
+<script src="/js/jsumm.js?ver=2"></script>
 <?php 
     include_once 'footer.php'
 ?>

@@ -65,6 +65,7 @@ select {
 }
 select{
   cursor: pointer;
+  /*visibility: hidden;*/
 }
 #addjob {
   height: 2.5rem;

@@ -229,6 +229,8 @@ function ddFrtPop(val){
   }
 };
 $(document).ready(function () {
+  console.log(window.location.href);
+
   climkr = 0;
   jbno = $("#jbnum").text();
   namt_tot();

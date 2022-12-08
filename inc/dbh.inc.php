@@ -1,18 +1,18 @@
 <?php
 
 
-/*infinitree
-$serverName = "sql100.epizy.com";
-$dBUsername = "epiz_29730146";
-$dBPassword = "8TX5LloePRMu";
-$dBName = "epiz_29730146_MOORTSP";
+/*A2
+$serverName = "sg1-lr2.a2hosting.com";
+$dBUsername = "aden_webusr";
+$dBPassword = "Webusr_password";
+$dBName = "aden_MOORTSP";
 */
 
 /*xampp or local*/
 $serverName = "localhost";
 $dBUsername = "root";
-$dBPassword = "";
-$dBName = "epiz_29730146_MOORTSP";
+$dBPassword = "Pass1v3$";
+$dBName = "aden_MOORTSP";
 
 
 $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName);

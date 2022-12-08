@@ -18,9 +18,10 @@ if (isset($_POST['inv'])) {
 };
 
 require 'dbh.inc.php';
-if ($client == 'null'){
+if ($client == 'null' || $client == 'false'){
     $client = '';
 };
+
 
 $clientId = '';
 //change client name for client ID if client is filled in
