@@ -8,7 +8,7 @@ $dBPassword = "Webusr_password";
 $dBName = "aden_MOORTSP";
 */
 
-/*xampp or local*/
+/*local*/
 $serverName = "localhost";
 $dBUsername = "root";
 $dBPassword = "Pass1v3$";
