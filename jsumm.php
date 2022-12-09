@@ -7,24 +7,22 @@
 <section>
     <div class="jsum-head">
         <div>
-            <p>Small fixes have been made</p>
-            <p>1 - Dates have been formated on the job cards to show day-month-year</p>
-            <p>2 - Con Note weights no longer multiply by the quantity in the cubic</p>
-            <p>3 - the number of items, weight and cubic now show in the con note cards</p>
-
+    <a class="weatherwidget-io" href="https://forecast7.com/en/n20d31118d59/port-hedland/" data-label_1="PORT HEDLAND" data-label_2="WEATHER" data-theme="original" >PORT HEDLAND WEATHER</a>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
+</div>
+        <div>
+<a class="weatherwidget-io" href="https://forecast7.com/en/n23d36119d74/newman/" data-label_1="NEWMAN" data-label_2="WEATHER" data-theme="original" >NEWMAN WEATHER</a>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
         </div>
         <div>
-            Con Notes can now be downloaded by selecting Print from inside the connote<br><br>
-            <p>If you receive a blank screen it means there was an error on the con note. some of these are still being
-                ironed out but you should be able to view and download basic con-notes</p>
-            <p>Due to the restrictions on the con note layout only 5 rows of con note details can be shown, and they can
-                all only be one line each.</p>
-        </div>
-        <div>
-            <p> The "Search for.." filter will be expanded to cover also the clients, their contacts, notes against the
-                jobs, supplier names, supplier addresses, name of your suppliers, description of your suppliers, con
-                note addresses, con note freight description, senders reference, invoice numbers and any other areas you
-                would like it to look in.
+<a class="weatherwidget-io" href="https://forecast7.com/en/n28d78114d61/geraldton/" data-label_1="GERALDTON" data-label_2="WEATHER" data-theme="original" >GERALDTON WEATHER</a>
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
         </div>
     </div>
     <div class="jsum-body">
