@@ -21,7 +21,6 @@
   font-size: 2.5rem;
   padding: 1rem 0.5rem;
   vertical-align: middle;
-  background-color: palegreen;
   border-radius: 1.5rem;
   margin: 1rem;
   text-justify: distribute;
@@ -171,6 +170,29 @@ a {
 #search-all{
   background-color: #96FA7F;
 }
+#cli-fil{
+  margin: 0rem auto;
+  font-size: 2.5rem;
+  border: rgb(150, 150, 150) solid 0.1rem;
+  border-radius: 1rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  min-width: 30rem;
+  color: #63666A;
+}
+#clilst{
+  /*visibility:hidden;*/
+  position: absolute;
+  border: 1px solid #5d5d5d;
+  z-index: 1;
+  background: #999;
+  width: 99%;
+  left: 0.5%;
+  border-radius: 5px;
+  min-height: 30px;
+  min-width: 32.5rem;
+}
+
 /*toggle filters*/
 .filt_box{
   position:relative;

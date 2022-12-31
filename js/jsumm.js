@@ -92,7 +92,8 @@ $(window).on("load", function () {
   $("input[name='job_Tog'][value='"+srchJob+"']").prop('checked', true);
 
   $.get("/inc/cli-list-upd.php", function (data, status) {
-    $("#cli-fil").html(data);
+    //$("#cli-fil").html(data);
+    $("#cli-fil").html('Client List - Search for...');
   }).done(function(){
     if (srchCli != "null" && srchCli != false) {
       $("#cli-fil").val(srchCli);
