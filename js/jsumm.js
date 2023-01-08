@@ -192,6 +192,7 @@ $(document).ready(function () {
   $('#cliclr').click(function(){
     srchCli = 'null';
     $("#clisel").html();
+    $('#search-cli').val('');
     urlUpdate();
     joblstUpd();
   })

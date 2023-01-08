@@ -145,7 +145,7 @@ function ddPop(){
 function ddConPop(val){
   clrDd()
   var stxt = val;
-  if (stxt.length < 3) {
+  if (stxt.length < 2) {
     $(".ddbrtxt").html("Please enter more letters");
     $(".load-3").removeClass("hideme");
   } else {
