@@ -11,7 +11,7 @@ $dBName = "aden_MOORTSP";
 /*local*/
 $serverName = "localhost";
 $dBUsername = "root";
-$dBPassword = "Pass1v3$";
+$dBPassword = "";
 $dBName = "aden_MOORTSP";
 
 
