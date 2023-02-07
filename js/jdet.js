@@ -1001,7 +1001,7 @@ $(document).ready(function () {
           if (chg == "") {
             updstr = updstr + fld + "=Null,"
           } else {
-            updstr = updstr + fld + "='" + chg.replace(/\'/g,"''").replace("'","''") + "',";
+            updstr = updstr + fld + "='" + chg.replace(/\'/g,"''") + "',";
           }        
       }
       });
