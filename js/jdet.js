@@ -2,6 +2,8 @@ var mcnf;
 var mcnl = [];
 var climkr;
 var jbno;
+var timeout = null;
+
 number_format = function (number, decimals, dec_point, thousands_sep) {
   number = Number(number).toFixed(decimals);
 
@@ -232,7 +234,7 @@ $(document).ready(function () {
   console.log(window.location.href);
 
   climkr = 0;
-  jbno = $("#jbnum").text();
+  jbno = $("#jbnum").text().trim();
   namt_tot();
   cnotUpd();
 
@@ -431,20 +433,48 @@ $(document).ready(function () {
     change: function(){
       var val = $(this).val();
       //var jbno = $("#jbnum").text();
+      var did = $(this).attr("id");
       var col = $(this).attr("name")
-      console.log (val + " " + jbno + " " + col);
+      console.log (val + "|" + jbno + "|" + col + "|" + $(this).attr("value"));
       $.post(
         "/inc/job_add_upd.php",
         { col: col, val: val, jno: jbno },
         function (data, status) {
-          /*console.log(data);
-          console.log(status);*/
+          console.log("data = " + data);
+          console.log("status = " + status);
+          //console.log("||" + $(this).attr("id") + "||");
+          $('#' + did).attr("value",val);
+          $('#' + did + ".pending").removeClass("pending").addClass("updated");
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);0
       });      
     }
-  });
+  ,
+    focus: function(){
+      if ($(this).attr('id') == "cnam" || $(this).attr('id') == "dnam" ) {
+
+      } else {
+        $("#dd").removeAttr('marker');
+        $("#dd").addClass("hideme");
+        clrDd();        
+        //console.log($(this).attr('id'));
+      }
+    }
+
+  ,
+    keyup : function(){
+      console.log("val vs value -" + $(this).val() + "|" + $(this).attr("value"));
+      if ($(this).val() == $(this).attr("value")) {
+        $('#' + $(this).attr("id") + ".pending").removeClass("pending").addClass("updated");
+      } else {
+        $('#' + $(this).attr("id") + ".updated").removeClass("updated");
+        $(this).addClass("pending");
+      }
+    }
+  
+  }
+  );
 
 
   //adding a note
@@ -982,7 +1012,10 @@ $(document).ready(function () {
         $.post(
           "/inc/job-dets-upd.php",
           { updstr: updstr, cno: jbno },
-          function (data, status) {}
+          function (data, status) {
+            console.log(data);
+            console.log(status);
+          }
         ).fail(function (response) {
           console.log("Error: " + response.responseText);
         });        
@@ -1141,16 +1174,7 @@ $(document).ready(function () {
 
 
 
-  $(".jadd").on("focus", function(){
-    if ($(this).attr('id') == "cnam" || $(this).attr('id') == "dnam" ) {
 
-    } else {
-    $("#dd").removeAttr('marker');
-    $("#dd").addClass("hideme");
-    clrDd();        
-    //console.log($(this).attr('id'));
-    }
-  });
 
   $(".j_det_info").on("focus", function(){
     if ($(this).attr('id') == "client" || $(this).attr('id') == "cliContact" ) {

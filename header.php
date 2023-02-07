@@ -63,7 +63,7 @@
         </div>
 
         <div class="nav-links">
-            <a href="jsumm.php">Job Summary</a>
+            <a href="jsumm.php?wild=null&cli=null&inv=All&job=All">Job Summary</a>
             <!-- <a href="reports.php">Reports</a> -->
             <a href="uman.php">User Management</a>
             <a href="/inc/logout.inc.php">Log out</a>

@@ -1046,6 +1046,7 @@ button.print-button:hover .print-icon::after {
   color:whitesmoke;
   
 }
+
 .jadd{
   border:none;
   background-color: transparent;
@@ -1055,6 +1056,48 @@ button.print-button:hover .print-icon::after {
   padding-top:0.4rem;
   padding-bottom:0.1rem;
 }
+.pending{
+  background-color: #cc550062;
+  transition: none;
+}
+@-webkit-keyframes updfade {
+  0% {
+    background-color: #00cc55;
+    opacity:1;
+  }
+  10% {
+    background-color: #00cc55;
+    
+  }
+  22% {
+      background-color: #00cc55be;
+
+  }
+  77% {
+      background-color: #00cc5570;
+
+  }
+  100% {
+      background-color: #00cc5500;
+
+  }
+}
+
+
+.updated{
+/*  background-color: #00cc55;
+  transition: 2s linear ease-out;*/
+  -webkit-animation-name: updfade;
+  -webkit-animation-duration: 1000ms;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: linear;
+-moz-animation-name: updfade;
+  -moz-animation-duration: 1000ms;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-timing-function: linear;
+}
+
+
 
 .jadd:focus {
   outline: none;
