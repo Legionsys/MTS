@@ -357,11 +357,8 @@ $(document).ready(function () {
   $("input[name=clientName]").on({
     change: function(){
       if (climkr != 1) {
-      //console.log("input change triggered");
       var client = $("input[name=clientName]").val();
-      //var jbno = $("#jbnum").text();
-      //console.log("Input change - " + client + " ----- " + jbno);
-      //console.log(client + " ----- " + jbno);
+      
       $.post(
         "/inc/job-cli-ch.php",
         { client: client, jobno: jbno },
@@ -992,12 +989,15 @@ $(document).ready(function () {
     var chg="";
     //var jbno = $("#jbnum").text();
     var mrkr = $("#dd").data('marker');
+    var crd = new Map();
 
     $(this).children().each(function() {
         if ($(this).attr("class") != 'add_trash'){
           fld = $("#dd").data('marker') + $(this).attr("class");
           chg = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-          $("#" + fld).val(chg);
+          $("#" + fld).val(chg).addClass("pending");
+          $("#" + fld + ".updated").removeClass("updated");
+          crd.set(fld,chg);
           if (chg == "") {
             updstr = updstr + fld + "=Null,"
           } else {
@@ -1015,6 +1015,11 @@ $(document).ready(function () {
           function (data, status) {
             console.log(data);
             console.log(status);
+            for (let [key, value] of crd) {
+              console.log(key + " - " + value);
+              $("#" + key).attr("value",value).addClass("updated");
+              $("#" + key + ".pending").removeClass("pending")
+            }            
           }
         ).fail(function (response) {
           console.log("Error: " + response.responseText);
