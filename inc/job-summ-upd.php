@@ -17,7 +17,9 @@ if (isset($_POST['inv'])) {
     $inv = trim($_POST['inv']);
 };
 
-require 'dbh.inc.php';
+define("FS_ROOT", realpath(dirname(__FILE__)));
+require_once FS_ROOT.'/dbh.inc.php';
+
 if ($client == 'null' || $client == 'false'){
     $client = '';
 };
