@@ -689,7 +689,7 @@ $(document).ready(function () {
           if (k == "Pb") {
             $('#' + v).prop('checked', true);
           } else {
-            $("#" + k).val(v);
+            $("#" + k).val(v).attr('value',v);
           }
         });
       });
@@ -1066,7 +1066,18 @@ $(document).ready(function () {
 
 
   });
+$("input").on({
+  keyup: function(){
+    if ($(this).val() != $(this).attr("value")) {
+      $("#" + $(this).attr("id") + ".updated").removeClass("updated");
+      $(this).addClass("pending");
+    } else {
+      $("#" + $(this).attr("id") + ".pending").removeClass("pending");
+      $(this).addClass("updated");
+    }
+  }
 
+})
 
 
 
@@ -1095,6 +1106,7 @@ $(document).ready(function () {
     },
     keyup: function(){
       ddConPop($(this).val());
+
     }
   });
   //adding a supplier
