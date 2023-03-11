@@ -20,23 +20,7 @@
     }
 
     $sql = "UPDATE jobList set ".$jcol." = ? WHERE jobID = ?;";
-    //echo $newd." | ".$jbno." | ".$jcol;
-    /*if ($jcol == "contd") {
-        $sql = "UPDATE jobList set contd = ? WHERE jobID = ?;";
-    } elseif ($jcol == "contPh") {
-        $sql = "UPDATE jobList set contPh = ? WHERE jobID = ?;";
-    } elseif ($jcol == "contEm") {
-        $sql = "UPDATE jobList set contEm = ? WHERE jobID = ?;";
-    } elseif ($jcol == "jobRef") {
-        $sql = "UPDATE jobList set jobRef = ? WHERE jobID = ?;";
-    } elseif ($jcol == "jobDate") {
-        $sql = "UPDATE jobList set jobDate = ? WHERE jobID = ?;";
-    } elseif ($jcol == "jobFin") {
-        $sql = "UPDATE jobList set jobFin = ? WHERE jobID = ?;";
-    } else {
-        exit();        
-    } */ 
-//echo $sql;    
+
 $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt,$sql)) {
         return "ERROR";
@@ -48,7 +32,20 @@ $stmt = mysqli_stmt_init($conn);
     $resultData = mysqli_insert_id($conn);
 
     if ($resultData != null ) {
-        return $resultData;
+        mysqli_stmt_close($stmt);
+
+        $sql = "Select ".$jcol." from jobList WHERE jobID = ".$jbno;
+        $resultData2 = mysqli_query($conn,$sql);
+        if (mysqli_num_rows($resultData2) > 0){               
+            while ($row = mysqli_fetch_assoc($resultData2)) {
+            echo "data complete";
+            return $row;
+            //return $row[$jcol];
+
+        } 
+
+        }
+        //return $resultData;
     } else {
         return "ERROR";
         exit();

@@ -1091,10 +1091,12 @@ button.print-button:hover .print-icon::after {
   -webkit-animation-duration: 1000ms;
   -webkit-animation-iteration-count: 1;
   -webkit-animation-timing-function: linear;
--moz-animation-name: updfade;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-name: updfade;
   -moz-animation-duration: 1000ms;
   -moz-animation-iteration-count: 1;
   -moz-animation-timing-function: linear;
+  -moz-animation-fill-mode: forwards;
 }
 
 

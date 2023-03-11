@@ -185,7 +185,7 @@ function ddConPop(val){
 
   }
 };
-function cnDetUpd(updstr,cno) {
+function cnDetUpd(updstr,cno,fld,chg) {
   //console.log("Posting - " + updstr + " to - " + cno);
   console.log("ln 171 - " + updstr + " -- " + cno);
   $.post(
@@ -194,6 +194,9 @@ function cnDetUpd(updstr,cno) {
       function (data, status) {
         $("#contlst").html(data);
         if (status == "success") {
+          console.log("ln 197 - Update Success");
+          $("#" + fld + ".pending").removeClass("pending");
+          $("#" + fld).attr("value",chg).addClass("updated");
         } else {
           alert("Error in updating");
           console.log("ln 180 - " + updstr + " : " + cno);
@@ -216,18 +219,18 @@ function ddFrtPop(val){
     $(".ddbrtxt").html("Please enter more letters");
     $(".load-3").removeClass("hideme");
   } else {
-  $(".ddbrtxt").html("Getting Suggestions");
-  $(".load-3").removeClass("hideme");
-  
-  //Get data from Server
-  $.post("/inc/frtbklst.php", { stxt: stxt }, function (data, status) {
-    $("#slist").html(data);
+    $(".ddbrtxt").html("Getting Suggestions");
+    $(".load-3").removeClass("hideme");
     
-  }).fail(function (response) {
-    console.log("Error: " + response.responseText);
-  });
-  $(".ddbrtxt").html("Freight Suggestions");
-  $(".load-3").addClass("hideme");
+    //Get data from Server
+    $.post("/inc/frtbklst.php", { stxt: stxt }, function (data, status) {
+      $("#slist").html(data);
+      
+    }).fail(function (response) {
+      console.log("Error: " + response.responseText);
+    });
+    $(".ddbrtxt").html("Freight Suggestions");
+    $(".load-3").addClass("hideme");
   }
 };
 $(document).ready(function () {
@@ -256,6 +259,7 @@ $(document).ready(function () {
     //var jbno = $("#jbnum").text();
     var cno = $("#cnID").val();
     var mrkr = $("#dd").data('marker');
+    var card = new Map();
     console.log(mrkr + " + " + cno + " + " + jbno);
 
     if (mrkr == 'Jcont') {
@@ -275,11 +279,18 @@ $(document).ready(function () {
         console.log("Error: " + response.responseText);
       });
     } else if (mrkr == 'client') {
-      $("#client").val($(this).children(".lstcli").html());
-      $("#cliContact").val($(this).children(".lstcont").html());
-      $("#cliContPh").val($(this).children(".lstcph").html());
-      $("#cliContEm").val($(this).children(".lstctc").html());
-      $("#cliContEm2").val($(this).children(".lstctc2").html());
+      $("#client").val($(this).children(".lstcli").html()).addClass("pending");
+      $("#cliContact").val($(this).children(".lstcont").html()).addClass("pending");
+      $("#cliContPh").val($(this).children(".lstcph").html()).addClass("pending");
+      $("#cliContEm").val($(this).children(".lstctc").html()).addClass("pending");
+      $("#cliContEm2").val($(this).children(".lstctc2").html()).addClass("pending");
+      
+      card.set("client",$(this).children(".lstcli").html());
+      card.set("cliContact",$(this).children(".lstcont").html());
+      card.set("cliContPh",$(this).children(".lstcph").html());
+      card.set("cliContEm",$(this).children(".lstctc").html());
+      card.set("cliContEm2",$(this).children(".lstctc2").html());
+
       console.log("Transpoint Marker");
       var client = $(this).children(".lstcli").html().replace(/\'/g,"''");
       //var jbno = $("#jbnum").text();
@@ -290,7 +301,7 @@ $(document).ready(function () {
         { client: client, jobno: jbno },
         function (data, status) {
           console.log("Post execute");
-          console.log(data);
+          console.log("job-cli-ch:" + data);
           
           $("#jbnum").html(data);
           jbno = data;
@@ -304,6 +315,15 @@ $(document).ready(function () {
             { updstr: updstr, cno: jbno },
             function (data, status) {
               console.log("dets update success");
+              console.log("job-dets-upd:" + status);
+              console.log("job-dets-upd:" + data);
+              if (status == "success") {
+                for (let [key, value] of card) {
+                  console.log(key + " - " + value);
+                  $("#" + key).attr("value",value).addClass("updated");
+                  $("#" + key + ".pending").removeClass("pending")
+                }  
+              }
             }
           ).fail(function (response) {
             console.log("Error: " + response.responseText);
@@ -385,13 +405,21 @@ $(document).ready(function () {
   });
   $(".j_det_info").change(function () {
     var ent = $(this).val();
-    //var jbno = $("#jbnum").text();
+    var fldId = $(this).attr("id");
     var field = $(this).attr("name");
     //console.log(ent + " ---- " + jbno + " ---- " + field);
     $.post(
       "/inc/job-inf-ch.php",
       { det: field, upd: ent, jobno: jbno },
-      function (data, status) {}
+      function (data,status) {
+        console.log(status);
+        if (status == 'success'){
+          console.log(fldId);
+
+          $(this).attr("value",ent);
+          $(this).removeClass("pending").addClass("updated");
+        };
+      }
     ).fail(function (response) {
       console.log("Error: " + response.responseText);
 
@@ -751,7 +779,7 @@ $(document).ready(function () {
       }
       updstr = updstr.substring(0,(updstr.length - 1));
 
-    cnDetUpd(updstr,cno);
+    cnDetUpd(updstr,cno,fld,chg);
 
   });
   function clrcnt(){
@@ -947,6 +975,8 @@ $(document).ready(function () {
       event.stopPropagation();
     },
     keyup: function(){
+      $(this).addClass("pending");
+      $("#snam" + ".updated").removeClass("updated");
       ddPop();
     }
   });
