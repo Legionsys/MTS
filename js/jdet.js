@@ -21,7 +21,6 @@ number_format = function (number, decimals, dec_point, thousands_sep) {
 };
 function namt_tot(){
   var tots = parseFloat(0);
- // console.log('starting the cycle');
 $('#notebody > .tr > .namt').each(function() {
   if ($.isNumeric($(this).html())) {
     tots = tots + parseFloat($(this).html().replace(/\,/g,""));
@@ -48,14 +47,10 @@ function conDetUpd(){
   var qty = 0;
   $('#cnt_body tr').each(function() {
     if ($(this).attr("data-id") != "no"){
-    //console.log($(this).attr("data-id") + " - " + tQty);
-
     $(this).children('td').each(function() {
-      //console.log($(this).attr('data-col') > $(this).html());
       if ($(this).attr('data-col') == 'noItem'){
         if ($.isNumeric($(this).html().replace(",",""))) {
           tQty = tQty + Number($(this).html().replace(",",""));
-          //console.log(tQty);
         }
       } else if ($(this).attr('data-col') == 'itWgt'){
         if ($.isNumeric($(this).html().replace(",",""))) {
@@ -82,16 +77,13 @@ function conDetUpd(){
     tM3 = tM3 + (len * wid * hei * qty / 1000000);
   }
   })
-  //console.log(tQty);
   $('#cn_titm').html(number_format(tQty,0,'.',','));
   $('#cn_twgt').html(number_format(tWgt,1,'.',',') + " kg");
   $('#cn_m3').html(number_format(tM3,3,'.',',') + " m3");
 };
 function cnotUpd(){
-  //var jbno = $("#jbnum").text();
-  console.log("cnotUpd - " + jbno);
   if (jbno == "" || jbno == 0) {
-    //console.log("A job needs to be created for notes to be added");
+
   } else {
     var cnlist = mcnl.toString();
     $.post("/inc/job-con-lst.php", { jbno: jbno, chkcn: cnlist }, function (data, status) {
@@ -107,7 +99,6 @@ function cnotCHK(){
     
     if (jQuery.inArray(this.value,mcnl) !== -1) {
       this.checked = true;
-      console.log("Check CN - " + this.value);
     }
     
 })
@@ -123,7 +114,6 @@ function ddPop(){
   } else {
     var stxt = $("#" + $("#dd").data('marker') + "nam").val();
   }
-  //console.log(stxt);
   if (stxt.length < 3) {
     $(".ddbrtxt").html("Please enter more letters");
     $(".load-3").removeClass("hideme");
@@ -186,27 +176,24 @@ function ddConPop(val){
   }
 };
 function cnDetUpd(updstr,cno,fld,chg) {
-  //console.log("Posting - " + updstr + " to - " + cno);
-  console.log("ln 171 - " + updstr + " -- " + cno);
   $.post(
       "/inc/job-conn-upd.php",
       { updstr: updstr, cno: cno },
       function (data, status) {
         $("#contlst").html(data);
         if (status == "success") {
-          console.log("ln 197 - Update Success");
           $("#" + fld + ".pending").removeClass("pending");
           $("#" + fld).attr("value",chg).addClass("updated");
         } else {
           alert("Error in updating");
-          console.log("ln 180 - " + updstr + " : " + cno);
+          console.log("Variables - " + updstr + " : " + cno);
           console.log("Error: " + response.responseText);
         }
       }
     ).fail(function (response) {
       alert("Error in updating");
       console.log("Error: " + response.responseText);
-      console.log("ln 187 - " + updstr + " : " + cno);
+      console.log("Variables - " + updstr + " : " + cno);
       console.log(response);
 
 
@@ -241,27 +228,18 @@ $(document).ready(function () {
   namt_tot();
   cnotUpd();
 
-  //console.log("climkr is 0");
   $("#slist").on('mouseenter',".contcard", function () {
     climkr = 1;
-    //console.log("climkr is 1");
   });
   $("#slist").on('mouseleave',".contcard", function () {
     climkr = 0;
-    //console.log("climkr is 0");
   });
   $("#slist").on('click',".contcard", function () {
-    //event.stopPropagation();
     climkr = 0;
-    //console.log("climkr is 0");
-    console.log("contcard click triggered");
     var updstr = "";
-    //var jbno = $("#jbnum").text();
     var cno = $("#cnID").val();
     var mrkr = $("#dd").data('marker');
     var card = new Map();
-    console.log(mrkr + " + " + cno + " + " + jbno);
-
     if (mrkr == 'Jcont') {
       $("#cliContact").val($(this).children(".lstNam").html());
       $("#cliContPh").val($(this).children(".lstPh").html());
@@ -270,7 +248,6 @@ $(document).ready(function () {
       updstr = updstr + 'contPh="' + $(this).children(".lstPh").html().replace(/\'/g,"''") + '",'
       updstr = updstr + 'contEm="' + $(this).children(".lstEm").html().replace(/\'/g,"''") + '"'
       updstr = updstr.replace('=""','=NULL')
-      console.log("ln 910 - " + updstr + " -- " + jbno);
       $.post(
         "/inc/job-dets-upd.php",
         { updstr: updstr, cno: jbno },
@@ -290,38 +267,24 @@ $(document).ready(function () {
       card.set("cliContPh",$(this).children(".lstcph").html());
       card.set("cliContEm",$(this).children(".lstctc").html());
       card.set("cliContEm2",$(this).children(".lstctc2").html());
-
-      console.log("Transpoint Marker");
       var client = $(this).children(".lstcli").html().replace(/\'/g,"''");
-      //var jbno = $("#jbnum").text();
-      console.log("ln929 - " + client + " - " + jbno);
-      //debugger;
       $.post(
         "/inc/job-cli-ch.php",
         { client: client, jobno: jbno },
         function (data, status) {
-          console.log("Post execute");
-          console.log("job-cli-ch:" + data);
-          
           $("#jbnum").html(data);
           jbno = data;
           insertJob = ("000000" + data).slice(-5);
           $("#jobnum").html("Job Specific Information - " + insertJob);
-
-
-          console.log("ln 304 - " + updstr + " -- " + jbno);
           $.post(
             "/inc/job-dets-upd.php",
             { updstr: updstr, cno: jbno },
             function (data, status) {
-              console.log("dets update success");
-              console.log("job-dets-upd:" + status);
-              console.log("job-dets-upd:" + data);
               if (status == "success") {
                 for (let [key, value] of card) {
-                  console.log(key + " - " + value);
+                  $("#" + key + ".pending").removeClass("pending");
                   $("#" + key).attr("value",value).addClass("updated");
-                  $("#" + key + ".pending").removeClass("pending")
+                  
                 }  
               }
             }
@@ -347,9 +310,7 @@ $(document).ready(function () {
       updstr = updstr + "#"+ mrkr +"Ctc='" + $(this).children(".lstNam").html().replace(/\'/g,"''") + "',"
       updstr = updstr + "#"+ mrkr +"Ph='" + $(this).children(".lstPh").html().replace(/\'/g,"''") + "'"
       updstr = updstr.replace('=""','=NULL')
-      //console.log ("markertest: " + mrkr);
       if (mrkr == 'r' || mrkr == 'c'){
-        console.log("job-det-upd - 893 - " + updstr + " -- " + jbno);
         $.post(
           "/inc/job-dets-upd.php",
           { updstr: updstr, cno: jbno },
@@ -385,21 +346,18 @@ $(document).ready(function () {
         function (data, status) {
           $("#jbnum").html(data);
           jbno = data;
-          console.log("Input change - " + data);
           insertJob = ("000000" + data).slice(-5);
           $("#jobnum").html("Job Specific Information - " + insertJob);
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);
-      });      
-    } else {
-      //console.log("climkr prevented trigger");
+      });   
     }}, 
     keydown: function(e) {
-      //debugger;
+
       if (e.which === 9) {
         climkr = 0;
-        //console.log("climkr is 0");
+
       }
     }
   });
@@ -407,17 +365,16 @@ $(document).ready(function () {
     var ent = $(this).val();
     var fldId = $(this).attr("id");
     var field = $(this).attr("name");
-    //console.log(ent + " ---- " + jbno + " ---- " + field);
+
     $.post(
       "/inc/job-inf-ch.php",
       { det: field, upd: ent, jobno: jbno },
       function (data,status) {
-        console.log(status);
-        if (status == 'success'){
-          console.log(fldId);
 
-          $(this).attr("value",ent);
-          $(this).removeClass("pending").addClass("updated");
+        if (status == 'success'){
+          $("#" + fldId).attr("value",ent);
+          $("#" + fldId + ".pending").removeClass("pending");
+          $("#" + fldId).addClass("updated");
         };
       }
     ).fail(function (response) {
@@ -436,15 +393,13 @@ $(document).ready(function () {
       if (!$(this).is(":checked")){
         var val = "";
         }
-      //var jbno = $("#jbnum").text();
-      var col = $(this).attr("data-par")
+      var col = $(this).attr("data-par");
 
       $.post(
         "/inc/job_add_upd.php",
         { col: col, val: val, jno: jbno },
         function (data, status) {
-          /*console.log(data);
-          console.log(status);          */
+
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);
@@ -459,17 +414,14 @@ $(document).ready(function () {
       var val = $(this).val();
       //var jbno = $("#jbnum").text();
       var did = $(this).attr("id");
-      var col = $(this).attr("name")
-      console.log (val + "|" + jbno + "|" + col + "|" + $(this).attr("value"));
+      var col = $(this).attr("name");
       $.post(
         "/inc/job_add_upd.php",
         { col: col, val: val, jno: jbno },
         function (data, status) {
-          console.log("data = " + data);
-          console.log("status = " + status);
-          //console.log("||" + $(this).attr("id") + "||");
           $('#' + did).attr("value",val);
-          $('#' + did + ".pending").removeClass("pending").addClass("updated");
+          $('#' + did + ".pending").removeClass("pending");
+          $('#' + did).addClass("updated");
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);0
@@ -483,15 +435,14 @@ $(document).ready(function () {
         $("#dd").removeAttr('marker');
         $("#dd").addClass("hideme");
         clrDd();        
-        //console.log($(this).attr('id'));
+
       }
     }
 
   ,
     keyup : function(){
-      console.log("val vs value -" + $(this).val() + "|" + $(this).attr("value"));
       if ($(this).val() == $(this).attr("value")) {
-        $('#' + $(this).attr("id") + ".pending").removeClass("pending").addClass("updated");
+        $('#' + $(this).attr("id") + ".pending").removeClass("pending");
       } else {
         $('#' + $(this).attr("id") + ".updated").removeClass("updated");
         $(this).addClass("pending");
@@ -519,10 +470,8 @@ $(document).ready(function () {
             { txt: nnote, amt: namt, jobno: jbno },
             function (data, status) {
               $("#notebody").append(data);
-              //console.log("Adding Note Status was: " + status);
               $("#nnt").text("");
               $("#nna").text("");
-              //$("#notebody").load(document.URL + " #notebody");
               namt_tot();
             }
           ).fail(function (response) {
@@ -540,8 +489,6 @@ $(document).ready(function () {
     var nid = $(this).parents().attr("data-id");
     
     $.post("/inc/job-note-rem.php", { jnid: nid }, function (data, status) {
-      //console.log(data);
-      //console.log(status);
       $(".tr[data-id=" + nid + "]").remove();
       namt_tot();
     }).fail(function (response) {
@@ -561,7 +508,7 @@ $(document).ready(function () {
     var val = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
     var updstr = "";
           //Collect vars
-    console.log(col + " : " + val + " : " + nid); 
+
       //send data and update
       $.post(
         "/inc/job-note-upd.php",
@@ -590,7 +537,6 @@ $(document).ready(function () {
   });
   $("#cnt_body").on("focus", "tr td", function () {
     nodta = $(this).html();
-    //console.log(cndta);
   });
 
   //adding a Connote
@@ -684,10 +630,8 @@ $(document).ready(function () {
 
   $("#contlst").on('click',".mcnprnt", function () {
     mcnf = "Y";
-    console.log(this.value);
     if (this.checked) {
       mcnl.push(this.value);  
-      //console.log(mcnl.toString());
     } else {
       var remItem = this.value;
       mcnl = jQuery.grep(mcnl, function(value) {
@@ -748,7 +692,6 @@ $(document).ready(function () {
       
       $("#dd").removeAttr('marker');
       $("#dd").addClass("hideme");
-      console.log("hiding #1");
       clrDd();    
     }
     
@@ -795,9 +738,7 @@ $(document).ready(function () {
   //add con note line
   $("img[id=ncl]").click(function () {
     var cnum = $("#cnID").val();
-    //console.log(cnum);
     $("#ncn td").each(function () {
-      //console.log($(this).attr("data-col") + " : " + $(this).html());
       if ($(this).html() == "") {
         var dta = null;
       } else {
@@ -883,7 +824,6 @@ $(document).ready(function () {
 //delete con note line
   $("#cnt_body").on("click", ".cntrash", function () {
     var nid = $(this).parents("tr").attr("data-id");
-    //console.log(nid);
     $.post("/inc/job-confrt-rem.php", { frid: nid }, function (data, status) {
       $("#cnt_body tr[data-id=" + nid + "]").remove();
       conDetUpd();
@@ -899,7 +839,6 @@ $(document).ready(function () {
 
     var nid = $(this).parents("tr").attr("data-id");
     var col = $(this).attr("data-col");
-    //console.log(nid + " + " + col);
     if ($(this).html() != cndta) {
       //Collect vars
       var updstr = col + "='" + $(this).html().trim() + "'";
@@ -912,14 +851,14 @@ $(document).ready(function () {
           if (status == "success") {
           } else {
             alert("Error in updating");
-            console.log("ln 712 - " + updstr + " : " + cno);
+            console.log("Variables - " + updstr + " : " + cno);
             console.log("Error: " + response.responseText);
           }
         }
       ).fail(function (response) {
         alert("Error in updating");
         console.log("Error: " + response.responseText);
-        console.log("ln 719 - " + updstr + " : " + nid);
+        console.log("Variables - " + updstr + " : " + nid);
         console.log(response);
       });      
       //check for sums
@@ -945,7 +884,6 @@ $(document).ready(function () {
     },
     keyup: function(){
       ddFrtPop($(this).html());
-      //console.log($(this).html());
     }
   });
   $("#slist").on('click',".frtLne", function () {
@@ -954,9 +892,7 @@ $(document).ready(function () {
     var chg="";
     $(this).children().each(function() {
         fld = $(this).data('marker');
-        //console.log("fld= " + fld);
         chg = $(this).html();
-        //console.log("chg= " + chg);
         $("#add" + fld).html(chg);
       });
       $("#dd").removeAttr('marker');
@@ -1008,7 +944,6 @@ $(document).ready(function () {
     $("#dd").removeAttr('marker');
     $("#dd").addClass("hideme");
     clrDd();        
-    //console.log($(this).attr('id'));
   });
 
   $("#slist").on('click',".addcard", function () {
@@ -1017,7 +952,6 @@ $(document).ready(function () {
     var cno = $("#cnID").val();
     var fld="";
     var chg="";
-    //var jbno = $("#jbnum").text();
     var mrkr = $("#dd").data('marker');
     var crd = new Map();
 
@@ -1036,17 +970,12 @@ $(document).ready(function () {
       }
       });
       updstr = updstr.substring(0,(updstr.length - 1));
-      //console.log ("markertest: " + mrkr);
       if (mrkr == 'd' || mrkr == 'c'){
-        console.log("ln 831 - " + updstr + " -- " + jbno + " -- " + mrkr);
         $.post(
           "/inc/job-dets-upd.php",
           { updstr: updstr, cno: jbno },
           function (data, status) {
-            console.log(data);
-            console.log(status);
             for (let [key, value] of crd) {
-              console.log(key + " - " + value);
               $("#" + key).attr("value",value).addClass("updated");
               $("#" + key + ".pending").removeClass("pending")
             }            
@@ -1075,12 +1004,10 @@ $(document).ready(function () {
     adBuild.Ph = addCard.children(".Ph").html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
     
     var senBuild = JSON.stringify(adBuild);
-    console.log(senBuild);
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function(){
       if(xhr.readyState == 4 && xhr.status == 200){
-        console.log(xhr.responseText);
         if (xhr.responseText.search('Error') > 0) {
           alert('Address Card Removal Error');
         } else {
@@ -1103,7 +1030,7 @@ $("input").on({
       $(this).addClass("pending");
     } else {
       $("#" + $(this).attr("id") + ".pending").removeClass("pending");
-      $(this).addClass("updated");
+      
     }
   }
 
@@ -1130,7 +1057,6 @@ $("input").on({
       this.parentNode.appendChild(document.querySelector('#dd'));
       $("#dd").removeClass("hideme");
       $("#dd").data('marker',"client");
-      //console.log("dd pop value - " + $(this).val());
       ddConPop($(this).val());
       event.stopPropagation();
     },
@@ -1177,8 +1103,6 @@ $("input").on({
     var nid = $(this).attr("data-id");
 
     $.post("/inc/job-sup-rem.php", { id: nid }, function (data, status) {
-      //console.log(data);
-      //console.log(status);
       $(".supln[data-id=" + nid + "]").remove();
       namt_tot();
     }).fail(function (response) {
@@ -1201,14 +1125,14 @@ $("input").on({
         if (status == "success") {
         } else {
           alert("Error in updating");
-          console.log("ln 978 - " + updstr + " : " + cno);
+          console.log("Variables - " + updstr + " : " + cno);
           console.log("Error: " + response.responseText);
         }
       }
     ).fail(function (response) {
       alert("Error in updating");
       console.log("Error: " + response.responseText);
-      console.log("ln 985 - " + updstr + " : " + nid);
+      console.log("Variables - " + updstr + " : " + nid);
       console.log(response);
     });      
 
@@ -1216,7 +1140,6 @@ $("input").on({
   });
   $("#supbody").on("focus", ".supln .lsup", function () {
     nodta = $(this).html();
-    //console.log(cndta);
   });
 
 
@@ -1230,7 +1153,6 @@ $("input").on({
     $("#dd").removeAttr('marker');
     $("#dd").addClass("hideme");
     clrDd();        
-    //console.log($(this).attr('id'));
     }
   });
 
@@ -1240,7 +1162,6 @@ $("input").on({
       $("#dd").removeClass("hideme");
       $("#dd").data('marker',"c");
       ddPop();
-      //event.stopPropagation();
     },
     keyup: function(){
       ddPop();
@@ -1252,7 +1173,6 @@ $("input").on({
       $("#dd").removeClass("hideme");
       $("#dd").data('marker',"d");
       ddPop();
-      //event.stopPropagation();
     },
     keyup: function(){
       ddPop();

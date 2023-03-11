@@ -28,7 +28,8 @@
   .cnblock {
     position: relative;
     border-radius: 0.25rem;
-    background-color: lightgray;
+    background-color: whitesmoke;
+    border: 1px solid lightgrey;
     height: 20rem;
     margin: 0.25rem;
   }
