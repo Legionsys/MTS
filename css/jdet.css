@@ -1099,7 +1099,7 @@ button.print-button:hover .print-icon::after {
   -moz-animation-fill-mode: forwards;
 }
 .updated{
-  background-color: #00cc55;
+  background-color: #00cc5569;
   transition: none;
 }
 

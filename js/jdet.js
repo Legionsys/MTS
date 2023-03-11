@@ -175,15 +175,18 @@ function ddConPop(val){
 
   }
 };
-function cnDetUpd(updstr,cno,fld,chg) {
+function cnDetUpd(updstr,cno,upd) {
   $.post(
       "/inc/job-conn-upd.php",
       { updstr: updstr, cno: cno },
       function (data, status) {
         $("#contlst").html(data);
         if (status == "success") {
-          $("#" + fld + ".pending").removeClass("pending");
-          $("#" + fld).attr("value",chg).addClass("updated");
+          for (let [key, value] of upd) {
+            $("#" + key + ".pending").removeClass("pending");
+            $("#" + key).attr("value",value).addClass("updated");
+            
+          }
         } else {
           alert("Error in updating");
           console.log("Variables - " + updstr + " : " + cno);
@@ -310,6 +313,8 @@ $(document).ready(function () {
       updstr = updstr + "#"+ mrkr +"Ctc='" + $(this).children(".lstNam").html().replace(/\'/g,"''") + "',"
       updstr = updstr + "#"+ mrkr +"Ph='" + $(this).children(".lstPh").html().replace(/\'/g,"''") + "'"
       updstr = updstr.replace('=""','=NULL')
+      card.set(mrkr +"Ctc",$(this).children(".lstNam").html());
+      card.set(mrkr +"Ph",$(this).children(".lstPh").html());
       if (mrkr == 'r' || mrkr == 'c'){
         $.post(
           "/inc/job-dets-upd.php",
@@ -319,18 +324,15 @@ $(document).ready(function () {
           console.log("Error: " + response.responseText);
         });        
       } else {
-        cnDetUpd(updstr,cno);
+
+        cnDetUpd(updstr,cno,card);
       }
     }
     $("#dd").removeAttr('marker');
     $("#dd").addClass("hideme");
     clrDd();  
+
     
-    
-    //  cnDetUpd(updstr,cno);
-      $("#dd").removeAttr('marker');
-      $("#dd").addClass("hideme");
-      clrDd();        
   });  
 
 
@@ -708,6 +710,7 @@ $(document).ready(function () {
     
   });
   $(".cndd").change(function () {
+    var upd = new Map();
     if ($(this).attr('type') == 'radio') {
       var fld = 'Pb';
     } else {
@@ -715,6 +718,7 @@ $(document).ready(function () {
     }
       var chg = $(this).val();
       var cno = $("#cnID").val();
+      upd.set(fld,chg);
       if (chg == "") {
         var updstr = fld + "=Null,"
       } else {
@@ -722,7 +726,7 @@ $(document).ready(function () {
       }
       updstr = updstr.substring(0,(updstr.length - 1));
 
-    cnDetUpd(updstr,cno,fld,chg);
+    cnDetUpd(updstr,cno,upd);
 
   });
   function clrcnt(){
@@ -975,16 +979,17 @@ $(document).ready(function () {
           "/inc/job-dets-upd.php",
           { updstr: updstr, cno: jbno },
           function (data, status) {
+            if(status == "success"){
             for (let [key, value] of crd) {
               $("#" + key).attr("value",value).addClass("updated");
               $("#" + key + ".pending").removeClass("pending")
-            }            
+            }}
           }
         ).fail(function (response) {
           console.log("Error: " + response.responseText);
         });        
       } else {
-        cnDetUpd(updstr,cno);
+        cnDetUpd(updstr,cno,crd);
       }
       $("#dd").removeAttr('marker');
       $("#dd").addClass("hideme");
@@ -1178,47 +1183,5 @@ $("input").on({
       ddPop();
     }
   });  
-
-
-  //dropdown con note description
-  /*$("#ncn #psn").on({
-    focusin: function(){
-      this.parentNode.appendChild(document.querySelector('#dd'));
-      $("#dd").removeClass("hideme");
-      $("#dd").data('marker',"ncn");
-      ddFrtPop($(this).val());
-      event.stopPropagation();
-    },
-    keyup: function(){
-      ddFrtPop($(this).val());
-    }
-  });
-  $("#slist").on('click',".frtLne", function () {
-    event.stopPropagation();
-    var updstr = "";
-    var cno = $("#cnID").val();
-    var mkr = $("#dd").data('marker');
-    var fld="";
-    var chg="";
-    $(this).children().each(function() {
-      fld = $(this).attr("class").replace("frtl bk","");
-      chg = $(this).html();
-      $("#" + mkr + ' .' + fld).val(chg);
-      if (mkr != "ncn") {
-        if (chg == "") {
-          updstr = updstr + fld + "=Null,"
-        } else {
-          updstr = updstr + fld + "='" + chg.replace(/\'/g,"''") + "',";
-        }
-      }        
-    });
-    if (mkr != "ncn") {
-      updstr = updstr.substring(0,(updstr.length - 1));
-      cnDetUpd(updstr,cno);
-    }
-    $("#dd").removeAttr('marker');
-    $("#dd").addClass("hideme");
-    clrDd();        
-  });*/
-  
+ 
 });
