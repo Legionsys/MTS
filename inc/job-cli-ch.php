@@ -34,7 +34,8 @@
         echo "Error on search";
         exit();        
     } else {
-        $clientId = $cliexist["clientId"];
+        //$clientId = $cliexist["clientId"];
+        $clientId = $cliexist;
         if($jbno == 0){
             $jbno = newJob($conn,$clientId);
         } else {

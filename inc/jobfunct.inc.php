@@ -1,6 +1,6 @@
 <?php
 function cliIdexist($conn,$client)  {
-    $sql = "SELECT * FROM clientList WHERE clientName = ?;";
+    $sql = "SELECT clientId FROM clientList WHERE clientName = ?;";
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt,$sql)) {
         return 'error';
@@ -12,7 +12,7 @@ function cliIdexist($conn,$client)  {
 
     $resultData = mysqli_stmt_get_result($stmt);
     if ($row = mysqli_fetch_assoc($resultData)) {
-        return $row;        
+        return $row['clientId'];        
     } else {
         $result = false;
         return $result;

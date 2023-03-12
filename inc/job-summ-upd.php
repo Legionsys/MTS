@@ -17,8 +17,14 @@ if (isset($_POST['inv'])) {
     $inv = trim($_POST['inv']);
 };
 
-require 'dbh.inc.php';
-if ($client == 'null' || $client == 'false'){
+define("FS_ROOT", realpath(dirname(__FILE__)));
+require_once FS_ROOT.'/dbh.inc.php';
+
+require FS_ROOT.'/jobfunct.inc.php';
+
+
+
+if ($client == 'null' || $client == 'false' || $client == 'All'){
     $client = '';
 };
 
@@ -30,7 +36,7 @@ if (strlen($client) > 0) {
     if (is_numeric($client) == 1) {
         $clientId = $client;
     } else {
-        $clientId = addcli($conn,$client);
+        $clientId = cliIdexist($conn,$client);
     }
 }
 

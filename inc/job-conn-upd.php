@@ -6,10 +6,10 @@ if (isset($_POST['updstr'])) {
 if (isset($_POST['cno'])) {
     $cno = trim($_POST['cno']);
 };
-/*    define("FS_ROOT", realpath(dirname(__FILE__)));
-    require_once FS_ROOT.'/dbh.inc.php';*/
+    define("FS_ROOT", realpath(dirname(__FILE__)));
+    require_once FS_ROOT.'/dbh.inc.php';
 
-require_once 'dbh.inc.php';
+//require_once 'dbh.inc.php';
 
 $sql = "UPDATE conNotes set $updstr where cnID=?;";
 $stmt = mysqli_stmt_init($conn);

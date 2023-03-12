@@ -28,7 +28,8 @@
   .cnblock {
     position: relative;
     border-radius: 0.25rem;
-    background-color: lightgray;
+    background-color: whitesmoke;
+    border: 1px solid lightgrey;
     height: 20rem;
     margin: 0.25rem;
   }
@@ -157,10 +158,11 @@
     cursor: pointer;
     border-radius: 2rem;
     color: #CC5500;
+    background-color:#faf83f;
   }
   .cnac:hover{
-    border:none;
-    color: #fff;
+    border: 2px solid #faf83f;
+    color: #faf83f;
     background-color: #CC5500;
   }
   .cnal{
@@ -299,6 +301,8 @@
   }
 #cnspacer {
     height: 7.5%;
+    background-color: none;
+    border:none;
 }
   #cnt_head 
   .nbut {
