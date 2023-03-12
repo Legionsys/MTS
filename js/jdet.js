@@ -4,6 +4,8 @@ var climkr;
 var jbno;
 var timeout = null;
 
+
+
 number_format = function (number, decimals, dec_point, thousands_sep) {
   number = Number(number).toFixed(decimals);
 
@@ -225,11 +227,14 @@ function ddFrtPop(val){
 };
 $(document).ready(function () {
   console.log(window.location.href);
-
+  $(window).on('popstate', function(event) {
+    alert("pop");
+  });
   climkr = 0;
   jbno = $("#jbnum").text().trim();
   namt_tot();
   cnotUpd();
+
 
   $("#slist").on('mouseenter',".contcard", function () {
     climkr = 1;
