@@ -75,6 +75,8 @@ function firstpop(){
     jbsu();
     jbnot();
     jbcon();
+    confrt();
+
 };
 function jsupd(){
     $(jdets).each(function (i, val) {
@@ -152,6 +154,13 @@ function jnotupd() {
     });
     namt_tot();
 };
+function jconupd() {
+    $(cnot).each(function (i, val) {
+        var txt = "";
+        txt = '<div data-id="' + val.cnID + '" class="ccnt_card"><div class="cnnum">' + val.cnNum + '</div><input type="checkbox" class="mcnprnt" name="mprint" value="' + val.cnID + '"><div class="cnscomp">' + val.snam + '</div><div class="cnrcomp">' + val.rnam + '</div><div class="cnitm">' + val.titm + ' itms</div><div class="cnwgt">' + val.twgt + ' kg</div><div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(val.tcub) + ' m3</div></div>';
+        $("#contlst").append(txt);
+    });
+};
 function jbdu(){
     var ind = "job";
     $.post("/inc/job-init.php", 
@@ -192,7 +201,7 @@ function jbnot(){
             jnotupd();
         }
     }).fail(function (response) {
-        console.log("Failure Supplier - " + jbn);
+        console.log("Failure Notes - " + jbn);
         console.log("Error: " + response.responseText);
         console.log(response);
     });   
@@ -202,21 +211,94 @@ function jbcon(){
     $.post("/inc/job-init.php", 
     { jbn: jbn , indi: ind }, 
     function (data, status) {
-        console.log(data);
         cnot = $.parseJSON(data);
-        console.log(cnot);
         if (upd === "y") {
-            //jnotupd();
+            jconupd();
         }
     }).fail(function (response) {
-        console.log("Failure Supplier - " + jbn);
+        console.log("Failure Con-note - " + jbn);
         console.log("Error: " + response.responseText);
         console.log(response);
     });   
 };
+function confrt(){
+    var ind = "frt";
+    $.post("/inc/job-init.php", 
+    { jbn: jbn , indi: ind }, 
+    function (data, status) {
+        frt = $.parseJSON(data);
+        if (upd === "y") {
+            //jnotupd();
+        }
+    }).fail(function (response) {
+        console.log("Failure Freight - " + jbn);
+        console.log("Error: " + response.responseText);
+        console.log(response);
+    }); 
+};
 $(document).ready(function () {
     jbn = getSearchParams("job_no");
     firstpop();
+
+    $("#contlst").on('click',".ccnt_card", function () {
+        var nid = $(this).attr("data-id");
+        /*if (mcnf == "Y") {
+          mcnf = "";
+          return;
+        }*/
+        //get filtered information
+        $(cnot).each(function (i, val) {
+            if (val.cnID == nid) {
+                $.each(val, function (k, v) {
+                    console.log(k);
+                    console.log(v);
+                    if (k == "Pb") {
+                        $('#' + v).prop('checked', true);
+                      } else {
+                        $("#" + k).val(v).attr('value',v);
+                      }
+                })
+            }
+        });
+        $(frt).each(function(i, val) {
+            if (val.cnID == nid) {
+                var txt = "";
+                txt = '<tr data-id="' + val.itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + val.senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + val.noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn">' + val.psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + val.itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + val.itLen + '</td>';
+                txt = txt + '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + val.itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + val.itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + val.itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + val.unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class">' + val.class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + val.sRisk + '</td>';
+                txt = txt + '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + val.pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + val.pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr><div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
+                $("#cnt_body").append(txt);                
+            }
+        });
+        $("#boscr").removeClass("hideme");
+        //Get data from Server
+        /*$.post("/inc/job-conn-sel.php", { cnid: nid }, function (data, status) {
+          var json = $.parseJSON(data);
+          //Preliminary Data
+    
+          //cycle Data
+          $(json).each(function (i, val) {
+            $.each(val, function (k, v) {
+              if (k == "Pb") {
+                $('#' + v).prop('checked', true);
+              } else {
+                $("#" + k).val(v).attr('value',v);
+              }
+            });
+          });
+    
+          $("#boscr").removeClass("hideme");
+        }).fail(function (response) {
+          console.log("Error: " + response.responseText);
+        });
+        $.post("/inc/job-conn-rows.php", { cnid: nid }, function (data, status) {
+          //$("#cn_rows").html(data);
+          $("#cnt_body").html(data);
+          conDetUpd();
+        }).fail(function (response) {
+          console.log("Error: " + response.responseText);
+    
+        });*/
+      });
     
 
 
