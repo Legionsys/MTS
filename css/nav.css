@@ -44,7 +44,7 @@ nav {
   font-family: "Roboto", sans-serif;
   position: -webkit-sticky; /* Safari */
   position: sticky;
-  top: 0;
+  top: 0.5rem;
   z-index: 1000;
   border-radius:1.5rem;
 }

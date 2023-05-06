@@ -3,6 +3,11 @@ var sups = [];
 var notes = [];
 var cnot = [];
 var frt = [];
+var ojdets = [];
+var osups = [];
+var onotes = [];
+var ocnot = [];
+var ofrt = [];
 var jbn;
 var upd;
 
@@ -41,26 +46,13 @@ number_format = function (number, decimals, dec_point, thousands_sep) {
   }
   };
 
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
 
-    for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-        }
-    }
-    return false;
-};
 function getSearchParams(k){
     var p={};
     location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
     return k?p[k]:p;
    };
+   
 function firstpop(){
     console.log(jbn);
     if (jbn != null && jbn !="0") {
@@ -72,10 +64,16 @@ function firstpop(){
     };
     upd = "y";
     jbdu();
+    ojdets = jdets;
+
     jbsu();
+    osups = sups;
     jbnot();
+    onotes = notes;
     jbcon();
+    ocnot = cnot;
     confrt();
+    ofrt = frt;
 
 };
 function jsupd(){
@@ -161,12 +159,17 @@ function jconupd() {
         $("#contlst").append(txt);
     });
 };
+
+
+
 function jbdu(){
     var ind = "job";
     $.post("/inc/job-init.php", 
     { jbn: jbn , indi: ind }, 
     function (data, status) {
         jdets = $.parseJSON(data);
+        console.log(data);
+        console.log(jdets);
         if (upd === "y") {
             jsupd();
         }
@@ -227,9 +230,6 @@ function confrt(){
     { jbn: jbn , indi: ind }, 
     function (data, status) {
         frt = $.parseJSON(data);
-        if (upd === "y") {
-            //jnotupd();
-        }
     }).fail(function (response) {
         console.log("Failure Freight - " + jbn);
         console.log("Error: " + response.responseText);
@@ -242,10 +242,7 @@ $(document).ready(function () {
 
     $("#contlst").on('click',".ccnt_card", function () {
         var nid = $(this).attr("data-id");
-        /*if (mcnf == "Y") {
-          mcnf = "";
-          return;
-        }*/
+
         //get filtered information
         $(cnot).each(function (i, val) {
             if (val.cnID == nid) {

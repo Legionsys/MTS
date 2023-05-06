@@ -3,18 +3,6 @@ var mcnl = [];
 var climkr;
 var jbno;
 var timeout = null;
-var jdets = [];
-var sups = [];
-var notes = [];
-var cnot = [];
-var frt = [];
-var ojdets = [];
-var osups = [];
-var onotes = [];
-var ocnot = [];
-var ofrt = [];
-var jbn;
-var upd;
 
 
 
@@ -51,153 +39,6 @@ if (tots != parseFloat(0)) {
   $('#ahead').html("Amount");
 }
 };
-function getSearchParams(k){
-  var p={};
-  location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
-  return k?p[k]:p;
- };
- function firstpop(){
-  if (jbn != null && jbn !="0") {
-      var jobn = "00000" + jbn;
-      $("#jbnum").html(jbn);
-      $("#jobnum").html("Job - " + jobn.substring(jobn.length - 5));
-  } else {
-      $("#jbnum").html("New Job");
-  };
-  upd = "y";
-  jbdu();
-  ojdets = jdets;
-  jbsu();
-  osups = sups;
-  jbnot();
-  onotes = notes;
-  jbcon();
-  ocnot = cnot;
-  confrt();
-  ofrt = frt;
-
-};
-function jsupd(){
-  $(jdets).each(function (i, val) {
-      $.each(val, function (k, v) {
-      if (k == "ac_cb" || k == "inv_c" ) {
-          if (v !== null){
-              $('#' + k).prop('checked', true);
-          }
-      } else {
-          $("#" + k).val(v).attr('value',v);
-      }
-      });
-  });
-};
-function chknull(value) {
-  //return value;
-  if ($.isEmptyObject(value)) {
-    return '';
-  } else {
-    return value;
-  }
-}
-function jsupupd() {
-  $(sups).each(function (i, val) {
-      var txt = "";
-      txt = '<div class="supln" data-id="' + chknull(val.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup">' + chknull(val.jsEst) + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div></div>';
-      $("#supbody").append(txt);
-  });
-};
-function jnotupd() {
-  $("#notebody").html('');
-  $(notes).each(function (i, val) {
-      var txt = "";
-      txt = '<div class="tr" data-id="' + chknull(val.jnID) + '"><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + number_format(chknull(val.jnAmt),2,'.',',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
-      $("#notebody").append(txt);
-      
-  });
-  namt_tot();
-};
-function jconupd() {
-  $(cnot).each(function (i, val) {
-      var txt = "";
-      txt = '<div data-id="' + chknull(val.cnID) + '" class="ccnt_card"><div class="cnnum">' + chknull(val.cnNum) + '</div><input type="checkbox" class="mcnprnt" name="mprint" value="' + chknull(val.cnID) + '"><div class="cnscomp">' + chknull(val.snam) + '</div><div class="cnrcomp">' + chknull(val.rnam) + '</div><div class="cnitm">' + chknull(val.titm) + ' itms</div><div class="cnwgt">' + chknull(val.twgt) + ' kg</div><div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(chknull(val.tcub)) + ' m3</div></div>';
-      $("#contlst").append(txt);
-  });
-};
-
-
-
-function jbdu(){
-  var ind = "job";
-  $.post("/inc/job-init.php", 
-  { jbn: jbn , indi: ind }, 
-  function (data, status) {
-      jdets = $.parseJSON(data);  
-      if (upd === "y") {
-          jsupd();
-      }
-      }).fail(function (response) {
-          console.log("Failure Job Details - " + jbn);
-          console.log("Error: " + response.responseText);
-          console.log(response);
-      });
-};
-function jbsu(){
-  var ind = "sup";
-  $.post("/inc/job-init.php", 
-  { jbn: jbn , indi: ind }, 
-  function (data, status) {
-      sups = $.parseJSON(data);
-      if (upd === "y") {
-          jsupupd();
-      }
-      }).fail(function (response) {
-          console.log("Failure Supplier - " + jbn);
-          console.log("Error: " + response.responseText);
-          console.log(response);
-      });    
-};
-function jbnot(){
-  var ind = "not";
-  $.post("/inc/job-init.php", 
-  { jbn: jbn , indi: ind }, 
-  function (data, status) {
-      notes = $.parseJSON(data);
-      if (upd === "y") {
-          jnotupd();
-      }
-  }).fail(function (response) {
-      console.log("Failure Notes - " + jbn);
-      console.log("Error: " + response.responseText);
-      console.log(response);
-  });   
-};
-function jbcon(){
-  var ind = "con";
-  $.post("/inc/job-init.php", 
-  { jbn: jbn , indi: ind }, 
-  function (data, status) {
-      cnot = $.parseJSON(data);
-      if (upd === "y") {
-          jconupd();
-      }
-  }).fail(function (response) {
-      console.log("Failure Con-note - " + jbn);
-      console.log("Error: " + response.responseText);
-      console.log(response);
-  });   
-};
-function confrt(){
-  var ind = "frt";
-  $.post("/inc/job-init.php", 
-  { jbn: jbn , indi: ind }, 
-  function (data, status) {
-      frt = $.parseJSON(data);
-  }).fail(function (response) {
-      console.log("Failure Freight - " + jbn);
-      console.log("Error: " + response.responseText);
-      console.log(response);
-  }); 
-};
-
 function conDetUpd(){
   var tQty = 0;
   var tWgt = 0;
@@ -246,18 +87,13 @@ function cnotUpd(){
   if (jbno == "" || jbno == 0) {
 
   } else {
-
     var cnlist = mcnl.toString();
-    $("#contlst").html('');
-    jconupd();
-    /*
     $.post("/inc/job-con-lst.php", { jbno: jbno, chkcn: cnlist }, function (data, status) {
     
       $("#contlst").html(data);
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
-    });*/
-
+    });
   }
 };
 function cnotCHK(){
@@ -390,14 +226,12 @@ function ddFrtPop(val){
   }
 };
 $(document).ready(function () {
-  //console.log(window.location.href);
+  console.log(window.location.href);
   $(window).on('popstate', function(event) {
     alert("pop");
   });
-
   climkr = 0;
-  jbn = getSearchParams("job_no");
-  firstpop();
+  jbno = $("#jbnum").text().trim();
   namt_tot();
   cnotUpd();
 
@@ -588,36 +422,13 @@ $(document).ready(function () {
       //var jbno = $("#jbnum").text();
       var did = $(this).attr("id");
       var col = $(this).attr("name");
-      var cur = '';
-      var og = '';
-
-
       $.post(
         "/inc/job_add_upd.php",
         { col: col, val: val, jno: jbno },
         function (data, status) {
           $('#' + did).attr("value",val);
           $('#' + did + ".pending").removeClass("pending");
-          $(jdets).each(function (i, val) {
-            $.each(val, function (k, v) {
-              if (k == did) {
-                cur = v;
-              }
-            });
-          });
-          $(ojdets).each(function (i, val) {
-            $.each(val, function (k, v) {
-              if (k == did) {
-                og = v;
-              }
-            });
-          });
-          if (val == og) {
-            $('#' + did).removeClass("updated");
-          } else {
-            $('#' + did).addClass("updated");
-          }
-          
+          $('#' + did).addClass("updated");
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);0
@@ -846,7 +657,6 @@ $(document).ready(function () {
       mcnf = "";
       return;
     }
-    $("#cnt_body").html('');
     //Get data from Server
     $.post("/inc/job-conn-sel.php", { cnid: nid }, function (data, status) {
       var json = $.parseJSON(data);
@@ -862,27 +672,19 @@ $(document).ready(function () {
           }
         });
       });
-      $(frt).each(function(i, val) {
-        if (val.cnID == nid) {
-            var txt = "";
-            txt = '<tr data-id="' + val.itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + val.senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + val.noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn">' + val.psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + val.itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + val.itLen + '</td>';
-            txt = txt + '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + val.itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + val.itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + val.itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + val.unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class">' + val.class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + val.sRisk + '</td>';
-            txt = txt + '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + val.pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + val.pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr><div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
-            $("#cnt_body").append(txt);                
-        }
-      });
+
       $("#boscr").removeClass("hideme");
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
     });
-    /*$.post("/inc/job-conn-rows.php", { cnid: nid }, function (data, status) {
+    $.post("/inc/job-conn-rows.php", { cnid: nid }, function (data, status) {
       //$("#cn_rows").html(data);
       $("#cnt_body").html(data);
       conDetUpd();
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
 
-    });*/
+    });
   });
   //connote functions
   $("#boscr").click(function () {

@@ -259,15 +259,7 @@
 </div>
 <div id="refs" class="hideme">
     <div id="jbnum" class="hideme">
-        <?php
-     if (isset($_GET['job_no'])) {
-        $jbno = $_GET['job_no'];
-       echo $jbno;
-    } else {
-        $jbno = 0;
-        echo '0';
-    }
-?>
+
     </div>
 </div>
 <div id="jd-notes">
@@ -297,26 +289,7 @@
                 </div>
             </div>
             <div class="tbody" id="notebody">
-                <?php
-if ($jbno != 0) {
-    $sql = "SELECT * FROM jobNote WHERE jobID = $jbno and jnDie is null order by jnOrd;";
-    //echo "<script>console.log('".$sql."')</script>";
-    $resultData = mysqli_query($conn,$sql);
-    if (mysqli_num_rows($resultData) > 0){
-        while ($row = mysqli_fetch_assoc($resultData)) {
-            if ($row['jnAmt'] != null) {
-                $namt = number_format($row['jnAmt'],2);
-            } else {
-                $namt = null;
-            }
-            echo '<div class="tr" data-id="'.$row['jnID'].'"><div contenteditable="true" data-col="jnNote" class="ncol td">'.$row['jnNote'].'</div>';
-            echo '<div contenteditable="true" data-col="jnAmt" class="namt td">'.$namt.'</div>';
-            echo '<div class="ntra td"><div class="cmd_img" data-id="'.$row['jnID'].'"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
-        } 
-        
-    }
-};
-?>
+
             </div>
         </div>
 
@@ -325,187 +298,186 @@ if ($jbno != 0) {
 <!--<section class="section" id="jdet-head">-->
 <div id="jdet-prim">
     <div class="title">
-        <?php 
-if ($jbno == 0) {
-    echo '<span id="jobnum">New Job</span>';
-} else {
-    echo '<span id="jobnum">Job - '.sprintf('%05d', $jbno).'</span>';
-}
-
-?>
+    <span id="jobnum">New Job</span>
     </div>
-    <div id="pri_dets" class="cont">
-        <?php
-if ($jbno != 0) {
-    $sql = "SELECT * FROM jobList LEFT JOIN clientList on jobList.clientId=clientList.clientId WHERE jobID = $jbno limit 1;";
 
-    $resultData = mysqli_query($conn,$sql);
-    if (mysqli_num_rows($resultData) > 0){
-        while ($row = mysqli_fetch_assoc($resultData)) {
-            echo '<div class="div_client pdd"><div class="group"><input value="'.$row['clientName'].'" id="client" class="inputMaterial" name="clientName" type="text" required />';
-            echo '<span id="client_span" class="highlight"></span><span class="bar"></span><label class="pri_lab"> Client </label></div></div>';
-            echo '<div class="div_jobRef pdd"><div class="group"><input value="'.$row['jobRef'].'" id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Refernce/PO#</label></div></div>';
-            echo '<div class="div_cliContact pdd"><div class="group"><input value="'.$row['contd'].'" id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact </label></div></div>';
-            echo '<div class="div_cliContPh pdd"><div class="group"><input value="'.$row['contPh'].'" id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Phone </label></div></div>';
-            echo '<div class="div_cliContEm pdd"><div class="group"><input value="'.$row['contEm'].'" id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Email </label></div></div>';
-            echo '<div class="div_cliContEm2 pdd"><div class="group"><input value="'.$row['contEm2'].'" id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> 2nd Contact Email </label></div></div>';
-            echo '<div class="div_puDate pdd"><div class="group"><input value="'.$row['jobDate'].'" id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Pick Up Date</label></div></div>';
-            echo '<div class="div_doDate pdd"><div class="group"><input value="'.$row['jobFin'].'" id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Drop Off Date</label></div></div>';
-            //job status toggles
-            echo '<div id="j_c_cont"><div class="j_chk"><label for="ac_cb" id="ac_lab"><input type="checkbox" class="chkbx" name="act_comp" data-par="jobComp" id="ac_cb"'; 
-            if (!is_null($row['jobComp'])){
-                echo 'checked="checked"';
-            }
-            echo '><span id="ac_sp"><i id="ac_i"></i></span></label></div><div class="j_chk"><label for="inv_c" id="ic_lab"><input type="checkbox" class="chkbx" name="inv_comp" data-par="jobInv" id="inv_c"';
-            if (!is_null($row['jobInv'])){
-                echo 'checked="checked"';
-            }            
-            echo '><span id="ic_sp"><i id="ic_i"></i></span></label></div></div>';
-            echo '<div class="div_invNum pdd"><div class="group"><input value="'.$row['invNum'].'" id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required />';
-            echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Invoice Number </label></div></div>';
-            
-            
-            echo '</div></div>';
-            //addresses
-            echo '<div id="jd-adds"><div class="title"><p> Addresses </p></div><div class="cont"><div id="job_signor" class="job_add_main"><div id="j_signor_head" class="job_add_title">Consignor</div>';
-            echo '<div id="j_signor_body" class="j_add_body"><div class="jac ja_name"><input value="'.$row['cnam'].'" id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required /></div>';
-            echo '<div class="jac ja_add1"><input value="'.$row['cadd1'].'" id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required /></div>';
-            echo '<div class="jac ja_add2"><input value="'.$row['cadd2'].'" id="cadd2" class="jadd" name="cadd2" type="text" required /></div>';
-            echo '<div class="jac ja_add3"><input value="'.$row['cadd3'].'" id="cadd3" class="jadd" name="cadd3" type="text" required /></div>';
-            echo '<div class="jac ja_st"><input value="'.$row['cst'].'" id="cst" class="jadd" name="cst" type="text" placeholder="State" required /></div>';
-            echo '<div class="jac ja_pc"><input value="'.$row['cpc'].'" id="cpc" class="jadd" name="cpc" type="text" placeholder=" P/C" required /></div>';
-            echo '<div class="jac ja_ct"><input value="'.$row['cCtc'].'" id="cCtc" class="jadd" name="cCtc" type="text" placeholder=" Name" required /></div>';
-            echo '<div class="jac ja_ph"><input value="'.$row['cPh'].'" id="cPh" class="jadd" name="cPh" type="text" placeholder=" Phone" required /></div>';
-            echo '<div class="jac ja_em"><input value="'.$row['cEm'].'" id="cEm" class="jadd" name="cEm" type="text" placeholder=" Email" required /></div>';
-            echo '<div class="jac ja_ct"><input value="'.$row['cCtc2'].'" id="j_r_ct2" class="jadd" name="cCtc2" type="text" placeholder=" Name" required /></div>';
-            echo '<div class="jac ja_ph"><input value="'.$row['cPh2'].'" id="j_r_ph2" class="jadd" name="cPh2" type="text" placeholder=" Phone" required /></div>';
-            echo '<div class="jac ja_em"><input value="'.$row['cEm2'].'" id="j_r_em2" class="jadd" name="cEm2" type="text" placeholder=" Email" required /></div></div></div>';
-            echo '<div id="job_signee" class="job_add_main"><div id="j_signee_head" class="job_add_title">Consignee</div><div id="j_signee_body" class="j_add_body">';
-            echo '<div class="jac ja_name"><input value="'.$row['dnam'].'" id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required /></div>';
-            echo '<div class="jac ja_add1"><input value="'.$row['dadd1'].'" id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required /></div>';
-            echo '<div class="jac ja_add2"><input value="'.$row['dadd2'].'" id="dadd2" class="jadd" name="dadd2" type="text" required /></div>';
-            echo '<div class="jac ja_add3"><input value="'.$row['dadd3'].'" id="dadd3" class="jadd" name="dadd3" type="text" required /></div>';
-            echo '<div class="jac ja_st"><input value="'.$row['dst'].'" id="dst" class="jadd" name="dst" type="text" placeholder="State" required /></div>';
-            echo '<div class="jac ja_pc"><input value="'.$row['dpc'].'" id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required /></div>';
-            echo '<div class="jac ja_ct"><input value="'.$row['dCtc'].'" id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required /></div>';
-            echo '<div class="jac ja_ph"><input value="'.$row['dPh'].'" id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required /></div>';
-            echo '<div class="jac ja_em"><input value="'.$row['dEm'].'" id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required /></div>';
-            echo '<div class="jac ja_ct"><input value="'.$row['dCtc2'].'" id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required /></div>';
-            echo '<div class="jac ja_ph"><input value="'.$row['dPh2'].'" id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required /></div>';
-            echo '<div class="jac ja_em"><input value="'.$row['dEm2'].'" id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required /></div></div></div></div></div>';
-        } 
-    } else {
-        echo '<div class="div_client pdd"><div class="group"><input id="client" class="inputMaterial" name="clientName" type="text" required />';
-        echo '<span id="client_span" class="highlight"></span><span class="bar"></span><label class="pri_lab"> Client </label></div></div>';
-        echo '<div class="div_jobRef pdd"><div class="group"><input id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Refernce/PO#</label></div></div>';
-        echo '<div class="div_cliContact pdd"><div class="group"><input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact </label></div></div>';
-        echo '<div class="div_cliContPh pdd"><div class="group"><input id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Phone </label></div></div>';
-        echo '<div class="div_cliContEm pdd"><div class="group"><input id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Email </label></div></div>';
-        echo '<div class="div_cliContEm2 pdd"><div class="group"><input id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> 2nd Contact Email </label></div></div>';
-        echo '<div class="div_puDate pdd"><div class="group"><input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Pick Up Date</label></div></div>';
-        echo '<div class="div_doDate pdd"><div class="group"><input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Drop Off Date</label></div></div>';
-        //job status toggles
-        echo '<div id="j_c_cont"><div class="j_chk"><label for="ac_cb" id="ac_lab"><input type="checkbox" class="chkbx" name="act_comp" data-par="jobComp" id="ac_cb"'; 
-        echo '><span id="ac_sp"><i id="ac_i"></i></span></label></div><div class="j_chk"><label for="inv_c" id="ic_lab"><input type="checkbox" class="chkbx" name="inv_comp" data-par="jobInv" id="inv_c"';
-        echo '><span id="ic_sp"><i id="ic_i"></i></span></label></div></div>';
-        echo '<div class="div_invNum pdd"><div class="group"><input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required />';
-        echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Invoice Number </label></div></div>';
-        echo '</div></div>';
-        //addresses
-        echo '<div id="jd-adds"><div class="title"><p> Addresses </p></div><div class="cont"><div id="job_signor" class="job_add_main"><div id="j_signor_head" class="job_add_title">Consignor</div>';
-        echo '<div id="j_signor_body" class="j_add_body"><div class="jac ja_name"><input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required /></div>';
-        echo '<div class="jac ja_add1"><input id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required /></div>';
-        echo '<div class="jac ja_add2"><input id="cadd2" class="jadd" name="cadd2" type="text" required /></div>';
-        echo '<div class="jac ja_add3"><input id="cadd3" class="jadd" name="cadd3" type="text" required /></div>';
-        echo '<div class="jac ja_st"><input id="cst" class="jadd" name="cst" type="text" placeholder="State" required /></div>';
-        echo '<div class="jac ja_pc"><input id="cpc" class="jadd" name="cpc" type="text" placeholder=" P/C" required /></div>';
-        echo '<div class="jac ja_ct"><input id="cCtc" class="jadd" name="cCtc" type="text" placeholder=" Name" required /></div>';
-        echo '<div class="jac ja_ph"><input id="cPh" class="jadd" name="cPh" type="text" placeholder=" Phone" required /></div>';
-        echo '<div class="jac ja_em"><input id="cEm" class="jadd" name="cEm" type="text" placeholder=" Email" required /></div>';
-        echo '<div class="jac ja_ct"><input id="j_r_ct2" class="jadd" name="cCtc2" type="text" placeholder=" Name" required /></div>';
-        echo '<div class="jac ja_ph"><input id="j_r_ph2" class="jadd" name="cPh2" type="text" placeholder=" Phone" required /></div>';
-        echo '<div class="jac ja_em"><input id="j_r_em2" class="jadd" name="cEm2" type="text" placeholder=" Email" required /></div></div></div>';
-        echo '<div id="job_signee" class="job_add_main"><div id="j_signee_head" class="job_add_title">Consignee</div><div id="j_signee_body" class="j_add_body">';
-        echo '<div class="jac ja_name"><input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required /></div>';
-        echo '<div class="jac ja_add1"><input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required /></div>';
-        echo '<div class="jac ja_add2"><input id="dadd2" class="jadd" name="dadd2" type="text" required /></div>';
-        echo '<div class="jac ja_add3"><input id="dadd3" class="jadd" name="dadd3" type="text" required /></div>';
-        echo '<div class="jac ja_st"><input id="dst" class="jadd" name="dst" type="text" placeholder="State" required /></div>';
-        echo '<div class="jac ja_pc"><input id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required /></div>';
-        echo '<div class="jac ja_ct"><input id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required /></div>';
-        echo '<div class="jac ja_ph"><input id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required /></div>';
-        echo '<div class="jac ja_em"><input id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required /></div>';
-        echo '<div class="jac ja_ct"><input id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required /></div>';
-        echo '<div class="jac ja_ph"><input id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required /></div>';
-        echo '<div class="jac ja_em"><input id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required /></div></div></div></div></div>';
-    }
-} else {
-    echo '<div class="div_client pdd"><div class="group"><input id="client" class="inputMaterial" name="clientName" type="text" required />';
-    echo '<span id="client_span" class="highlight"></span><span class="bar"></span><label class="pri_lab"> Client </label></div></div>';
-    echo '<div class="div_jobRef pdd"><div class="group"><input id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Refernce/PO#</label></div></div>';
-    echo '<div class="div_cliContact pdd"><div class="group"><input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact </label></div></div>';
-    echo '<div class="div_cliContPh pdd"><div class="group"><input id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Phone </label></div></div>';
-    echo '<div class="div_cliContEm pdd"><div class="group"><input id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Contact Email </label></div></div>';
-    echo '<div class="div_cliContEm2 pdd"><div class="group"><input id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> 2nd Contact Email </label></div></div>';
-    echo '<div class="div_puDate pdd"><div class="group"><input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Pick Up Date</label></div></div>';
-    echo '<div class="div_doDate pdd"><div class="group"><input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab">Drop Off Date</label></div></div>';
-    //job status toggles
-    echo '<div id="j_c_cont"><div class="j_chk"><label for="ac_cb" id="ac_lab"><input type="checkbox" class="chkbx" name="act_comp" data-par="jobComp" id="ac_cb"'; 
-    echo '><span id="ac_sp"><i id="ac_i"></i></span></label></div><div class="j_chk"><label for="inv_c" id="ic_lab"><input type="checkbox" class="chkbx" name="inv_comp" data-par="jobInv" id="inv_c"';
-    echo '><span id="ic_sp"><i id="ic_i"></i></span></label></div></div>';
-    echo '<div class="div_invNum pdd"><div class="group"><input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required />';
-    echo '<span class="highlight"></span><span class="bar"></span><label class="pri_lab"> Invoice Number </label></div></div>';
-    echo '</div></div>';
-    //addresses
-    echo '<div id="jd-adds"><div class="title"><p> Addresses </p></div><div class="cont"><div id="job_signor" class="job_add_main"><div id="j_signor_head" class="job_add_title">Consignor</div>';
-    echo '<div id="j_signor_body" class="j_add_body"><div class="jac ja_name"><input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required /></div>';
-    echo '<div class="jac ja_add1"><input id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required /></div>';
-    echo '<div class="jac ja_add2"><input id="cadd2" class="jadd" name="cadd2" type="text" required /></div>';
-    echo '<div class="jac ja_add3"><input id="cadd3" class="jadd" name="cadd3" type="text" required /></div>';
-    echo '<div class="jac ja_st"><input id="cst" class="jadd" name="cst" type="text" placeholder="State" required /></div>';
-    echo '<div class="jac ja_pc"><input id="cpc" class="jadd" name="cpc" type="text" placeholder=" P/C" required /></div>';
-    echo '<div class="jac ja_ct"><input id="cCtc" class="jadd" name="cCtc" type="text" placeholder=" Name" required /></div>';
-    echo '<div class="jac ja_ph"><input id="cPh" class="jadd" name="cPh" type="text" placeholder=" Phone" required /></div>';
-    echo '<div class="jac ja_em"><input id="cEm" class="jadd" name="cEm" type="text" placeholder=" Email" required /></div>';
-    echo '<div class="jac ja_ct"><input id="j_r_ct2" class="jadd" name="cCtc2" type="text" placeholder=" Name" required /></div>';
-    echo '<div class="jac ja_ph"><input id="j_r_ph2" class="jadd" name="cPh2" type="text" placeholder=" Phone" required /></div>';
-    echo '<div class="jac ja_em"><input id="j_r_em2" class="jadd" name="cEm2" type="text" placeholder=" Email" required /></div></div></div>';
-    echo '<div id="job_signee" class="job_add_main"><div id="j_signee_head" class="job_add_title">Consignee</div><div id="j_signee_body" class="j_add_body">';
-    echo '<div class="jac ja_name"><input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required /></div>';
-    echo '<div class="jac ja_add1"><input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required /></div>';
-    echo '<div class="jac ja_add2"><input id="dadd2" class="jadd" name="dadd2" type="text" required /></div>';
-    echo '<div class="jac ja_add3"><input id="dadd3" class="jadd" name="dadd3" type="text" required /></div>';
-    echo '<div class="jac ja_st"><input id="dst" class="jadd" name="dst" type="text" placeholder="State" required /></div>';
-    echo '<div class="jac ja_pc"><input id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required /></div>';
-    echo '<div class="jac ja_ct"><input id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required /></div>';
-    echo '<div class="jac ja_ph"><input id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required /></div>';
-    echo '<div class="jac ja_em"><input id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required /></div>';
-    echo '<div class="jac ja_ct"><input id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required /></div>';
-    echo '<div class="jac ja_ph"><input id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required /></div>';
-    echo '<div class="jac ja_em"><input id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required /></div></div></div></div></div>';
-};
-?>
+    <div id="pri_dets" class="cont">
+        <div class="div_client pdd">
+            <div class="group">
+                <input id="client" class="inputMaterial" name="clientName" type="text" required />
+                <span id="client_span" class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Client </label>
+            </div>
+        </div>
+        <div class="div_jobRef pdd">
+            <div class="group">
+                <input id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab">Refernce/PO#</label>
+            </div>
+        </div>
+        <div class="div_cliContact pdd">
+            <div class="group">
+                <input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Contact </label>
+            </div>
+        </div>
+        <div class="div_cliContPh pdd">
+            <div class="group">
+                <input id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Contact Phone </label>
+            </div>
+        </div>
+        <div class="div_cliContEm pdd">
+            <div class="group">
+                <input id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Contact Email </label>
+            </div>
+        </div>
+        <div class="div_cliContEm2 pdd">
+            <div class="group">
+                <input id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> 2nd Contact Email </label>
+            </div>
+        </div>
+        <div class="div_puDate pdd">
+            <div class="group">
+                <input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab">Pick Up Date</label>
+            </div>
+        </div>
+        <div class="div_doDate pdd">
+            <div class="group">
+                <input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab">Drop Off Date</label>
+            </div>
+        </div>
+        <div id="j_c_cont">
+            <div class="j_chk">
+                <label for="ac_cb" id="ac_lab">
+                    <input type="checkbox" class="chkbx" name="act_comp" data-par="jobComp" id="ac_cb">
+                    <span id="ac_sp"><i id="ac_i"></i></span>
+                </label>
+            </div>
+            <div class="j_chk">
+                <label for="inv_c" id="ic_lab">
+                    <input type="checkbox" class="chkbx" name="inv_comp" data-par="jobInv" id="inv_c">
+                    <span id="ic_sp"><i id="ic_i"></i></span>
+                </label>
+            </div>
+        </div>
+        <div class="div_invNum pdd">
+            <div class="group">
+                <input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Invoice Number </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="jd-adds">
+    <div class="title"><p> Addresses </p></div>
+    <div class="cont">
+        <div id="job_signor" class="job_add_main">
+            <div id="j_signor_head" class="job_add_title">Consignor</div>
+            <div id="j_signor_body" class="j_add_body">
+                <div class="jac ja_name">
+                    <input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required />
+                </div>
+                <div class="jac ja_add1">
+                    <input id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required />
+                </div>
+                <div class="jac ja_add2">
+                    <input id="cadd2" class="jadd" name="cadd2" type="text" required />
+                </div>
+                <div class="jac ja_add3">
+                    <input id="cadd3" class="jadd" name="cadd3" type="text" required />
+                </div>
+                <div class="jac ja_st">
+                    <input id="cst" class="jadd" name="cst" type="text" placeholder="State" required />
+                </div>
+                <div class="jac ja_pc">
+                    <input id="cpc" class="jadd" name="cpc" type="text" placeholder=" P/C" required />
+                </div>
+                <div class="jac ja_ct">
+                    <input id="cCtc" class="jadd" name="cCtc" type="text" placeholder=" Name" required />
+                </div>
+                <div class="jac ja_ph">
+                    <input id="cPh" class="jadd" name="cPh" type="text" placeholder=" Phone" required />
+                </div>
+                <div class="jac ja_em">
+                    <input id="cEm" class="jadd" name="cEm" type="text" placeholder=" Email" required />
+                </div>
+                <div class="jac ja_ct">
+                    <input id="j_r_ct2" class="jadd" name="cCtc2" type="text" placeholder=" Name" required />
+                </div>
+                <div class="jac ja_ph">
+                    <input id="j_r_ph2" class="jadd" name="cPh2" type="text" placeholder=" Phone" required />
+                </div>
+                <div class="jac ja_em">
+                    <input id="j_r_em2" class="jadd" name="cEm2" type="text" placeholder=" Email" required />
+                </div>
+            </div>
+        </div>
+        <div id="job_signee" class="job_add_main">
+            <div id="j_signee_head" class="job_add_title">Consignee</div>
+            <div id="j_signee_body" class="j_add_body">
+                <div class="jac ja_name">
+                    <input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required />
+                </div>
+                <div class="jac ja_add1">
+                    <input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required />
+                </div>
+                <div class="jac ja_add2">
+                    <input id="dadd2" class="jadd" name="dadd2" type="text" required />
+                </div>
+                <div class="jac ja_add3">
+                    <input id="dadd3" class="jadd" name="dadd3" type="text" required />
+                </div>
+                <div class="jac ja_st">
+                    <input id="dst" class="jadd" name="dst" type="text" placeholder="State" required />
+                </div>
+                <div class="jac ja_pc">
+                    <input id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required />
+                </div>
+                <div class="jac ja_ct">
+                    <input id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required />
+                </div>
+                <div class="jac ja_ph">
+                    <input id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required />
+                </div>
+                <div class="jac ja_em">
+                    <input id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required />
+                </div>
+                <div class="jac ja_ct">
+                    <input id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required />
+                </div>
+                <div class="jac ja_ph">
+                    <input id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required />
+                </div>
+                <div class="jac ja_em">
+                    <input id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div id="jdet-cns">
     <div class="title">
         <div class="cnmulti"><img id="mcn" src="img/book-2.svg" alt="Con Note Book"></div>
@@ -520,10 +492,6 @@ if ($jbno != 0) {
     </div>
 </div>
 
-
-<!--</section>-->
-
-<!--<section class="section" id="jdet-anc">-->
 <div id="jdet-supp">
     <div class="title">
         <p>Suppliers</p>
@@ -551,25 +519,6 @@ if ($jbno != 0) {
                 <div id="addsup" class="supSp asup">Add Supplier</div>
             </div>
             <div class="tbody" id="supbody">
-                <?php
-                if ($jbno != 0) {
-                    $sql = "SELECT * FROM jobSup WHERE jobID = $jbno order by jsID desc;";
-                    //echo "<script>console.log('".$sql."')</script>";
-                    $resultData = mysqli_query($conn,$sql);
-                    if (mysqli_num_rows($resultData) > 0){
-                        while ($row = mysqli_fetch_assoc($resultData)) {
-                            echo '<div class="supln" data-id="'.$row['jsID'].'">';
-                            echo '<div contenteditable="true" data-col="jsName" class="supSu lsup">'.$row['jsName'].'</div>';
-                            echo '<div contenteditable="true" data-col="jsType" class="supTy lsup">'.$row['jsType'].'</div>';
-                            echo '<div contenteditable="true" data-col="jsDesc" class="supDe lsup">'.$row['jsDesc'].'</div>';
-                            echo '<div contenteditable="true" data-col="jsEst" class="supEc lsup">'.$row['jsEst'].'</div>';
-                            echo '<div contenteditable="true" data-col="jsInvRec" class="supIr lsup">'.$row['jsInvRec'].'</div>';
-                            echo '<div contenteditable="true" data-col="jsNotes" class="supNo lsup">'.$row['jsNotes'].'</div>';
-                            echo '<div class="suprm td" data-id="'.$row['jsID'].'">Remove Supplier</div></div>';
-                        } 
-                    }
-                };
-            ?>
             </div>
         </div>
 
@@ -584,7 +533,7 @@ if ($jbno != 0) {
     </div>
 </div>-->
 <!--</section>-->
-<script src="/js/jdet.js?ver=0622"></script>
+<script src="/js/jdet.js?ver=0423"></script>
 <?php 
 
 include_once 'footer.php'
