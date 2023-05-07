@@ -40,7 +40,7 @@ if (mysqli_num_rows($resultData) > 0){
     echo json_encode($emparray);
  } else {
     $result = false;
-    echo "<script>console.log('error on row within job ".$job." for ind ".$indi."');</script>";     
+    echo "<script>console.log('Error or Zero rows for job ".$job." using ind ".$indi."');</script>";     
 }
 
 mysqli_stmt_close($stmt);

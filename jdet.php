@@ -11,7 +11,7 @@
 ?>
 
 
-
+<div id="updcheck"></div>
 <div id="dd" class="dropd hideme">
     <div id="ddbarh">
         <div class="ddbrtxt">Addresses Book Suggestions</div>

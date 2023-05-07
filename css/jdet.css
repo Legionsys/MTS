@@ -1369,3 +1369,26 @@ button.print-button:hover .print-icon::after {
   margin: auto;
   cursor: pointer;
 }
+.chkpend{
+  background-color: #cc550062;
+  transition: none;
+}
+.chkgood{
+  background-color: #00cc5569;
+  transition: none;
+}
+#updcheck{
+  position: absolute;
+  height: 3rem;
+  border-radius: 1.9rem;
+  width: 20%;
+  z-index: 10001;
+  top: -4rem;
+  left: 40%;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 2.2rem;
+  color: #353535;
+  line-height: 3rem;
+  text-align: center;
+}
