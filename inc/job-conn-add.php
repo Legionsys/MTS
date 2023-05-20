@@ -23,8 +23,6 @@ $resultData = mysqli_insert_id($conn);
 mysqli_stmt_close($stmt);
 if ($resultData != null ) {
     $num = "E".sprintf('%05d', $resultData);
-    echo "<script>console.log('ID ".$resultData."');</script>";
-    echo "<script>console.log('Num ".$num."');</script>";
     $sql = "UPDATE conNotes set cnNum=? WHERE cnID=?;";
     $stmt = mysqli_stmt_init($conn);
 
@@ -37,8 +35,10 @@ if ($resultData != null ) {
     mysqli_stmt_execute($stmt);    
     mysqli_stmt_close($stmt);
 
-    echo '<div data-id="'.$resultData.'" class="ccnt_card"><div class="cnnum">'.$num.'</div><div class="cnscomp">Blank</div><div class="cnrcomp">Blank</div>';
-    echo '<div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>';   
+    echo $resultData;
+
+    //echo '<div data-id="'.$resultData.'" class="ccnt_card"><div class="cnnum">'.$num.'</div><div class="cnscomp">Blank</div><div class="cnrcomp">Blank</div>';
+    //echo '<div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>';   
     
     //return $resultData;
 } else {
