@@ -14,6 +14,7 @@ var ocnot = [];
 var ofrt = [];
 var jbn;
 var upd;
+var actcn;
 
 
 
@@ -377,6 +378,7 @@ function cnDetUpd(updstr,cno,upd) {
         $("#" + key + ".pending").removeClass("pending");
         $("#" + key).attr("value",value).addClass("updated");
         updchkr();
+        cnot[actcn][key] = value;
       }
     } else {
       alert("Error in updating");
@@ -433,7 +435,7 @@ $(document).ready(function () {
   $(window).on('popstate', function(event) {
     alert("pop");
   });
-
+  actcn = null;
   climkr = 0;
   jbn = getSearchParams("job_no");
   firstpop();
@@ -777,8 +779,11 @@ $(document).ready(function () {
           txt = data;
         } else {
           var cnum = '00000' + data;
-          txt = '<div data-id="' + data + '" class="ccnt_card"><div class="cnnum">' + 'E' + cnum.substring(cnum.length - 5) + '</div><div class="cnscomp"></div><div class="cnrcomp"></div><div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>'
-          cnot[cnot.length].push('{"cnID":' + data + ',"cnNum":' 'E' + cnum.substring(cnum.length - 5), 'jobID': jbn});
+          txt = '<div data-id="' + data + '" class="ccnt_card"><div class="cnnum">E' + cnum.substring(cnum.length - 5) + '</div><div class="cnscomp"></div><div class="cnrcomp"></div><div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>'
+          console.log(txt);
+          console.log('{"cnID":' + data + ',"cnNum": E' + cnum.substring(cnum.length - 5) + ', "jobID":' + jbn +'}')
+          console.log(cnot.length);
+          cnot.push($.parseJSON('{"cnID":' + data + ',"cnNum": "E' + cnum.substring(cnum.length - 5) + '", "jobID":' + jbn +'}'));
           console.log(cnot);
         }
         $("#contlst").append(txt);
@@ -887,6 +892,7 @@ $(document).ready(function () {
     //Get data from Server
     $(cnot).each(function (i, val) {
       if (val.cnID == nid) {
+        actcn = i;
       $.each(val, function (k, v) {
         if (k == "Pb") {
           $('#' + v).prop('checked', true);
@@ -905,10 +911,12 @@ $(document).ready(function () {
       }
     });
     $("#boscr").removeClass("hideme");
+    
   });
   //connote functions
   $("#boscr").click(function () {
     $("#boscr").addClass("hideme");
+    actcn = null;
     clrcnt();
     cnotUpd();
     
@@ -936,23 +944,26 @@ $(document).ready(function () {
   });
   $(".cndd").change(function () {
     var upd = new Map();
+    var updstr;
+    var fld;
+    var chg = $(this).val().replace(/\'/g,"''");
+    var cno = $("#cnID").val();
+
     if ($(this).attr('type') == 'radio') {
-      var fld = 'Pb';
+      fld = 'Pb';
     } else {
-      var fld = $(this).attr("id");
+      fld = $(this).attr("id");
     }
-      var chg = $(this).val();
-      var cno = $("#cnID").val();
+
       upd.set(fld,chg);
       if (chg == "") {
-        var updstr = fld + "=Null,"
+        updstr = fld + "=Null,"
       } else {
-        var updstr = fld + "='" + chg.replace(/\'/g,"''") + "',";
+        updstr = fld + "='" + chg + "',";
       }
       updstr = updstr.substring(0,(updstr.length - 1));
-
     cnDetUpd(updstr,cno,upd);
-
+    
   });
   function clrcnt(){
     $('.radios').prop('checked', false);
@@ -961,6 +972,8 @@ $(document).ready(function () {
         
       } else {
         $(this).val('');
+        $(this).removeClass("updated");
+        $(this).removeClass("pending");
       }
     })
   }

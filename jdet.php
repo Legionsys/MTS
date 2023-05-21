@@ -47,11 +47,11 @@
                 <!--<div id="bill_p">Who will pay for freight?</div> -->
                 <div id="bill_r">
                     <input type="radio" id="s" name="bill" value="s" class="radios cndd">
-                    <label for="send" class="radios">Sender </label>
+                    <label for="s" class="radios">Sender </label>
                     <input type="radio" id="r" name="bill" value="r" class="radios cndd">
-                    <label for="rec" class="radios">Receiver </label>
+                    <label for="r" class="radios">Receiver </label>
                     <input type="radio" id="o" name="bill" value="o" class="radios cndd">
-                    <label for="other" class="radios">Other</label>
+                    <label for="o" class="radios">Other</label>
                 </div>
             </div>
             <div class="ind_r">
