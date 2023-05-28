@@ -64,10 +64,10 @@
   }
   
   #bill_r input {
-      position: absolute !important;
+      /*position: absolute !important;*/
       clip: rect(0, 0, 0, 0);
-      height: 1px;
-      width: 1px;
+      height: 100%;
+      width: 33%;
       border: 0;
       overflow: hidden;
   }
