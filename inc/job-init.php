@@ -18,7 +18,7 @@ if ($indi == "job") {
 } elseif ($indi == "con") {
     $sql = "SELECT a.*,b.titm,b.twgt,b.tcub FROM conNotes a LEFT JOIN (select cnID,sum(ifnull(noItem,0)) as titm,sum(ifnull(itWgt,0)) as twgt,sum(ifnull((itLen*itWid*itHei*itQty)/1000000,0)) as tcub from conDets WHERE frtDie is Null group by cnID) b on a.cnID = b.cnID WHERE a.jobID = ? order by cnID;";
 } elseif ($indi == "frt") {
-    $sql = "SELECT * FROM conDets where cnID in (Select cnID from conNotes where jobID = ?) and frtDie is Null order by class desc;";
+    $sql = "SELECT * FROM conDets where cnID in (Select cnID from conNotes where jobID = ?) and frtDie is Null order by class desc,itID;";
 }
 
 

@@ -261,6 +261,7 @@
     <div id="jbnum" class="hideme">
 
     </div>
+    <div id="coll"></div>
 </div>
 <div id="jd-notes">
     <div class="title">

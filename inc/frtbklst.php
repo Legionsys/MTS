@@ -12,7 +12,7 @@ $stxt = str_replace(" And ","%",$stxt);
 
 //$sql = "SELECT a.cnID,a.cnNum,a.snam,a.rnam,sum(ifnull(b.noItem,0)) as titm,sum(ifnull(b.itWgt,0)) as twgt,sum(ifnull((b.itLen*b.itWid*b.itHei*b.itQty)/1000000,0)) as tcub FROM conNotes a LEFT JOIN conDets b on a.cnID = b.cnID WHERE a.jobID = $jbno group by a.cnID,a.cnNum,a.snam,a.rnam;";
 
-$sql = "SELECT senRef,noItem,psn,itWgt,itLen,itWid,itHei,itQty,unNum,class,sRisk,pkGr,pkDes FROM `conDets` WHERE CONCAT(ifnull(senRef,''),ifnull(noItem,''),ifnull(psn,''),ifnull(itWgt,''),ifnull(itLen,''),ifnull(itWid,''),ifnull(itHei,''),ifnull(itQty,''),ifnull(unNum,''),ifnull(class,''),ifnull(sRisk,''),ifnull(pkGr,''),ifnull(pkDes,'')) like '%$stxt%' limit 10;";
+$sql = "SELECT DISTINCT senRef,noItem,psn,itWgt,itLen,itWid,itHei,itQty,unNum,class,sRisk,pkGr,pkDes FROM `conDets` WHERE CONCAT(ifnull(senRef,''),ifnull(noItem,''),ifnull(psn,''),ifnull(itWgt,''),ifnull(itLen,''),ifnull(itWid,''),ifnull(itHei,''),ifnull(itQty,''),ifnull(unNum,''),ifnull(class,''),ifnull(sRisk,''),ifnull(pkGr,''),ifnull(pkDes,'')) like '%$stxt%' limit 10;";
 
 //$sql = "SELECT * FROM conNotes WHERE jobID = $jbno;";
 //echo "<script>console.log('".$sql."')</script>";

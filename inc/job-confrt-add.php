@@ -56,23 +56,24 @@ if (!mysqli_stmt_prepare($stmt,$sql)) {
 mysqli_stmt_bind_param($stmt, "isisiiiiisssss", $cnum,$sref,$nitm,$psn,$itWgt,$itLen,$itWid,$itHei,$itQty,$unNum,$dcls,$sRisk,$pkGr,$pkDes);
 mysqli_stmt_execute($stmt);
 $resultData = mysqli_insert_id($conn);
-if ($namt = null) {
+if ($resultData == null) {
     echo "<script>alert('Error when trying to add row');</script>";
     exit();
 }
 mysqli_stmt_close($stmt);
 
-$sql = "SELECT * FROM conDets WHERE cnID = ? and frtDie is Null order by class desc;";
+//$sql = "SELECT * FROM conDets WHERE cnID = ? and frtDie is Null order by class desc;";
+$sql = "SELECT * FROM conDets WHERE itID =?;";
 $stmt = mysqli_stmt_init($conn);
 if (!mysqli_stmt_prepare($stmt,$sql)) {
     return "ERROR";
     exit();
 }
-mysqli_stmt_bind_param($stmt, "i", $cnum);
+mysqli_stmt_bind_param($stmt, "i", $resultData);
 mysqli_stmt_execute($stmt);
 $resultData = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($resultData) > 0){
-    $titm = 0;
+    /*$titm = 0;
     $twgt = 0;
     $tcub = 0;
 
@@ -85,7 +86,11 @@ if (mysqli_num_rows($resultData) > 0){
         echo '<div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
 
 
+    }*/
+    while ($row = mysqli_fetch_assoc($resultData)) {
+        $emparray[] = $row;
     }
+    echo json_encode($emparray); 
 }
 mysqli_stmt_close($stmt);
 ?>
