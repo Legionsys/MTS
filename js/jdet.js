@@ -768,8 +768,20 @@ $(document).ready(function () {
   $("#notebody").on("click", ".ntrash", function () {
     var nid = $(this).parents().attr("data-id");
     $.post("/inc/job-note-rem.php", { jnid: nid }, function (data, status) {
-      $(".tr[data-id=" + nid + "]").remove();
-      namt_tot();
+      if (status == "success") {
+        $(notes).each(function (i, val) {
+          if (val.jnID == nid) {
+            notes.splice(i,1);
+          }
+        })
+        console.log(notes);
+        $(".tr[data-id=" + nid + "]").remove();
+      } else {
+      alert("Error in removing supplier");
+      console.log("Variables - " + nid);
+      console.log("Error: " + response.responseText);
+    }
+    namt_tot();
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
     });
@@ -1588,7 +1600,7 @@ $("input").on({
             sups.splice(i,1);
           }
         })
-        console.log(sups);
+
         $(".supln[data-id=" + nid + "]").remove();
       } else {
       alert("Error in removing supplier");
