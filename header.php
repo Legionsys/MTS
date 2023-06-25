@@ -33,7 +33,7 @@
 
     <?php
     if ($pName == "jdet") {
-        echo '<link rel="stylesheet" href="/css/jdet.css?ver=0622">';
+        echo '<link rel="stylesheet" href="/css/jdet.css?ver=0622-2">';
         echo '<link rel="stylesheet" href="/css/cnote.css?ver=1">';
     } elseif ($pName == "jsumm") {
         echo '<link rel="stylesheet" href="/css/jsumm.css?ver=0h">';    
