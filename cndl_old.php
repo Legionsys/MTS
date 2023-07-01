@@ -39,13 +39,13 @@ if (mysqli_num_rows($resultData) > 0){
         //add content
         //header
         $pdf->SetLineStyle(array('width' => 0.1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(125,125,125)));
-        $pdf->Image(__DIR__.'/img/MT-PTY-Logo x 8.jpg',10,1.5,68,20);
+        $pdf->Image(__DIR__.'/img/Moorish_logo.gif',10,1.5,81,20);
         $pdf->SetFont('Helvetica','',14);
-        $pdf->Cell(75,20,'',0,0,'C'); //You need to have logo inserted
+        $pdf->Cell(81,20,'',0,0,'C'); //You need to have logo inserted
         $pdf->SetFont('Helvetica','',8);
-        $pdf->Cell(30,20,'ABN 54 157 699 815',0,0,'C',false,'',0,false,'','B');
+        $pdf->Cell(29,20,'ABN 54 157 699 815',0,0,'C',false,'',0,false,'','B');
         $pdf->SetFont('Helvetica','B',12);
-        $pdf->Cell(35,20,'  (08) 9455 5002',0,0,'L',false,'',0,false,'','B');
+        $pdf->Cell(32,20,'(08) 9455 5002',0,0,'L',false,'',0,false,'','B');
         $pdf->SetFont('Helvetica','B',10);
         $pdf->Cell(41,9,'',0,0,'L',false,'',0,false,'','B');
         $pdf->Cell(22,9,'Contract No.',0,0,'L');
@@ -92,75 +92,47 @@ if (mysqli_num_rows($resultData) > 0){
         $pdf->Cell(188,3,'',0,1,'',false,'',0,true); //Spacer line
 
         //row 3
-        $pdf->SetFont('Helvetica','',7);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->MultiCell(79,6,"ALL drivers MUST answer these questions and sign below\nbefore entering the road network.",1,'L',true,0);
-        $pdf->SetFont('Helvetica','B',7.5);
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(30,6,'Who Pays For Freight',1,0,'L',true,'',0,false,'','C');
-
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
         $pdf->SetFont('Helvetica','B',8);
-        $pdf->Cell(75,6,'OTHER PARTY',1,1,'L',true,'',0,false,'','C');
+        $pdf->SetFillColor(255,80,0);
+        $pdf->Cell(79,6,'SENDER',1,0,'L',true,'',0,false,'','C');
+        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+        $pdf->Cell(107,6,'OTHER PARTY',1,1,'L',true,'',0,false,'','C');
         $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked to ensure all relevant permits,\napprovals etc are current and available (where applicable).",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+        $pdf->MultiCell(79,6,"Who will pay for\nthis freight:",1,'L',false,0);
         $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',7);
-        //$pdf->Cell(30,6,'',1,0,'L',false,'',0,false,'','C');
-        $pdf->SetTextColor(125,125,125);
-        $pdf->Cell(10,6,'SEND',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(10,6,'REC',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(10,6,'OTH',1,0,'C',false,'',0,false,'','C');
-        $pdf->SetTextColor(0,0,0);
+        $pdf->MultiCell(107,6,"Company\nName",1,'L',false,1);
+        $pdf->Cell(79,6,"Account No.                                                  Quote No.",1,0,'L',false,'',0,false,'','C');
         $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->MultiCell(75,6,"Company\nName",1,'L',false,1);
+        $pdf->Cell(107,6,"Address",1,1,'L',false,'',0,false,'','T');
+        $pdf->SetFont('Helvetica','B',6);
+        $pdf->MultiCell(79,6,"ALL drivers MUST answer these questions and sign below\nbefore entering the road network.",1,'L',true,0);
         $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked the load to ensure the Dimension of the load\nis compliant prior to travelling on the road.",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
         $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6.75);
-        $pdf->MultiCell(30,6,"Account\nNo.",1,'L',false,0);
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(75,6,"Address",1,1,'L',false,'',0,false,'','T');
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked to ensure the load is restrained securely prior\nto the vehicle travelling on the road.",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6.75);
-        $pdf->MultiCell(30,6,"Quote\nNo.",1,'L',false,0);
-
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(30,6,"Contact\nName",1,'L',false,0);
-        $pdf->Cell(24,6,'Ph',1,0,'L',false,'',0,false,'','T');
+        $pdf->MultiCell(46,6,"Contact\nName",1,'L',false,0);
+        $pdf->Cell(38,6,'Ph',1,0,'L',false,'',0,false,'','T');
         $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
-        $pdf->Cell(11,6,'Postcode',1,1,'C',false,'',0,false,'','T');
-        $pdf->MultiCell(69,9,"You have checked to ensure the loading does not affect the centre of gravity for the vehicle. (The Main Roads Static Rollover Threshold (SRT) Calculator may be utilised).",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,9,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,9,'',0,1,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(69,6,'You are verifying you are suitably trained in load restraint methods.',1,0,'L',false,'',0,false,'','C');
-        //$pdf->MultiCell(69,6,"You are verifying you are suitably trained in load restraint methods.",1,'L',false,0,'','',true,0,false,true,0,'C');
+        $pdf->Cell(13,6,'Postcode',1,1,'C',false,'',0,false,'','T');
+        $pdf->Cell(69,6,'Is all cargo adequately restrained?',1,0,'L',false,'',0,false,'','C');
         $pdf->SetFont('Helvetica','B',7);
         $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
         $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
         $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked the proposal route is approved for the particular vehicle combination to travelling on the road.",1,'L',false,0);
+        $pdf->MultiCell(69,6,"Is your combination within VSR dimension limits, or do you have\ncurrent permits to exceed VSR dimension limits?",1,'L',false,0);
         $pdf->SetFont('Helvetica','B',7);
         $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
         $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
         $pdf->SetFont('Helvetica','',6);
-        /*$pdf->MultiCell(69,6,"Do you have a route planned this is safe and legal for your\nCombination",1,'L',false,0);
+        $pdf->MultiCell(69,6,"Is your combination within VSR mass limits, or do you have\ncurrent permits to exceed VSR mass limits?",1,'L',false,0);
         $pdf->SetFont('Helvetica','B',7);
         $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line*/
+        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
         $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(79,13,'Drivers Signature:',1,1,'L',false,'',0,false,'','T');
+        $pdf->MultiCell(69,6,"Do you have a route planned this is safe and legal for your\nCombination",1,'L',false,0);
+        $pdf->SetFont('Helvetica','B',7);
+        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
+        $pdf->SetFont('Helvetica','',6);
+        $pdf->Cell(79,10,'Drivers Signature:',1,1,'L',false,'',0,false,'','T');
         $pdf->Cell(233,2,"",0,1,'',false,'',0,true);
 
         //table - header
@@ -255,22 +227,20 @@ if (mysqli_num_rows($resultData) > 0){
         $pdf->Cell(112,4,"SENDER'S SIGNATURE AND DECLARATION",1,0,'',true,'',0,true);
         $pdf->Cell(121,4,"RECEIVER'S SIGNATURE",1,1,'',true,'',0,true);
         $pdf->SetFont('Helvetica','B',6);
-        $pdf->MultiCell(112,13,"I AGREE TO THE CONDITIONS ON THE TERMS AND CONDITIONS PAGE OF THIS CONTRACT,\nREQUEST MOORISH TO DELIVER THE GOODS AND DECLARE:\nTHESE GOODS DO NOT CONTAINER ANY UNAUTHORISED EXPLOSIVES OR INCENDIARY DEVICES; ANY\nDANGEROUS GOODS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED AND LABELLED CORRECTLY;\nAND I AM AWARE THESE GOODS WILL BE SUBJECT TO SECURITY SCREENING AND CLEARING.",1,'L',false,0,'','',true,3,false,true,7,'M',true);
+        $pdf->MultiCell(112,12,"I AGREE TO THE CONDITIONS ON THE TERMS AND CONDITIONS PAGE OF THIS CONTRACT,\nREQUEST MOORISH TO DELIVER THE GOODS AND DECLARE:\nTHESE GOODS DO NOT CONTAINER ANY UNAUTHORISED EXPLOSIVES OR INCENDIARY DEVICES; ANY\nDANGEROUS GOODS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED AND LABELLED CORRECTLY;\nAND I AM AWARE THESE GOODS WILL BE SUBJECT TO SECURITY SCREENING AND CLEARING.",1,'L',false,0,'','',true,3,false,true,7,'M',true);
         $pdf->Cell(51,8,"RECEIVED IN GOOD CONDITION",1,0,'',false,'',0,true,'T','T');
         $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(70,14.75,"    Print Name",1,2,'',false,'',0,true,'T','T');
+        $pdf->Cell(70,14,"    Print Name",1,2,'',false,'',0,true,'T','T');
         $pdf->Cell(70,4,"    Date          /            /",1,2,'',false,'',0,true,'T','C');
         $pdf->Cell(70,4,"    Time",1,1,'',false,'',0,true,'T','C');
         $pdf->Cell(233,3,"Please print minimum 2 copies, one for reciever, one for POD.",0,1,'',false,'',0,true,'T','B');
         //floating Sig sections
-        $pdf->SetXY(10,190);
+        $pdf->SetXY(10,189);
         $pdf->Cell(39,10,"   Signature",1,0,'',false,'',0,true,'T','T');
-        $pdf->MultiCell(73,6,"Print\nName",1,'L',false,1);
-        //$pdf->Cell(73,6," Print Name",1,2,'',false,'',0,true,'T','T');
-        $pdf->Cell(39,1,"",0,0,'',false,'',0,true,'T','T');
+        $pdf->Cell(73,6," Print Name",1,2,'',false,'',0,true,'T','T');
         $pdf->Cell(73,4," Date          /            /",1,2,'',false,'',0,true,'T','C');
         $pdf->SetXY(122,185);
-        $pdf->Cell(51,15," Signature",1,0,'',false,'',0,true,'T','T');
+        $pdf->Cell(51,14," Signature",1,0,'',false,'',0,true,'T','T');
         //$pdf->SetFont('zapfdingbats','',10);// 3 for tick || 39
         //$pdf->Cell(188,6,"",1,1,'',false,'',0,true);
         //$pdf->Cell(188,0.2,"",1,1,'',false,'',0,true);//double thick border
@@ -308,21 +278,22 @@ if (mysqli_num_rows($resultData) > 0){
         $pdf->SetTextColor(255,0,0);
         $pdf->Cell(28,9,$cnote,0,1,'C');
         $pdf->SetTextColor(0,0,0);
-/*
+
         //billing tick and boxes
         $pdf->SetFont('zapfdingbats','',12);
-        $pdf->SetXY(81.5,69);
+        $pdf->SetXY(25,69);
+        $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
         $pdf->SetFont('Helvetica','',6);
-        $pdf->Rect(93,70.5,3,3);
-        $pdf->Rect(103.5,70.5,3,3);
-        $pdf->Rect(114,70.5,3,3);
-        $pdf->Cell(9.5,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(7,6,"S",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(1,6,"R",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6,6,"O",0,0,'C',false,'',0,false,'','C');
-*/
+        $pdf->Rect(35,70.5,3,3);
+        $pdf->Rect(50,70.5,3,3);
+        $pdf->Rect(65,70.5,3,3);
+        $pdf->Cell(9,6,"",0,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(7,6,"Sender",0,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(9,6,"",0,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(7,6,"Receiver",0,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(9,6,"",0,0,'C',false,'',0,false,'','C');
+        $pdf->Cell(7,6,"Other Party",0,0,'C',false,'',0,false,'','C');
+
 
         //table header subtext
         $pdf->SetFont('Helvetica','B',5);
