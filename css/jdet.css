@@ -515,7 +515,7 @@
   flex-flow: column nowrap;
 }
 .ncol {
-  width: Auto;
+  width: calc(100% - 17.5rem);
   flex-grow: 2;
   padding: 0.5rem 0.5rem 0.5rem 1.5rem;
 }

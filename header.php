@@ -33,7 +33,7 @@
 
     <?php
     if ($pName == "jdet") {
-        echo '<link rel="stylesheet" href="/css/jdet.css?ver=0622">';
+        echo '<link rel="stylesheet" href="/css/jdet.css?ver=0622-2">';
         echo '<link rel="stylesheet" href="/css/cnote.css?ver=1">';
     } elseif ($pName == "jsumm") {
         echo '<link rel="stylesheet" href="/css/jsumm.css?ver=0h">';    
@@ -63,7 +63,7 @@
         </div>
 
         <div class="nav-links">
-            <a href="jsumm.php?wild=null&cli=null&inv=All&job=All">Job Summary</a>
+            <a href="jsumm.php?wild=null&cli=null&inv=All&job=Act">Job Summary</a>
             <!-- <a href="reports.php">Reports</a> -->
             <a href="uman.php">User Management</a>
             <a href="/inc/logout.inc.php">Log out</a>

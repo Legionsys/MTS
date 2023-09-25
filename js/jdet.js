@@ -121,8 +121,6 @@ function jnotupd() {
   namt_tot();
 };
 function jconupd() {
-
-
   $(cnot).each(function (i, val) {
       var txt = "";
       txt = '<div data-id="' + chknull(val.cnID) + '" class="ccnt_card"><div class="cnnum">' + chknull(val.cnNum) + '</div><input type="checkbox" class="mcnprnt" name="mprint" value="' + chknull(val.cnID) + '"><div class="cnscomp">' + chknull(val.snam) + '</div><div class="cnrcomp">' + chknull(val.rnam) + '</div><div class="cnitm">' + chknull(val.titm) + ' itms</div><div class="cnwgt">' + chknull(val.twgt) + ' kg</div><div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(chknull(val.tcub)) + ' m3</div></div>';
@@ -522,7 +520,41 @@ function frtload(cno){
     pauseReq = false;
   }
 }
-
+function ccntLoad(cno){
+  var oin = -1;
+  $("#cnt_body").html('');
+  $(ocnot).each(function (i,val){
+    if (val.cnID == cno) {
+      oin = i;
+      return false;
+  }});
+  
+  $(cnot).each(function (i, val) {
+    if (val.cnID == cno) {
+      actcn = i;
+      $.each(val, function (k, v) {
+        if (k == "Pb") {
+          $('#' + v).prop('checked', true);
+        } else {
+          $("#" + k).val(v).attr('value',chknull(v));
+          if (oin == -1) {
+            $("#" + k).addClass("updated");
+            $("#" + k).removeClass("pending");
+          } else {
+            if (ocnot[oin][k] != v) {
+              $("#" + k).addClass("updated");
+              $("#" + k).removeClass("pending");
+            } else {
+              $("#" + k).removeClass("pending");
+              $("#" + k).removeClass("updated");
+            }
+          }
+        }
+      });
+  }});
+  frtload(cno);
+  $("#boscr").removeClass("hideme");
+}
 
 
 
@@ -790,12 +822,14 @@ $(document).ready(function () {
   var nodta = "";
   $("#notebody").on("focusout",".tr .td", function () {
     if (col == "jnAmt") {
-
       $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
+      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    } else {
+      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
+      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
     };
     var nid = $(this).parents(".tr").attr("data-id");
     var col = $(this).attr("data-col");
-    var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
     var chkkr = 1;
     var mrkr = $(this);
     var ind = -1;
@@ -827,6 +861,9 @@ $(document).ready(function () {
               }
             });
             updchkr();
+            if (col == "jnNote") {
+              mrkr.html(nval);
+            }
           } else {
             alert("Error in updating");
             console.log(col + " : " + val + " : " + nid);
@@ -894,11 +931,12 @@ $(document).ready(function () {
           $('#coll').append(data);
           //txt = data;
         } else {
-          var cnum = '00000' + data;
-          txt = '<div data-id="' + data + '" class="ccnt_card"><div class="cnnum">E' + cnum.substring(cnum.length - 5) + '</div><div class="cnscomp"></div><div class="cnrcomp"></div><div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>'
-          cnot.push($.parseJSON('{"cnID":' + data + ',"cnNum": "E' + cnum.substring(cnum.length - 5) + '", "jobID":' + jbn +'}'));
+          var obj = $.parseJSON(data);
+          cnot.push(obj[0]);
+          ocnot.push(obj[0]);
+          ccntLoad(obj[0].cnID);
         }
-        $("#contlst").append(txt);
+        //$("#contlst").append(txt);
       }).fail(function (response) {
         console.log("Error: " + response.responseText);
       });      
@@ -906,6 +944,7 @@ $(document).ready(function () {
       alert("A job needs to be created for notes to be added - acn.click");
     }
   });
+
   //multi CN compile
   $("img[id=mcn]").click(function () {
     var cnlst = mcnl.toString();
@@ -1033,43 +1072,12 @@ $(document).ready(function () {
 
   $("#contlst").on('click',".ccnt_card", function () {
     var nid = $(this).attr("data-id");
-    var oin = -1;
+    
     if (mcnf == "Y") {
       mcnf = "";
       return;
     }
-    $("#cnt_body").html('');
-    $(ocnot).each(function (i,val){
-      if (val.cnID == nid) {
-        oin = i;
-        return false;
-    }});
-    
-    $(cnot).each(function (i, val) {
-      if (val.cnID == nid) {
-        actcn = i;
-        $.each(val, function (k, v) {
-          if (k == "Pb") {
-            $('#' + v).prop('checked', true);
-          } else {
-            $("#" + k).val(v).attr('value',chknull(v));
-            if (oin == -1) {
-              $("#" + k).addClass("updated");
-              $("#" + k).removeClass("pending");
-            } else {
-              if (ocnot[oin][k] != v) {
-                $("#" + k).addClass("updated");
-                $("#" + k).removeClass("pending");
-              } else {
-                $("#" + k).removeClass("pending");
-                $("#" + k).removeClass("updated");
-              }
-            }
-          }
-        });
-    }});
-    frtload(nid);
-    $("#boscr").removeClass("hideme");
+    ccntLoad(nid);
     
   });
   //connote functions
