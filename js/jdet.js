@@ -121,8 +121,6 @@ function jnotupd() {
   namt_tot();
 };
 function jconupd() {
-
-
   $(cnot).each(function (i, val) {
       var txt = "";
       txt = '<div data-id="' + chknull(val.cnID) + '" class="ccnt_card"><div class="cnnum">' + chknull(val.cnNum) + '</div><input type="checkbox" class="mcnprnt" name="mprint" value="' + chknull(val.cnID) + '"><div class="cnscomp">' + chknull(val.snam) + '</div><div class="cnrcomp">' + chknull(val.rnam) + '</div><div class="cnitm">' + chknull(val.titm) + ' itms</div><div class="cnwgt">' + chknull(val.twgt) + ' kg</div><div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(chknull(val.tcub)) + ' m3</div></div>';
@@ -933,12 +931,12 @@ $(document).ready(function () {
           $('#coll').append(data);
           //txt = data;
         } else {
-          var cnum = '00000' + data;
-          txt = '<div data-id="' + data + '" class="ccnt_card"><div class="cnnum">E' + cnum.substring(cnum.length - 5) + '</div><div class="cnscomp"></div><div class="cnrcomp"></div><div class="cnitm">0 itms</div><div class="cnwgt">0 kg</div><div class="cnm3">0 m3</div></div>'
-          cnot.push($.parseJSON('{"cnID":' + data + ',"cnNum": "E' + cnum.substring(cnum.length - 5) + '", "jobID":' + jbn +'}'));
-          ccntLoad(data);
+          var obj = $.parseJSON(data);
+          cnot.push(obj[0]);
+          ocnot.push(obj[0]);
+          ccntLoad(obj[0].cnID);
         }
-        $("#contlst").append(txt);
+        //$("#contlst").append(txt);
       }).fail(function (response) {
         console.log("Error: " + response.responseText);
       });      

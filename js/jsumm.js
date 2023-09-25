@@ -114,36 +114,23 @@ $(window).on("load", function () {
   srchInv = getUrlParameter('inv');
   srchJob = getUrlParameter('job');
   srchCli = getUrlParameter('cli');
-  //Check session data and update search information.
-  joblstUpd();
-  cliupd();
-  //check URL for parameters for search filters
-  //set search filters from parameters
-
-
-  
   if (srchAll != "null" && srchAll != false ) {
     $("#search-all").val(srchAll);
   } else {
     srchAll = 'null';
   };
-  
   if (srchInv == "null" || srchInv == false) {
     srchInv = 'All';
   };
   $("input[name='inv_Tog'][value='"+srchInv+"']").prop('checked', true);
-  
   if (srchJob == "null" || srchJob == false) {
-    srchJob = 'All';
+    srchJob = 'Act';
   }
   $("input[name='job_Tog'][value='"+srchJob+"']").prop('checked', true);
-
-
-  //update Client list
-  //joblstUpd();  
+  joblstUpd();
+  cliupd();
 });
 $(document).ready(function () {
-
   //search update
   $("#search-all").keyup(function () {
     srchAll = $("#search-all").val();
