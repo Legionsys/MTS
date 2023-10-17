@@ -1,0 +1,18 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/aden/MTS/
+    - /bin/cp -R css $DEPLOYPATH
+    - /bin/cp -R img $DEPLOYPATH
+    - /bin/cp -R inc $DEPLOYPATH
+    - /bin/cp -R js $DEPLOYPATH
+    - /bin/cp -R TCPDF $DEPLOYPATH
+    - /bin/cp cndl.php $DEPLOYPATH
+    - /bin/cp footer.php $DEPLOYPATH
+    - /bin/cp header.php $DEPLOYPATH
+    - /bin/cp index.php $DEPLOYPATH
+    - /bin/cp jdet.php $DEPLOYPATH
+    - /bin/cp jsumm.php $DEPLOYPATH
+    - /bin/cp signup.php $DEPLOYPATH
+    - /bin/cp uman.php $DEPLOYPATH
+    - /bin/cp underconstruction.php $DEPLOYPATH
