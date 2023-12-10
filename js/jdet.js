@@ -821,18 +821,21 @@ $(document).ready(function () {
   //updating a note
   var nodta = "";
   $("#notebody").on("focusout",".tr .td", function () {
-    if (col == "jnAmt") {
-      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
-      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    } else {
-      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
-      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
-    };
+
     var nid = $(this).parents(".tr").attr("data-id");
     var col = $(this).attr("data-col");
     var chkkr = 1;
     var mrkr = $(this);
     var ind = -1;
+    console.log("Note data -- " + col);
+    if (col == "jnAmt") {
+      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
+      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\,/g, "").replace("$","");
+      console.log(nval);
+    } else {
+      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
+      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
+    };
           //Collect vars
     $(notes).each(function (i, val) {
       if (nid == val.jnID) {
@@ -845,6 +848,7 @@ $(document).ready(function () {
 
     if (chkkr == 1) {
       //send data and update
+      console.log(col + " : " + nval + " : " + nid);
       $.post("/inc/job-note-upd.php",
         { updstr: nval, ref: col, cno: nid },
         function (data, status) {
@@ -866,14 +870,14 @@ $(document).ready(function () {
             }
           } else {
             alert("Error in updating");
-            console.log(col + " : " + val + " : " + nid);
+            console.log(col + " : " + nval + " : " + nid);
             console.log("Error: " + response.responseText);
           }
         }
       ).fail(function (response) {
         alert("Error in updating");
         console.log("Error: " + response.responseText);
-        console.log(col + " : " + val + " : " + nid);
+        console.log(col + " : " + nval + " : " + nid);
         console.log(response);
 
       });      
