@@ -106,7 +106,7 @@ function chknull(value) {
 function jsupupd() {
   $(sups).each(function (i, val) {
       var txt = "";
-      txt = '<div class="supln" data-id="' + chknull(val.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup">' + chknull(val.jsEst) + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div></div>';
+      txt = '<div class="supln" data-id="' + chknull(val.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup">$' + number_format(chknull(val.jsEst),2,'.',',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div></div>';
       $("#supbody").append(txt);
   });
 };
@@ -821,18 +821,21 @@ $(document).ready(function () {
   //updating a note
   var nodta = "";
   $("#notebody").on("focusout",".tr .td", function () {
-    if (col == "jnAmt") {
-      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
-      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    } else {
-      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
-      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
-    };
+
     var nid = $(this).parents(".tr").attr("data-id");
     var col = $(this).attr("data-col");
     var chkkr = 1;
     var mrkr = $(this);
     var ind = -1;
+    console.log("Note data -- " + col);
+    if (col == "jnAmt") {
+      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
+      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\,/g, "").replace("$","");
+      console.log(nval);
+    } else {
+      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
+      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
+    };
           //Collect vars
     $(notes).each(function (i, val) {
       if (nid == val.jnID) {
@@ -845,6 +848,7 @@ $(document).ready(function () {
 
     if (chkkr == 1) {
       //send data and update
+      console.log(col + " : " + nval + " : " + nid);
       $.post("/inc/job-note-upd.php",
         { updstr: nval, ref: col, cno: nid },
         function (data, status) {
@@ -866,14 +870,14 @@ $(document).ready(function () {
             }
           } else {
             alert("Error in updating");
-            console.log(col + " : " + val + " : " + nid);
+            console.log(col + " : " + nval + " : " + nid);
             console.log("Error: " + response.responseText);
           }
         }
       ).fail(function (response) {
         alert("Error in updating");
         console.log("Error: " + response.responseText);
-        console.log(col + " : " + val + " : " + nid);
+        console.log(col + " : " + nval + " : " + nid);
         console.log(response);
 
       });      
@@ -1580,7 +1584,7 @@ $("input").on({
               sups.push(nsup[0]);
               console.log(sups);
               var txt = "";
-              txt = '<div class="supln" data-id="' + chknull(nsup[0].jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup[0].jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup[0].jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup[0].jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">' + chknull(nsup[0].jsEst) + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup[0].jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup[0].jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup[0].jsID) + '">Remove Supplier</div></div>';
+              txt = '<div class="supln" data-id="' + chknull(nsup[0].jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup[0].jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup[0].jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup[0].jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">$' + number_format(chknull(nsup[0].jsEst),2,'.',',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup[0].jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup[0].jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup[0].jsID) + '">Remove Supplier</div></div>';
               $("#supbody").prepend(txt);
             }
             //$("#supbody").prepend(data);
@@ -1627,6 +1631,9 @@ $("input").on({
     var nid = $(this).parents(".supln").attr("data-id");
     var col = $(this).attr("data-col");
     var nval = $(this).html();
+    if (col == "jsEst") {
+      nval = nval.replace("$","").replace(",","")
+    }
     var obj = $(this);
     var chkkr = 1;
     $(sups).each(function (i, val) {
@@ -1645,6 +1652,9 @@ $("input").on({
                 sups[i][col] = nval;
                 obj.addClass("updated");
                 obj.removeClass("pending");
+                if (col == "jsEst") {
+                  obj.html("$" + number_format(chknull(nval),2,'.',','))
+                }
               }
             });
             $(osups).each(function (i, val) {
