@@ -1,14 +1,14 @@
 <?php
 
 
-/*A2
-$serverName = "sg1-lr2.a2hosting.com";
+//A2
+/*$serverName = "sg1-lr2.a2hosting.com";
 $dBUsername = "aden_webusr";
 $dBPassword = "Webusr_password";
 $dBName = "aden_MOORTSP";
 */
 
-/*local*/
+//local
 $serverName = "localhost";
 $dBUsername = "root";
 $dBPassword = "";
