@@ -1,4 +1,59 @@
 <?php
+// set vars and checks    
+if (isset($_POST['stxt'])) {
+    $stxt = trim($_POST['stxt']);
+}
+
+require_once 'dbh.inc.php';
+
+// Sanitize input using mysqli_real_escape_string
+$stxt = mysqli_real_escape_string($conn, $stxt);
+
+// Use prepared statements to prevent SQL injection
+$sql = "SELECT DISTINCT senRef, noItem, psn, itWgt, itLen, itWid, itHei, itQty, unNum, class, sRisk, pkGr, pkDes
+        FROM `conDets`
+        WHERE CONCAT(ifnull(senRef, ''), ifnull(noItem, ''), ifnull(psn, ''), ifnull(itWgt, ''), ifnull(itLen, ''), ifnull(itWid, ''), ifnull(itHei, ''), ifnull(itQty, ''), ifnull(unNum, ''), ifnull(class, ''), ifnull(sRisk, ''), ifnull(pkGr, ''), ifnull(pkDes, ''))
+        LIKE ? LIMIT 10";
+
+$stmt = mysqli_stmt_init($conn);
+
+if (!mysqli_stmt_prepare($stmt, $sql)) {
+    echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmt);
+    exit();
+}
+
+// Bind parameters
+$searchTerm = "%$stxt%";
+mysqli_stmt_bind_param($stmt, "s", $searchTerm);
+
+// Execute the query
+mysqli_stmt_execute($stmt);
+
+// Get results
+$resultData = mysqli_stmt_get_result($stmt);
+
+// Output results
+if (mysqli_num_rows($resultData) > 0) {
+    while ($row = mysqli_fetch_assoc($resultData)) {
+        // Output results using htmlspecialchars to prevent XSS attacks
+        echo '<div class="frtLne">';
+        foreach ($row as $key => $value) {
+            echo '<div data-marker="' . $key . '" class="frtl bk' . $key . ' ' . $key . '">' . htmlspecialchars($value) . '</div>';
+        }
+        echo '</div>';
+    }
+} 
+
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+
+
+
+
+
+
+
+/*
 //set vars and checks    
 if (isset($_POST['stxt'])) {
     $stxt = trim($_POST['stxt']);
@@ -30,5 +85,5 @@ if (mysqli_num_rows($resultData) > 0){
 
     } 
     
-}
+}*/
 ?>

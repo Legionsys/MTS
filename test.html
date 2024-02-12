@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autocomplete with Server Update</title>
+  <style>
+    /* Add your custom styling here */
+  </style>
+</head>
+<body>
+  <label for="autocompleteInput">Enter Text:</label>
+  <input type="text" id="autocompleteInput">
+
+  <!-- Suggestions container -->
+  <div id="suggestionsContainer"></div>
+
+  <!-- Other input fields to be updated -->
+  <label for="otherField1">Other Field 1:</label>
+  <input type="text" id="otherField1">
+
+  <label for="otherField2">Other Field 2:</label>
+  <input type="text" id="otherField2">
+
+  <!-- Script to handle autocomplete and updates -->
+  <script>
+    // Sample suggestion data (replace with your server-generated suggestions)
+    const suggestionsData = ['Apple', 'Banana', 'Cherry', 'Date', 'Grapes'];
+
+    const autocompleteInput = document.getElementById('autocompleteInput');
+    const suggestionsContainer = document.getElementById('suggestionsContainer');
+    const otherField1 = document.getElementById('otherField1');
+    const otherField2 = document.getElementById('otherField2');
+
+    autocompleteInput.addEventListener('input', handleInput);
+
+    function handleInput() {
+      const inputValue = autocompleteInput.value.trim().toLowerCase();
+      suggestionsContainer.innerHTML = '';
+
+      // Show suggestions after 3 characters
+      if (inputValue.length >= 3) {
+        const filteredSuggestions = suggestionsData.filter(suggestion =>
+          suggestion.toLowerCase().includes(inputValue)
+        );
+
+        // Display suggestions
+        filteredSuggestions.forEach(suggestion => {
+          const suggestionElement = document.createElement('div');
+          suggestionElement.textContent = suggestion;
+          suggestionElement.addEventListener('click', () => handleSuggestionClick(suggestion));
+          suggestionsContainer.appendChild(suggestionElement);
+        });
+      }
+    }
+
+    function handleSuggestionClick(selectedValue) {
+      // Autofill input field
+      autocompleteInput.value = selectedValue;
+
+      // Update other fields (replace with your logic)
+      otherField1.value = `Updated value for ${selectedValue}`;
+      otherField2.value = `Another updated value for ${selectedValue}`;
+
+      // Update server (replace with your server update logic)
+      updateServer();
+    }
+
+    function updateServer() {
+      // Replace with your server update logic (e.g., using fetch or AJAX)
+      console.log('Server updated with new information');
+    }
+
+    // Update individual input fields on leaving the field
+    autocompleteInput.addEventListener('blur', () => updateServerField(autocompleteInput));
+    otherField1.addEventListener('blur', () => updateServerField(otherField1));
+    otherField2.addEventListener('blur', () => updateServerField(otherField2));
+
+    function updateServerField(field) {
+      // Replace with your server update logic for individual fields
+      console.log(`Server updated with new value for ${field.id}: ${field.value}`);
+    }
+  </script>
+</body>
+</html>

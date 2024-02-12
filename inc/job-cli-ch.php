@@ -9,7 +9,8 @@
     };
     require_once 'dbh.inc.php';
     require_once 'jobfunct.inc.php';
-//check if ClientID exists
+
+    //check if ClientID exists
     $cliexist = cliIdexist($conn,$client);
     if ($cliexist === false) {
     //no client entry, add new entry

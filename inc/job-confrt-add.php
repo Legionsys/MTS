@@ -1,4 +1,103 @@
 <?php
+// Set vars and checks
+if (isset($_POST["cnum"])) {
+    $cnum = intval($_POST["cnum"]); // Convert to integer
+}
+require_once 'dbh.inc.php';
+if (isset($_POST['kv'])) {
+    $kv = trim($_POST['kv']);
+    $data = json_decode($kv, true);
+    $dtoc = json_decode($kv, true);
+    // Remove key-value pairs with null values
+    $data = array_filter($data, function ($value) {
+        return $value !== null;
+    });
+    // Retrieve valid column names from the database
+    $sqlColumns = "SHOW COLUMNS FROM conDets;";
+    $resultColumns = mysqli_query($conn, $sqlColumns);
+    if (!$resultColumns) {
+        echo "ERROR: Unable to fetch column names - " . mysqli_error($conn);
+        exit();
+    }
+
+    $validColumns = array();
+    while ($row = mysqli_fetch_assoc($resultColumns)) {
+        $validColumns[] = $row['Field'];
+    }
+    foreach ($data as $key => $value) {
+        if (!in_array($key, $validColumns)) {
+            echo "ERROR: Invalid column name - $key";
+            exit();
+        }
+    }
+}
+
+// Build the dynamic part of the SQL query for columns
+$columns = implode(", ", array_keys($data));
+
+// Build the dynamic part of the SQL query for placeholders
+$placeholders = implode(", ", array_fill(0, count($data), "?"));
+
+// SQL query to insert data
+$sqlInsert = "INSERT INTO conDets (cnID, $columns) VALUES (?, $placeholders);";
+
+$stmtInsert = mysqli_stmt_init($conn);
+if (!mysqli_stmt_prepare($stmtInsert, $sqlInsert)) {
+    echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmtInsert);
+    exit();
+}
+
+// Bind parameters dynamically
+$types = "i" . str_repeat("s", count($data));
+$bindParams = array($stmtInsert, $types, $cnum);
+$bindParams = array_merge($bindParams, array_values($data));
+
+call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+
+// Execute the query
+mysqli_stmt_execute($stmtInsert);
+$itID = mysqli_insert_id($conn);
+if ($itID === 0) {
+    echo "ERROR: Error when trying to add row";
+    exit();
+}
+
+mysqli_stmt_close($stmtInsert);
+
+// SQL query to retrieve inserted data
+$sqlSelect = "SELECT * FROM conDets WHERE itID = ?;";
+$stmtSelect = mysqli_stmt_init($conn);
+if (!mysqli_stmt_prepare($stmtSelect, $sqlSelect)) {
+    echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmtSelect);
+    exit();
+}
+
+// Bind parameter
+mysqli_stmt_bind_param($stmtSelect, "i", $itID);
+
+// Execute the query
+mysqli_stmt_execute($stmtSelect);
+
+// Get result
+$resultSelect = mysqli_stmt_get_result($stmtSelect);
+
+// Check if the retrieved data matches the inserted data
+$updatedData = mysqli_fetch_assoc($resultSelect);
+
+// Return inserted data in JSON format
+echo json_encode($updatedData);
+
+mysqli_stmt_close($stmtSelect);
+mysqli_close($conn);
+
+
+
+
+
+
+
+
+/*
 //set vars and checks    
 if (isset($_POST["cnum"])) {
     $cnum = trim($_POST["cnum"]);
@@ -73,24 +172,11 @@ mysqli_stmt_bind_param($stmt, "i", $resultData);
 mysqli_stmt_execute($stmt);
 $resultData = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($resultData) > 0){
-    /*$titm = 0;
-    $twgt = 0;
-    $tcub = 0;
 
-    while ($row = mysqli_fetch_assoc($resultData)) {
-        echo '<tr data-id="'.$row['itID'].'"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef">'.$row['senRef'].'</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem">'.$row['noItem'].'</td>';
-        echo '<td contenteditable="true" id="psn" data-col="psn" class="psn">'.$row['psn'].'</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">'.$row['itWgt'].'</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen">'.$row['itLen'].'</td>';
-        echo '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">'.$row['itWid'].'</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei">'.$row['itHei'].'</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty">'.$row['itQty'].'</td>';
-        echo '<td contenteditable="true" id="unNum" data-col="unNum" class="unNum">'.$row['unNum'].'</td><td contenteditable="true" id="class" data-col="class" class="class">'.$row['class'].'</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">'.$row['sRisk'].'</td>';
-        echo '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">'.$row['pkGr'].'</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">'.$row['pkDes'].'</td><td class="cn_ctrls" data-col="cmd">';
-        echo '<div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
-
-
-    }*/
     while ($row = mysqli_fetch_assoc($resultData)) {
         $emparray[] = $row;
     }
     echo json_encode($emparray); 
 }
-mysqli_stmt_close($stmt);
+mysqli_stmt_close($stmt);*/
 ?>

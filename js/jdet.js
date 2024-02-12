@@ -16,26 +16,25 @@ var jbn;
 var upd;
 var actcn;
 var pauseReq = false;
+let draggedItem = null;
 
-
-
-function number_format(number, decimals, dec_point, thousands_sep) {
+function numberFormat(number, decimals, decPoint, thousandsSep) {
   number = Number(number).toFixed(decimals);
 
   var nstr = number.toString();
   nstr += '';
   var x = nstr.split('.');
   var x1 = x[0];
-  var x2 = x.length > 1 ? dec_point + x[1] : '';
+  var x2 = x.length > 1 ? decPoint + x[1] : '';
   var rgx = /(\d+)(\d{3})/;
 
   while (rgx.test(x1))
-    x1 = x1.replace(rgx, '$1' + thousands_sep + '$2');
+    x1 = x1.replace(rgx, '$1' + thousandsSep + '$2');
 
   return x1 + x2;
 }
 
-function namt_tot() {
+function namtTot() {
   var tots = parseFloat(0);
 
   var elements = document.querySelectorAll('#notebody > .tr > .namt');
@@ -53,11 +52,12 @@ function namt_tot() {
 
   var aheadElement = document.getElementById('ahead');
   if (tots !== parseFloat(0)) {
-    aheadElement.innerHTML = number_format(tots, 2, '.', ',');
+    aheadElement.innerHTML = numberFormat(tots, 2, '.', ',');
   } else {
     aheadElement.innerHTML = 'Amount';
   }
 }
+
 function getSearchParams(k) {
   var p = {};
   location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, key, value) {
@@ -65,23 +65,26 @@ function getSearchParams(k) {
   });
   return k ? p[k] : p;
 }
+
 function firstpop() {
-  if (jbn !== null && jbn !== "0") {
-    var jobn = "00000" + jbn;
+  if (typeof jbn === 'number' && jbn !== 0) {   //jbn !== null && jbn !== "0") {
+    var jobn = "000000" + jbn;
     document.getElementById("jbnum").innerHTML = jbn;
     document.getElementById("jobnum").innerHTML = "Job - " + jobn.substring(jobn.length - 5);
+    upd = "y";
+    fr = 'Y';
+    jbdu();
+    jbsu();
+    jbnot();
+    jbcon();
+    confrt('');
+    fr = '';
   } else {
     document.getElementById("jbnum").innerHTML = "New Job";
   }
-  upd = "y";
-  fr = 'Y';
-  jbdu();
-  jbsu();
-  jbnot();
-  jbcon();
-  confrt('');
-  fr = '';
+
 }
+
 function jsupd() {
   jdets.forEach(function (val) {
     Object.entries(val).forEach(function ([k, v]) {
@@ -97,52 +100,101 @@ function jsupd() {
   });
 }
 function chknull(value) {
-  // return value;
+  if (value === null || value === undefined || (typeof value === 'object' && Object.keys(value).length === 0)) {
+    return '';
+  }
+  return value;
+}
+
+
+function chknull_old(value) {
   if (typeof value === 'number' && !isNaN(value)) {
     return value;
   }
-  if (value !== null) {
+  if (value !== null && typeof value !== 'undefined') {
     return value;
   }
-  if (typeof value === 'object' && Object.keys(value).length === 0) {
+  if (typeof value === 'object' && value !== null && Object.keys(value).length === 0) {
     return '';
   } else {
     return value;
   }
 }
 function jsupupd() {
+  const fragment = document.createDocumentFragment(); // Create a document fragment
+
+  sups.forEach(function (val) {
+    const jsID = chknull(val.jsID);
+    const jsName = chknull(val.jsName);
+    const jsType = chknull(val.jsType);
+    const jsDesc = chknull(val.jsDesc);
+    const jsEst = chknull(val.jsEst);
+    const jsInvRec = chknull(val.jsInvRec);
+    const jsNotes = chknull(val.jsNotes);
+
+    const txt = `
+      <div class="supln" data-id="${jsID}">
+        <div contenteditable="true" data-col="jsName" class="supSu lsup">${jsName}</div>
+        <div contenteditable="true" data-col="jsType" class="supTy lsup">${jsType}</div>
+        <div contenteditable="true" data-col="jsDesc" class="supDe lsup">${jsDesc}</div>
+        <div contenteditable="true" data-col="jsEst" class="supEc lsup">$${numberFormat(jsEst, 2, '.', ',')}</div>
+        <div contenteditable="true" data-col="jsInvRec" class="supIr lsup">${jsInvRec}</div>
+        <div contenteditable="true" data-col="jsNotes" class="supNo lsup">${jsNotes}</div>
+        <div class="suprm td" data-id="${jsID}">Remove Supplier</div>
+      </div>
+    `;
+
+    fragment.appendChild(document.createRange().createContextualFragment(txt)); // Append the HTML to the fragment
+  });
+
+  document.getElementById('supbody').appendChild(fragment); // Append the fragment to the DOM
+}
+
+
+
+function jsupupd_old() {
   sups.forEach(function (val) {
     var txt = '';
     txt += '<div class="supln" data-id="' + chknull(val.jsID) + '">';
     txt += '<div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div>';
     txt += '<div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div>';
     txt += '<div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div>';
-    txt += '<div contenteditable="true" data-col="jsEst" class="supEc lsup">$' + number_format(chknull(val.jsEst), 2, '.', ',') + '</div>';
+    txt += '<div contenteditable="true" data-col="jsEst" class="supEc lsup">$' + numberFormat(chknull(val.jsEst), 2, '.', ',') + '</div>';
     txt += '<div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div>';
     txt += '<div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div>';
     txt += '<div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div>';
     txt += '</div>';
+
     document.getElementById('supbody').insertAdjacentHTML('beforeend', txt);
   });
 }
 function jnotupd() {
-  var notebody = document.getElementById('notebody');
   notebody.innerHTML = '';
 
   notes.forEach(function (val) {
-    var txt = '';
-    txt += '<div class="tr" data-id="' + chknull(val.jnID) + '">';
-    txt += '<div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div>';
-    txt += '<div contenteditable="true" data-col="jnAmt" class="namt td">' + number_format(chknull(val.jnAmt), 2, '.', ',') + '</div>';
+    const item = document.createElement('div');
+    item.classList.add('draggable-item');
+    item.classList.add('tr');
+    item.draggable = true;
+    item.setAttribute('ondragstart', 'dragStart(event)');
+    item.setAttribute('data-id', chknull(val.jnID));
+    item.setAttribute('data-ord', chknull(val.jnOrd));
+    item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
+    notebody.appendChild(item);
+    /*txt += '<div class="tr draggable-item" data-id="' + chknull(val.jnID) + '" draggable="true" ondragstart="dragStart(event)">';
+    //txt += '<div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div>';
+    txt += '<div data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div>';
+    //txt += '<div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div>';
+    txt += '<div data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div>';
     txt += '<div class="ntra td">';
     txt += '<div class="cmd_img" data-id="' + chknull(val.jnID) + '">';
     txt += '<img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg">';
     txt += '</div></div></div>';
 
-    notebody.insertAdjacentHTML('beforeend', txt);
+    notebody.insertAdjacentHTML('beforeend', txt);*/
   });
 
-  namt_tot();
+  namtTot();
 }
 function jconupd() {
   var contlst = document.getElementById('contlst');
@@ -342,7 +394,48 @@ function confrt(cnn) {
   xhr.send("jbn=" + jbn + "&indi=" + ind);
 }
 function conDetUpd() {
-  var tQty = 0;
+    var tQty = 0;
+    var tWgt = 0;
+    var tM3 = 0;
+  
+    document.querySelectorAll('#cnt_body tr').forEach(function (row) {
+      if (row.getAttribute("data-id") !== "no") {
+        var len = parseCell(row, 'itLen');
+        var wid = parseCell(row, 'itWid');
+        var hei = parseCell(row, 'itHei');
+        var qty = parseCell(row, 'itQty');
+        var noItemValue = parseCell(row, 'noItem');
+        var itWgtValue = parseCell(row, 'itWgt');
+  
+        // Check if values are numeric before adding
+        if (!isNaN(noItemValue)) {
+          tQty += parseFloat(noItemValue);
+        }
+        if (!isNaN(itWgtValue)) {
+          tWgt += parseFloat(itWgtValue);
+        }
+  
+        // Check if all dimension values are numeric before adding
+        if (!isNaN(len) && !isNaN(wid) && !isNaN(hei) && !isNaN(qty)) {
+          tM3 += len * wid * hei * qty / 1000000;
+        }
+      }
+    });
+  
+    document.getElementById('cn_titm').innerHTML = numberFormat(tQty, 0, '.', ',');
+    document.getElementById('cn_twgt').innerHTML = numberFormat(tWgt, 1, '.', ',') + " kg";
+    document.getElementById('cn_m3').innerHTML = numberFormat(tM3, 3, '.', ',') + " m3";
+
+
+
+
+
+
+
+
+
+
+  /*var tQty = 0;
   var tWgt = 0;
   var tM3 = 0;
   var len = 0;
@@ -384,9 +477,14 @@ function conDetUpd() {
     }
   });
 
-  document.getElementById('cn_titm').innerHTML = number_format(tQty, 0, '.', ',');
-  document.getElementById('cn_twgt').innerHTML = number_format(tWgt, 1, '.', ',') + " kg";
-  document.getElementById('cn_m3').innerHTML = number_format(tM3, 3, '.', ',') + " m3";
+  document.getElementById('cn_titm').innerHTML = numberFormat(tQty, 0, '.', ',');
+  document.getElementById('cn_twgt').innerHTML = numberFormat(tWgt, 1, '.', ',') + " kg";
+  document.getElementById('cn_m3').innerHTML = numberFormat(tM3, 3, '.', ',') + " m3";*/
+}
+function parseCell(row, dataCol) {
+  var cell = row.querySelector(`td[data-col="${dataCol}"]`);
+  var cellValue = cell ? parseFloat(cell.innerHTML.replace(/,/g, '')) : NaN;
+  return isNaN(cellValue) ? 0 : cellValue;
 }
 function cnotUpd() {
   if (jbn === "" || jbn === 0) {
@@ -457,18 +555,19 @@ function ddPop() {
   clrDd();
   var stxt;
 
-  if ($("#dd").data('marker').includes('_')) {
-    stxt = $("#" + $("#dd").data('marker') + "name").val();
+  if (document.getElementById("dd").dataset.marker.includes('_')) {
+    stxt = document.getElementById(document.getElementById("dd").dataset.marker + "name").value;
   } else {
-    stxt = $("#" + $("#dd").data('marker') + "nam").val();
+    stxt = document.getElementById(document.getElementById("dd").dataset.marker + "nam").value;
   }
 
+
   if (stxt.length < 3) {
-    $(".ddbrtxt").html("Please enter more letters");
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
+    document.querySelector(".load-3").classList.remove("hideme");
   } else {
-    $(".ddbrtxt").html("Getting Addresses");
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Getting Addresses";
+    document.querySelector(".load-3").classList.remove("hideme");
 
     // Get data from Server
     fetch("/inc/addbklst.php", {
@@ -487,8 +586,8 @@ function ddPop() {
       console.log("Error: ddpop");
     });
 
-    $(".ddbrtxt").html("Addresses Book Suggestions");
-    $(".load-3").addClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
+    document.querySelector(".load-3").classList.add("hideme");
   }
 }
 function ddConPop(val) {
@@ -496,23 +595,23 @@ function ddConPop(val) {
   var stxt = val;
 
   if (stxt.length < 2) {
-    $(".ddbrtxt").html("Please enter more letters");
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
+    document.querySelector(".load-3").classList.remove("hideme");
   } else {
     var endpoint = '';
-    var marker = $("#dd").data('marker');
+    var marker = document.getElementById("dd").dataset.marker;
 
     if (marker == 'Jcont') {
       endpoint = "/inc/contbklst.php";
-      $(".ddbrtxt").html("Getting Contacts");
+      document.querySelector(".ddbrtxt").innerHTML = "Getting Contacts";
     } else if (marker == 'client') {
       endpoint = "/inc/clientbklst.php";
-      $(".ddbrtxt").html("Getting Clients");
+      document.querySelector(".ddbrtxt").innerHTML = "Getting Clients";
     } else {
-      $(".ddbrtxt").html("Contacting Server");
+      document.querySelector(".ddbrtxt").innerHTML = "Contacting Server";
     }
 
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".load-3").classList.remove("hideme");
 
     // Get data from Server
     fetch(endpoint, {
@@ -528,33 +627,67 @@ function ddConPop(val) {
     })
     .catch(error => {
       console.log("Error:", error);
+    })
+    .finally(() => {
+      document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
+      document.querySelector(".load-3").classList.add("hideme");
     });
-
-    $(".ddbrtxt").html("Addresses Book Suggestions");
-    $(".load-3").addClass("hideme");
   }
 }
-function cnDetUpd(updstr, cno, upd) {
+function convertToObject(data) {
+  let result;
+
+  // Check if it's a Map
+  if (data instanceof Map) {
+    result = {};
+    data.forEach((value, key) => {
+      result[key] = value;
+    });
+  }
+  // Check if it's a JSON string
+  else if (typeof data === 'string') {
+    try {
+      result = JSON.parse(data);
+    } catch (error) {
+      // Handle parsing error
+      console.error('Error parsing JSON string:', error);
+      result = null;
+    }
+  }
+  // Check if it's an Object
+  else if (data !== null && typeof data === 'object' && !Array.isArray(data)) {
+    result = data;
+  }
+  // Handle other cases or return null for unsupported types
+  else {
+    console.error('Unsupported data type:', data);
+    result = null;
+  }
+
+  return result;
+}
+function cnDetUpd(cno, upd) {
+  console.log('cndetupd');
+  const nupd = convertToObject(upd);
   fetch("/inc/job-conn-upd.php", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: 'updstr=' + encodeURIComponent(updstr) + '&cno=' + encodeURIComponent(cno),
+    body: 'updstr=' + encodeURIComponent(JSON.stringify(nupd)) + '&cno=' + encodeURIComponent(cno),
   })
   .then(response => response.text())
   .then((data, status) => {
-    if (status === 'success') {
-      var oin = -1;
+    if (data === 'success') {
 
+      var oin = -1;
       ocnot.forEach((val, i) => {
         if (val.cnID === cno) {
           oin = i;
           return false;
         }
       });
-
-      for (const [key, value] of Object.entries(upd)) {
+      for (const [key, value] of Object.entries(nupd)) {
         const element = document.getElementById(key);
 
         element.classList.remove('pending');
@@ -571,14 +704,16 @@ function cnDetUpd(updstr, cno, upd) {
       }
     } else {
       alert('Error in updating');
-      console.log('Variables - ' + updstr + ' : ' + cno);
+      console.log('Variables - ' + cno);
+      console.log(upd);
       console.log('Error: ' + response.responseText);
     }
   })
   .catch(error => {
     alert('Error in updating');
     console.log('Error: ' + error);
-    console.log('Variables - ' + updstr + ' : ' + cno);
+    console.log('Variables - ' + cno);
+    console.log(upd);
   });
 }
 function ddFrtPop(val) {
@@ -586,11 +721,11 @@ function ddFrtPop(val) {
   var stxt = val;
 
   if (stxt.length < 3) {
-    $(".ddbrtxt").html("Please enter more letters");
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
+    document.querySelector(".load-3").classList.remove("hideme");
   } else {
-    $(".ddbrtxt").html("Getting Suggestions");
-    $(".load-3").removeClass("hideme");
+    document.querySelector(".ddbrtxt").innerHTML = "Getting Suggestions";
+    document.querySelector(".load-3").classList.remove("hideme");
 
     // Get data from Server using fetch API
     fetch("/inc/frtbklst.php", {
@@ -602,14 +737,14 @@ function ddFrtPop(val) {
     })
     .then(response => response.text())
     .then(data => {
-      $("#slist").html(data);
+      document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
       console.log("Error: " + error);
     })
     .finally(() => {
-      $(".ddbrtxt").html("Freight Suggestions");
-      $(".load-3").addClass("hideme");
+      document.querySelector(".ddbrtxt").innerHTML = "Freight Suggestions";
+      document.querySelector(".load-3").classList.add("hideme");
     });
   }
 }
@@ -631,7 +766,6 @@ function frtload(cno) {
   var oind = -1;
   var cntBody = document.getElementById('cnt_body');
   cntBody.innerHTML = '';
-
   frt.forEach(function (val) {
     if (val.cnID == cno) {
       oind = -1;
@@ -641,24 +775,23 @@ function frtload(cno) {
           return false;
         }
       });
-
       var row = document.createElement('tr');
       row.setAttribute('data-id', val.itID);
-      row.innerHTML = '<td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + val.senRef + '</td>' +
-                      '<td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + val.noItem + '</td>' +
-                      '<td contenteditable="true" id="psn" data-col="psn" class="psn">' + val.psn + '</td>' +
-                      '<td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + val.itWgt + '</td>' +
-                      '<td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + val.itLen + '</td>' +
-                      '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + val.itWid + '</td>' +
-                      '<td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + val.itHei + '</td>' +
-                      '<td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + val.itQty + '</td>' +
-                      '<td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + val.unNum + '</td>' +
-                      '<td contenteditable="true" id="class" data-col="class" class="class">' + val.class + '</td>' +
-                      '<td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + val.sRisk + '</td>' +
-                      '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + val.pkGr + '</td>' +
-                      '<td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + val.pkDes + '</td>' +
-                      '<td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>' +
-                      '<div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
+      row.innerHTML = '<td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + (val.senRef !== null ? val.senRef : '') + '</td>' +
+                      '<td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + (val.noItem !== null ? val.noItem : '') + '</td>' +
+                      '<td contenteditable="true" id="psn" data-col="psn" class="psn">' + (val.psn !== null ? val.psn : '') + '</td>' +
+                      '<td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + (val.itWgt !== null ? val.itWgt : '') + '</td>' +
+                      '<td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + (val.itLen !== null ? val.itLen : '') + '</td>' +
+                      '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + (val.itWid !== null ? val.itWid : '') + '</td>' +
+                      '<td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + (val.itHei !== null ? val.itHei : '') + '</td>' +
+                      '<td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + (val.itQty !== null ? val.itQty : '') + '</td>' +
+                      '<td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + (val.unNum !== null ? val.unNum : '') + '</td>' +
+                      '<td contenteditable="true" id="class" data-col="class" class="class">' + (val.class !== null ? val.class : '') + '</td>' +
+                      '<td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + (val.sRisk !== null ? val.sRisk : '') + '</td>' +
+                      '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + (val.pkGr !== null ? val.pkGr : '') + '</td>' +
+                      '<td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + (val.pkDes !== null ? val.pkDes : '') + '</td>' +
+                      '<td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
+                      //'<div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
       cntBody.appendChild(row);
 
       var rows = cntBody.querySelectorAll('tr[data-id="' + val.itID + '"]');
@@ -667,8 +800,8 @@ function frtload(cno) {
         cells.forEach(function (cell) {
           if (oind == -1) {
             cell.classList.add('updated');
-          } else {
-            if (cell.innerHTML != ofrt[oind][cell.getAttribute('data-col')]) {
+          } else { //     (val.noItem !== null ? val.noItem : '')
+            if (cell.innerHTML != (ofrt[oind][cell.getAttribute('data-col')] !== null ? ofrt[oind][cell.getAttribute('data-col')] : '')) {
               cell.classList.add('updated');
             }
           }
@@ -680,6 +813,7 @@ function frtload(cno) {
   if (pauseReq) {
     pauseReq = false;
   }
+  conDetUpd();
 }
 function ccntLoad(cno) {
   var oin = -1;
@@ -697,44 +831,164 @@ function ccntLoad(cno) {
     if (val.cnID == cno) {
       actcn = i;
       for (var k in val) {
+        if (val.hasOwnProperty(k)) {
         if (k == "Pb") {
-          document.getElementById(val[k]).checked = true;
+          if (val[k] != null) {
+            document.getElementById(val[k]).checked = true;
+          }
+        } else if (k == "jobID") {
+
         } else {
           var element = document.getElementById(k);
-          element.value = val[k];
-          element.setAttribute('value', chknull(val[k]));
-
-          if (oin == -1) {
-            element.classList.add("updated");
-            element.classList.remove("pending");
-          } else {
-            if (ocnot[oin][k] != val[k]) {
+          if (element) {
+            element.value = (chknull(val[k]) !== null ? chknull(val[k]) : '');
+            element.setAttribute('value', (chknull(val[k]) !== null ? chknull(val[k]) : ''));
+            if (oin == -1) {
               element.classList.add("updated");
               element.classList.remove("pending");
             } else {
-              element.classList.remove("pending");
-              element.classList.remove("updated");
+              if (ocnot[oin][k] != val[k]) {
+                element.classList.add("updated");
+                element.classList.remove("pending");
+              } else {
+                element.classList.remove("pending");
+                element.classList.remove("updated");
+              }
             }
-          }
+        } else {
+          //console.log('Element with ID ' + k + ' not found!');
+        }
         }
       }
+    }
     }
   });
 
   frtload(cno);
   document.getElementById('boscr').classList.remove('hideme');
 }
+//Dragging Note items
+function dragStart(event) {
+  // Find the closest ancestor with the class 'draggable-item'
+  draggedItem = event.target.closest('.draggable-item');
+
+  if (draggedItem) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/html', draggedItem.innerHTML);
+
+    // Set a custom drag image
+    const dragImage = document.createElement('div');
+    dragImage.classList.add('custom-drag-image');
+
+    // Copy styles from the original .draggable-item to the dragImage
+    const computedStyles = window.getComputedStyle(draggedItem);
+    for (const prop of computedStyles) {
+      dragImage.style[prop] = computedStyles[prop];
+    }
+
+    dragImage.innerHTML = draggedItem.innerHTML;
+
+    document.body.appendChild(dragImage);
+    event.dataTransfer.setDragImage(dragImage, 0, 0);
+
+    // Remove the drag image element after the drag operation
+    setTimeout(() => {
+      document.body.removeChild(dragImage);
+    }, 0);
+  }
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+}
+function drop(event) {
+  event.preventDefault();
+  const target = event.target.closest('.draggable-item');
+  if (draggedItem && notebody) {
+    if (target) {
+      notebody.insertBefore(draggedItem, target);
+    } else {
+      notebody.appendChild(draggedItem);
+    }
+    draggedItem = null;
+    logOrderChange();
+  }
+}
+function logOrderChange() {
+  const items = document.querySelectorAll('.draggable-item');
+  const newOrder = Array.from(items).map(item => item.getAttribute('data-id')).join('|');
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/inc/job-not-ordch.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        console.log("Order change response:", xhr.responseText);
+      } else {
+        console.error("Error in upddating reordering:", xhr.status, xhr.responseText);
+      }
+    }
+  };
+
+  xhr.onerror = function () {
+    console.error("Error in making the request.");
+  };
+
+  const requestBody = `nord=${newOrder}&job=${jbn}`;
+  xhr.send(requestBody);
+
+  console.log('Order Changed:', newOrder);
+}
+
+function logOrderChange_old() {
+  const items = document.querySelectorAll('.draggable-item');
+  const newOrder = Array.from(items).map(item => item.getAttribute('data-id')).join('|');
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/inc/job-not-ordch.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        var data = xhr.responseText;
+        console.log("sup response");
+        console.log(data);
+      } else {
+        console.log("Failure Notes - " + jbn);
+        console.log("Error: " + xhr.responseText);
+        console.log(xhr);
+      }
+    }
+  };
+
+  xhr.onerror = function () {
+    console.log("Error in making the request.");
+  };
+
+  xhr.send("nord=" + newOrder + "&job=" + jbn);
+  console.log("nord=" + newOrder + "&job=" + jbn);
+  console.log('Order Changed:', newOrder);
+}
+
+function handleClick(event) {
+  // Handle click on the drag handle
+  event.stopPropagation();
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
   window.addEventListener('popstate', function(event) {
     alert('pop');
   });
-  
+  const notebody = document.getElementById('notebody');
   actcn = null;
   climkr = 0;
-  jbn = getSearchParams("job_no");
+  //jbn = 0;
+  jbn = Number(getSearchParams("job_no")) || 0;
   firstpop();
-  namt_tot();
+  namtTot();
   cnotUpd();
   updchkr();
   document.getElementById("slist").addEventListener('mouseenter', function (event) {
@@ -748,13 +1002,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
   document.getElementById("slist").addEventListener('click', function (event) {
-    if (event.target.classList.contains('contcard')) {
+    var target = event.target;
+    if (event.target.classList.contains('contcard') || target.parentElement.classList.contains("contcard")) {
+      if (!target.classList.contains("contcard")) {
+        target = event.target.parentElement;
+      }
       climkr = 0;
       var updstr = "";
       var cno = document.getElementById("cnID").value;
       var mrkr = document.getElementById("dd").getAttribute('data-marker');
       var card = new Map();
-  
+      var sncrd = new Map()
+      
       if (mrkr == 'Jcont') {
         document.getElementById("cliContact").value = event.target.querySelector(".lstNam").innerHTML;
         document.getElementById("cliContPh").value = event.target.querySelector(".lstPh").innerHTML;
@@ -777,11 +1036,11 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Error:', error);
         });
       } else if (mrkr == 'client') {
-        document.getElementById("client").value = event.target.querySelector(".lstcli").innerHTML;
-        document.getElementById("cliContact").value = event.target.querySelector(".lstcont").innerHTML;
-        document.getElementById("cliContPh").value = event.target.querySelector(".lstcph").innerHTML;
-        document.getElementById("cliContEm").value = event.target.querySelector(".lstctc").innerHTML;
-        document.getElementById("cliContEm2").value = event.target.querySelector(".lstctc2").innerHTML;
+        document.getElementById("client").value = target.querySelector(".lstcli").innerHTML;
+        document.getElementById("cliContact").value = target.querySelector(".lstcont").innerHTML;
+        document.getElementById("cliContPh").value = target.querySelector(".lstcph").innerHTML;
+        document.getElementById("cliContEm").value = target.querySelector(".lstctc").innerHTML;
+        document.getElementById("cliContEm2").value = target.querySelector(".lstctc2").innerHTML;
   
         document.getElementById("client").classList.add("pending");
         document.getElementById("cliContact").classList.add("pending");
@@ -791,13 +1050,18 @@ document.addEventListener('DOMContentLoaded', function () {
   
         updchkr();
   
-        card.set("client", event.target.querySelector(".lstcli").innerHTML);
-        card.set("cliContact", event.target.querySelector(".lstcont").innerHTML);
-        card.set("cliContPh", event.target.querySelector(".lstcph").innerHTML);
-        card.set("cliContEm", event.target.querySelector(".lstctc").innerHTML);
-        card.set("cliContEm2", event.target.querySelector(".lstctc2").innerHTML);
-  
-        var client = event.target.querySelector(".lstcli").innerHTML.replace(/'/g, "''");
+        card.set("client", target.querySelector(".lstcli").innerHTML);
+        card.set("cliContact", target.querySelector(".lstcont").innerHTML);
+        card.set("cliContPh", target.querySelector(".lstcph").innerHTML);
+        card.set("cliContEm", target.querySelector(".lstctc").innerHTML);
+        card.set("cliContEm2", target.querySelector(".lstctc2").innerHTML);
+
+        sncrd.set("contd", target.querySelector(".lstcont").innerHTML);
+        sncrd.set("contPh", target.querySelector(".lstcph").innerHTML);
+        sncrd.set("contEm", target.querySelector(".lstctc").innerHTML);
+        sncrd.set("contEm2", target.querySelector(".lstctc2").innerHTML);
+        
+        var client = target.querySelector(".lstcli").innerHTML.replace(/'/g, "''");
         fetch("/inc/job-cli-ch.php", {
           method: 'POST',
           headers: {
@@ -805,25 +1069,33 @@ document.addEventListener('DOMContentLoaded', function () {
           },
           body: "client=" + client + "&jobno=" + jbn,
         }).then(response => response.text()).then(data => {
+
           document.getElementById("jbnum").innerHTML = data;
-          jbn = data;
+          jbn = Number(data) || 0;
           insertJob = ("000000" + data).slice(-5);
+          var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?job_no=' + jbn;
+
+          // Update the URL without reloading the page
+          window.history.pushState({ path: newurl }, '', newurl);
+
           document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
-  
           fetch("/inc/job-dets-upd.php", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: "updstr=" + updstr + "&cno=" + jbn,
+            //body: "updstr=" + updstr + "&cno=" + jbn,
+            body: "updstr=" + JSON.stringify(Object.fromEntries(sncrd)) + "&cno=" + jbn,
           }).then(response => response.text()).then(data => {
-            if (status == "success") {
+            if (data == "success") {
               for (let [key, value] of card) {
-                document.getElementById(key + ".pending").classList.remove("pending");
+                document.getElementById(key).classList.remove("pending");
                 document.getElementById(key).value = value;
                 document.getElementById(key).classList.add("updated");
               }
               updchkr();
+            } else {
+              alert(data);
             }
           }).catch(error => {
             console.error('Error:', error);
@@ -831,11 +1103,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(error => {
           console.error('Error:', error);
         });
-  
-        updstr += 'contd="' + event.target.querySelector(".lstcont").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contPh="' + event.target.querySelector(".lstcph").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contEm="' + event.target.querySelector(".lstctc").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contEm2="' + event.target.querySelector(".lstctc2").innerHTML.replace(/'/g, "''") + '"';
+        
+        updstr += 'contd="' + target.querySelector(".lstcont").innerHTML.replace(/'/g, "''") + '",';
+        updstr += 'contPh="' + target.querySelector(".lstcph").innerHTML.replace(/'/g, "''") + '",';
+        updstr += 'contEm="' + target.querySelector(".lstctc").innerHTML.replace(/'/g, "''") + '",';
+        updstr += 'contEm2="' + target.querySelector(".lstctc2").innerHTML.replace(/'/g, "''") + '"';
         updstr = updstr.replace('=""', '=NULL');
       } else {
         document.getElementById(mrkr + "Ctc").value = event.target.querySelector(".lstNam").innerHTML;
@@ -861,14 +1133,128 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error:', error);
           });
         } else {
-          cnDetUpd(updstr, cno, card);
+          cnDetUpd(cno, card);
         }
       }
   
       document.getElementById("dd").removeAttribute('marker');
       document.getElementById("dd").classList.add("hideme");
       clrDd();
+    } else if (!target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
+      event.stopPropagation();
+      if (!target.classList.contains("addcard")) {
+        target = event.target.parentElement;
+      }
+      var updstr = "";
+      var cno = document.getElementById("cnID").value;
+      var fld = "";
+      var chg = "";
+      var mrkr = document.getElementById("dd").dataset.marker;
+      var crd = new Map();
+
+      Array.from(target.children).forEach(function (child) {
+          if (!child.classList.contains('add_trash')) {
+              fld = mrkr + child.classList[0];
+              chg = child.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+              document.getElementById(fld).value = chg;
+              document.getElementById(fld).classList.add("pending");
+              document.getElementById(fld).classList.remove("updated");
+              updchkr();
+              crd.set(fld, chg);
+
+              //if (chg === "") {
+                  //updstr += fld + "=Null,";
+              //} else {
+                  updstr += fld + "='" + chg.replace(/\'/g, "''") + "',";
+              //}
+          }
+      });
+
+      updstr = updstr.substring(0, (updstr.length - 1));
+      if (mrkr === 'd' || mrkr === 'c') {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/inc/job-dets-upd.php", true);
+          xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+          xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                  console.log(xhr.responseText);
+                  if (xhr.responseText === "success") {
+                      crd.forEach(function (value, key) {
+                          document.getElementById(key).value = value;
+                          document.getElementById(key).classList.add("updated");
+                          document.getElementById(key).classList.remove("pending");
+                      });
+                      updchkr();
+                  }
+              }
+          };
+          xhr.send("updstr=" + JSON.stringify(Object.fromEntries(crd)) + "&cno=" + encodeURIComponent(jbn));
+      } else {
+          cnDetUpd(cno, crd);
+      }
+
+      document.getElementById("dd").removeAttribute('marker');
+      document.getElementById("dd").classList.add("hideme");
+      clrDd();
+    } else if (target.classList.contains("img_trash")) {
+    event.stopPropagation();
+
+    var addCard = target.parentElement.parentElement;
+    var adBuild = {
+        nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        add1: addCard.querySelector(".add1").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        add2: addCard.querySelector(".add2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        add3: addCard.querySelector(".add3").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        st: addCard.querySelector(".st").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        pc: addCard.querySelector(".pc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        Ctc: addCard.querySelector(".Ctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+        Ph: addCard.querySelector(".Ph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+    };
+
+    var senBuild = JSON.stringify(adBuild);
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            if (xhr.responseText.indexOf('Error') > -1) {
+                alert('Address Card Removal Error');
+            } else {
+                addCard.remove();
+            }
+        }
+    };
+
+    xhr.open("POST", "/inc/adrem.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(senBuild);
+    } else if (target.classList.contains("frtLne") || target.parentElement.classList.contains("frtLne")) {
+      //fix this one
+      event.stopPropagation();
+      if (!target.classList.contains("frtLne") && target.parentElement.classList.contains("frtLne")) {
+        target = target.parentElement;
+      }
+      var fld = "";
+      var chg = "";
+      Array.from(target.childNodes).forEach(function (frtLne) {
+          //console.log("FRTLNE");
+          fld = frtLne.dataset.marker;
+          chg = frtLne.innerHTML;
+          document.getElementById("add" + fld).innerHTML = chg;
+      });
+      document.getElementById("dd").removeAttribute('marker');
+      document.getElementById("dd").classList.add("hideme");
+      clrDd();
     }
+
+
+
+
+
+
+
+
+
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
@@ -881,7 +1267,7 @@ document.addEventListener('DOMContentLoaded', function () {
         body: "client=" + client + "&jobno=" + jbn,
       }).then(response => response.text()).then(data => {
         document.getElementById("jbnum").innerHTML = data;
-        jbn = data;
+        jbn = Number(data) || 0;
         insertJob = ("000000" + data).slice(-5);
         document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
       }).catch(error => {
@@ -895,6 +1281,7 @@ document.addEventListener('DOMContentLoaded', function () {
       climkr = 0;
     }
   });
+  
   document.querySelectorAll(".j_det_info").forEach(function (element) {
     element.addEventListener('change', function () {
       var ent = element.value;
@@ -908,7 +1295,8 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         body: "det=" + field + "&upd=" + ent + "&jobno=" + jbn,
       }).then(response => response.text()).then(function (data) {
-        if (data === 'success') {
+        console.log(data);
+        if (data.slice(0,7) === 'success') {
           document.getElementById(fldId).value = ent;
           document.getElementById(fldId).classList.remove("pending");
           document.getElementById(fldId).classList.add("updated");
@@ -919,6 +1307,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+  
   //job status toggles
   document.querySelectorAll(".chkbx").forEach(function (checkbox) {
     checkbox.addEventListener('change', function () {
@@ -954,9 +1343,11 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         body: "col=" + col + "&val=" + val + "&jno=" + jbn,
       }).then(response => response.text()).then(function (data) {
+        if (data.slice(0,7) === 'success') {
         document.getElementById(did).setAttribute("value", val);
-        document.getElementById(did + ".pending").classList.remove("pending");
-  
+        if (document.getElementById(did).classList.contains("pending")) {
+          document.getElementById(did).classList.remove("pending");
+        }
         jdets.forEach(function (val) {
           Object.entries(val).forEach(function ([k, v]) {
             if (k === did) {
@@ -980,6 +1371,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
   
         updchkr();
+      } else {
+        alert("Error in updating: " + data);
+      }
       }).catch(function (error) {
         console.error('Error:', error);
       });
@@ -996,10 +1390,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   
     input.addEventListener('keyup', function () {
+      var lmnt = document.getElementById(input.id);
       if (input.value === input.getAttribute("value")) {
-        document.getElementById(input.id + ".pending").classList.remove("pending");
+        if (lmnt.classList.contains("pending")){
+          document.getElementById(input.id).classList.remove("pending");
+        }
       } else {
-        document.getElementById(input.id + ".updated").classList.remove("updated");
+        if (lmnt.classList.contains("updated")){
+          document.getElementById(input.id).classList.remove("updated");
+        }
         input.classList.add("pending");
       }
   
@@ -1025,10 +1424,20 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: "txt=" + nnote + "&amt=" + namt + "&jobno=" + jbn,
           }).then(response => response.text()).then(function (data) {
-            document.getElementById('notebody').insertAdjacentHTML('beforeend', data);
+            nnote = JSON.parse(data);
+            notes.push(nnote);
+            const item = document.createElement('div');
+            item.classList.add('draggable-item');
+            item.classList.add('tr');
+            item.draggable = true;
+            item.setAttribute('ondragstart', 'dragStart(event)');
+            item.setAttribute('data-id', chknull(nnote.jnID));
+            item.setAttribute('data-ord', chknull(nnote.jnOrd));
+            item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(nnote.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(nnote.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(nnote.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
+            notebody.appendChild(item);
             document.getElementById('nnt').textContent = "";
             document.getElementById('nna').textContent = "";
-            namt_tot();
+            namtTot();
           }).catch(function (error) {
             console.error('Error:', error);
           });
@@ -1048,21 +1457,25 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: "jnid=" + nid,
-      }).then(response => response.text()).then(function (data) {
+        body: "jnid=" + encodeURIComponent(nid),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to remove note');
+        }
+        return response.text();
+      })
+      .then(function (data) {
+        console.log(data);
         if (data === "success") {
-          notes.forEach(function (val, i) {
-            if (val.jnID == nid) {
-              notes.splice(i, 1);
-            }
-          });
+          notes = notes.filter(val => val.jnID !== nid);
           console.log(notes);
           document.querySelector('.tr[data-id="' + nid + '"]').remove();
         } else {
-          alert("Error in removing supplier");
+          alert("Error in removing note");
           console.log("Variables - " + nid);
         }
-        namt_tot();
+        namtTot();
       }).catch(function (error) {
         console.log("Error: ", error);
       });
@@ -1072,19 +1485,22 @@ document.addEventListener('DOMContentLoaded', function () {
   var nodta = "";
   document.getElementById('notebody').addEventListener('focusout', function (event) {
     var target = event.target;
+  
     if (target.closest('.tr') && target.closest('.tr .td')) {
       var nid = target.closest('.tr').getAttribute('data-id');
       var col = target.getAttribute('data-col');
       var chkkr = 1;
       var mrkr = target;
       var ind = -1;
-      
+  
+      var nval;
+  
       if (col == "jnAmt") {
-        target.innerHTML = number_format(target.innerHTML.replace(/\,/g, "").replace("$", ""), 2, ".", ",");
-        var nval = target.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\,/g, "").replace("$", "");
+        target.innerHTML = numberFormat(target.innerHTML.replace(/\,/g, "").replace("$", ""), 2, ".", ",");
+        nval = target.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\,/g, "").replace("$", "");
       } else {
         var nval1 = target.innerHTML.replace(/<div>/g, "&zzz;").replace(/<br>/g, "&zzz;");
-        var nval = nval1.replace(/(<([^>]+)>)/ig, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g, "<br>");
+        nval = nval1.replace(/(<([^>]+)>)/ig, "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g, "<br>");
       }
   
       // Collect vars
@@ -1100,6 +1516,10 @@ document.addEventListener('DOMContentLoaded', function () {
   
       if (chkkr == 1) {
         // Send data and update
+        console.log(nval);
+        console.log(col);
+        console.log(nid);
+
         fetch("/inc/job-note-upd.php", {
           method: 'POST',
           headers: {
@@ -1108,6 +1528,10 @@ document.addEventListener('DOMContentLoaded', function () {
           body: "updstr=" + nval + "&ref=" + col + "&cno=" + nid,
         }).then(response => response.text()).then(function (data) {
           if (data === "success") {
+            console.log(ind);
+            console.log(col);
+            console.log(nval);
+            console.log(notes);
             notes[ind][col] = nval;
             mrkr.classList.add("updated");
             mrkr.classList.remove("pending");
@@ -1126,6 +1550,7 @@ document.addEventListener('DOMContentLoaded', function () {
               mrkr.innerHTML = nval;
             }
           } else {
+            console.log(data);
             alert("Error in updating");
             console.log(col + " : " + nval + " : " + nid);
           }
@@ -1137,11 +1562,12 @@ document.addEventListener('DOMContentLoaded', function () {
   
         // Check for sums
         if (col == "jnAmt") {
-          namt_tot();
+          namtTot();
         }
       }
     }
   });
+  
   document.getElementById('notebody').addEventListener('keyup', function (event) {
     var target = event.target;
     if (target.closest('.tr') && target.closest('.tr .td')) {
@@ -1151,10 +1577,12 @@ document.addEventListener('DOMContentLoaded', function () {
       var ind = -1;
       var oind = -1;
   
+      var cval;
+  
       if (col == "jnAmt") {
-        var cval = number_format(target.innerHTML.replace(/\,/g, "").replace("$", ""), 2, ".", ",");
+        cval = numberFormat(target.innerHTML.replace(/\,/g, "").replace("$", ""), 2, ".", ",");
       } else {
-        var cval = target.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+        cval = target.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
       }
   
       // Find data in array
@@ -1186,12 +1614,15 @@ document.addEventListener('DOMContentLoaded', function () {
       updchkr();
     }
   });
+  
   document.getElementById('cnt_body').addEventListener('focus', function (event) {
     var target = event.target;
+  
     if (target.closest('tr td')) {
       nodta = target.innerHTML;
     }
   });
+  
   //adding a Connote
   document.querySelector('img[id=acn]').addEventListener('click', function () {
     if (jbn !== "" && jbn !== 0) {
@@ -1365,9 +1796,13 @@ document.getElementById('contlst').addEventListener('click', function (event) {
 });
 //Opening a Connote
 document.getElementById('contlst').addEventListener('click', function (event) {
+  var nid = null;
   if (event.target.classList.contains('ccnt_card')) {
-    var nid = event.target.getAttribute('data-id');
-    
+    nid = event.target.getAttribute('data-id');
+  } else if (event.target.parentNode.classList.contains('ccnt_card')) {
+    nid = event.target.parentNode.getAttribute('data-id');
+  }
+  if (nid != null) {
     if (mcnf === "Y") {
       mcnf = "";
       return;
@@ -1435,7 +1870,7 @@ document.querySelectorAll('.cndd').forEach(function (element) {
     }
 
     updstr = updstr.substring(0, (updstr.length - 1));
-    cnDetUpd(updstr, cno, upd);
+    cnDetUpd(cno, upd);
   });
 });
 function clrcnt() {
@@ -1443,7 +1878,7 @@ function clrcnt() {
     radio.checked = false;
   });
 
-  document.querySelectorAll('#cn-frame :input').forEach(function (input) {
+  document.querySelectorAll('#cn-frame input').forEach(function (input) {
     if (input.type === 'radio') {
       // Handling radio buttons if needed
     } else {
@@ -1454,89 +1889,142 @@ function clrcnt() {
   });
 }
   //add con note line
-  document.querySelector("img[id=ncl]").addEventListener("click", function () {
-    var cnum = document.querySelector("#cnID").value;
-    var sref, nitm, psn, itWgt, itLen, itWid, itHei, itQty, unNum, dcls, sRisk, pkGr, pkDes;
+document.querySelector("img[id=ncl]").addEventListener('click', function () {
+  var cnum = document.querySelector("#cnID").value;
+  const kv = {};
+  const trElement = document.getElementById("ncn");
+  const tdElements = trElement.getElementsByTagName("td");
 
-    document.querySelectorAll("#ncn td").forEach(function (cell) {
-        var dta = cell.innerHTML.trim() || null;
+  for (const td of tdElements) {
+    const key = td.getAttribute("data-col");
+    const value = td.textContent.trim() || null;
+    if (key != "cmd") {
+      kv[key] = value;
+      td.textContent = "";
+    }
+  }
 
-        switch (cell.getAttribute("data-col")) {
-            case "senRef":
-                sref = dta;
-                cell.textContent = '';
-                break;
-            case "noItem":
-                nitm = dta;
-                cell.textContent = '';
-                break;
-            case "psn":
-                psn = dta;
-                cell.textContent = '';
-                break;
-            case "itWgt":
-                itWgt = dta;
-                cell.textContent = '';
-                break;
-            case "itLen":
-                itLen = dta;
-                cell.textContent = '';
-                break;
-            case "itWid":
-                itWid = dta;
-                cell.textContent = '';
-                break;
-            case "itHei":
-                itHei = dta;
-                cell.textContent = '';
-                break;
-            case "itQty":
-                itQty = dta;
-                cell.textContent = '';
-                break;
-            case "unNum":
-                unNum = dta;
-                cell.textContent = '';
-                break;
-            case "class":
-                dcls = dta;
-                cell.textContent = '';
-                break;
-            case "sRisk":
-                sRisk = dta;
-                cell.textContent = '';
-                break;
-            case "pkGr":
-                pkGr = dta;
-                cell.textContent = '';
-                break;
-            case "pkDes":
-                pkDes = dta;
-                cell.textContent = '';
-                break;
-        }
-    });
 
-    // Post data
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/inc/job-confrt-add.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var rtrn = JSON.parse(xhr.responseText)[0];
-            frt.push(rtrn);
-            var txt = '<tr data-id="' + frt[frt.length - 1].itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef updated">' + frt[frt.length - 1].senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem updated">' + frt[frt.length - 1].noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn updated">' + frt[frt.length - 1].psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt updated">' + frt[frt.length - 1].itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen updated">' + frt[frt.length - 1].itLen + '</td>';
-            txt += '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid updated">' + frt[frt.length - 1].itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei updated">' + frt[frt.length - 1].itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty updated">' + frt[frt.length - 1].itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum updated">' + frt[frt.length - 1].unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class updated">' + frt[frt.length - 1].class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk updated">' + frt[frt.length - 1].sRisk + '</td>';
-            txt += '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr updated">' + frt[frt.length - 1].pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes updated">' + frt[frt.length - 1].pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr><div class="ntra td"><div class="cmd_img" data-id="' + frt[frt.length - 1].jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
-            document.getElementById("cnt_body").insertAdjacentHTML("beforeend", txt);
-            console.log(txt);
-            conDetUpd();
-        } else if (xhr.readyState == 4) {
-            alert("Error in updating");
-        }
-    };
-    var data = "cnum=" + encodeURIComponent(cnum) + "&sref=" + encodeURIComponent(sref) + "&nitm=" + encodeURIComponent(nitm) + "&psn=" + encodeURIComponent(psn) + "&itWgt=" + encodeURIComponent(itWgt) + "&itLen=" + encodeURIComponent(itLen) + "&itWid=" + encodeURIComponent(itWid) + "&itHei=" + encodeURIComponent(itHei) + "&itQty=" + encodeURIComponent(itQty) + "&unNum=" + encodeURIComponent(unNum) + "&dcls=" + encodeURIComponent(dcls) + "&sRisk=" + encodeURIComponent(sRisk) + "&pkGr=" + encodeURIComponent(pkGr) + "&pkDes=" + encodeURIComponent(pkDes);
-    xhr.send(data);
+
+  /*
+  var sref, nitm, psn, itWgt, itLen, itWid, itHei, itQty, unNum, dcls, sRisk, pkGr, pkDes;
+
+  document.querySelectorAll("#ncn td").forEach(function (cell) {
+      var dta = cell.innerHTML.trim() || null;
+
+      switch (cell.getAttribute("data-col")) {
+          case "senRef":
+              sref = dta;
+              cell.textContent = '';
+              break;
+          case "noItem":
+              nitm = dta;
+              cell.textContent = '';
+              break;
+          case "psn":
+              psn = dta;
+              cell.textContent = '';
+              break;
+          case "itWgt":
+              itWgt = dta;
+              cell.textContent = '';
+              break;
+          case "itLen":
+              itLen = dta;
+              cell.textContent = '';
+              break;
+          case "itWid":
+              itWid = dta;
+              cell.textContent = '';
+              break;
+          case "itHei":
+              itHei = dta;
+              cell.textContent = '';
+              break;
+          case "itQty":
+              itQty = dta;
+              cell.textContent = '';
+              break;
+          case "unNum":
+              unNum = dta;
+              cell.textContent = '';
+              break;
+          case "class":
+              dcls = dta;
+              cell.textContent = '';
+              break;
+          case "sRisk":
+              sRisk = dta;
+              cell.textContent = '';
+              break;
+          case "pkGr":
+              pkGr = dta;
+              cell.textContent = '';
+              break;
+          case "pkDes":
+              pkDes = dta;
+              cell.textContent = '';
+              break;
+      }
+  });*/
+
+  // Post data
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/inc/job-confrt-add.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+          try {
+            JSON.parse(xhr.responseText);
+          } catch (e) {
+            console.log(xhr.responseText)
+            alert("error response not correct format");
+            return;
+          }
+
+          var rtrn = JSON.parse(xhr.responseText);
+          frt.push(rtrn);
+          var frtItem = frt[frt.length - 1];
+
+          var txt = `
+            <tr data-id="${frtItem.itID}">
+              <td contenteditable="true" id="senRef" data-col="senRef" class="senRef updated">${frtItem.senRef || ''}</td>
+              <td contenteditable="true" id="noItem" data-col="noItem" class="noItem updated">${frtItem.noItem || ''}</td>
+              <td contenteditable="true" id="psn" data-col="psn" class="psn updated">${frtItem.psn || ''}</td>
+              <td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt updated">${frtItem.itWgt || ''}</td>
+              <td contenteditable="true" id="itLen" data-col="itLen" class="itLen updated">${frtItem.itLen || ''}</td>
+              <td contenteditable="true" id="itWid" data-col="itWid" class="itWid updated">${frtItem.itWid || ''}</td>
+              <td contenteditable="true" id="itHei" data-col="itHei" class="itHei updated">${frtItem.itHei || ''}</td>
+              <td contenteditable="true" id="itQty" data-col="itQty" class="itQty updated">${frtItem.itQty || ''}</td>
+              <td contenteditable="true" id="unNum" data-col="unNum" class="unNum updated">${frtItem.unNum || ''}</td>
+              <td contenteditable="true" id="class" data-col="class" class="class updated">${frtItem.class || ''}</td>
+              <td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk updated">${frtItem.sRisk || ''}</td>
+              <td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr updated">${frtItem.pkGr || ''}</td>
+              <td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes updated">${frtItem.pkDes || ''}</td>
+              <td class="cn_ctrls" data-col="cmd">
+                <div class="cmd_img">
+                  <img class="cntrash cnbut" alt="Delete Freight Note Line" src="/img/trash.svg">
+                </div>
+              </td>
+            </tr>
+          `;
+
+          /*
+          var txt = '<tr data-id="' + frt[frt.length - 1].itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef updated">' + frt[frt.length - 1].senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem updated">' + frt[frt.length - 1].noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn updated">' + frt[frt.length - 1].psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt updated">' + frt[frt.length - 1].itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen updated">' + frt[frt.length - 1].itLen + '</td>';
+          txt += '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid updated">' + frt[frt.length - 1].itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei updated">' + frt[frt.length - 1].itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty updated">' + frt[frt.length - 1].itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum updated">' + frt[frt.length - 1].unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class updated">' + frt[frt.length - 1].class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk updated">' + frt[frt.length - 1].sRisk + '</td>';
+          txt += '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr updated">' + frt[frt.length - 1].pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes updated">' + frt[frt.length - 1].pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';*/
+          /*'<div class="ntra td"><div class="cmd_img" data-id="' + frt[frt.length - 1].jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';*/
+          document.getElementById("cnt_body").insertAdjacentHTML("beforeend", txt);
+          conDetUpd();
+      } else if (xhr.readyState == 4) {
+          console.log("status = " + xhr.status);
+          console.log(xhr.responseText);
+          alert("Error in updating");
+      }
+  };
+  var data = "cnum=" + encodeURIComponent(cnum) + "&kv=" + JSON.stringify(kv);
+  //var data = "cnum=" + encodeURIComponent(cnum) + "&sref=" + encodeURIComponent(sref) + "&nitm=" + encodeURIComponent(nitm) + "&psn=" + encodeURIComponent(psn) + "&itWgt=" + encodeURIComponent(itWgt) + "&itLen=" + encodeURIComponent(itLen) + "&itWid=" + encodeURIComponent(itWid) + "&itHei=" + encodeURIComponent(itHei) + "&itQty=" + encodeURIComponent(itQty) + "&unNum=" + encodeURIComponent(unNum) + "&dcls=" + encodeURIComponent(dcls) + "&sRisk=" + encodeURIComponent(sRisk) + "&pkGr=" + encodeURIComponent(pkGr) + "&pkDes=" + encodeURIComponent(pkDes);
+  xhr.send(data);
 });
 function findParentRow(element) {
   while (element && element.tagName !== "TR") {
@@ -1545,7 +2033,7 @@ function findParentRow(element) {
   return element;
 }
 //delete con note line
-document.getElementById("cnt_body").addEventListener("click", function (event) {
+document.getElementById("cnt_body").addEventListener('click', function (event) {
   var target = event.target;
 
   if (target.classList.contains("cntrash")) {
@@ -1573,113 +2061,101 @@ document.getElementById("cnt_body").addEventListener("click", function (event) {
       }
   }
 });
-
-
-
 //update con note line
   var cndta = "";
   var cndu = "";
-  document.getElementById("cnt_body").addEventListener("focusout", function (event) {
-    var target = event.target;
+document.getElementById("cnt_body").addEventListener("focusout", function (event) {
+  var target = event.target;
+  if (target.tagName === "TD") {
+      var row = findParentRow(target);
+      if (row) {
+          var nid = row.getAttribute("data-id");
+          var col = target.getAttribute("data-col");
+          var nval = target.textContent.trim();
+          var mrkr = target;
+          
 
-    if (target.tagName === "TD") {
-        var row = findParentRow(target);
-        if (row) {
-            var nid = row.getAttribute("data-id");
-            var col = target.getAttribute("data-col");
-            var nval = target.textContent.trim();
-            var mrkr = target;
+          if (target.innerHTML !== cndta) {
+              // Collect vars
+              var upd = { [col]: nval };
+              // Send data and update
+              var xhr = new XMLHttpRequest();
+              xhr.open("POST", "/inc/con-rows-upd.php", true);
+              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState == 4 && xhr.status == 200) {
+                      if (xhr.responseText === "success") {
+                          frt.forEach(function (val, i) {
+                              if (val.itID == nid) {
+                                  frt[i][col] = nval;
+                              }
+                          });
+                          var oind = ofrt.findIndex(function (oval) {
+                              return oval.itID == nid;
+                          });
+                          if (oind != -1) {
+                              // Handle case when oind is not -1
+                          }
+                          if (oind == -1 || chknull(ofrt[oind][col]) != nval) {
+                              mrkr.classList.add("updated");
+                              mrkr.classList.remove("pending");
+                          } else {
+                              mrkr.classList.remove("pending");
+                              mrkr.classList.remove("updated");
+                          }
+                      } else {
+                          alert("Error in updating");
+                          console.log("Variables - " + upd + " : " + nid);
+                          console.log("Error: " + xhr.responseText);
+                      }
+                  } else if (xhr.readyState == 4) {
+                      alert("Error in updating");
+                      console.log("Error: " + xhr.responseText);
+                      console.log("Variables - " + upd + " : " + nid);
+                      console.log(xhr);
+                  }
+              };
+              var data = "updstr=" + encodeURIComponent(JSON.stringify(upd)) + "&cno=" + encodeURIComponent(nid);
+              xhr.send(data);
 
-            if (target.innerHTML !== cndta) {
-                // Collect vars
-                var updstr = col + "='" + nval + "'";
-                // Send data and update
-                var xhr = new XMLHttpRequest();
-                xhr.open("POST", "/inc/con-rows-upd.php", true);
-                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        if (xhr.responseText === "success") {
-                            frt.forEach(function (val, i) {
-                                if (val.itID == nid) {
-                                    frt[i][col] = nval;
-                                }
-                            });
-                            var oind = ofrt.findIndex(function (oval) {
-                                return oval.itID == nid;
-                            });
-                            if (oind != -1) {
-                                // Handle case when oind is not -1
-                            }
-                            if (oind == -1 || chknull(ofrt[oind][col]) != nval) {
-                                mrkr.classList.add("updated");
-                                mrkr.classList.remove("pending");
-                            } else {
-                                mrkr.classList.remove("pending");
-                                mrkr.classList.remove("updated");
-                            }
-                        } else {
-                            alert("Error in updating");
-                            console.log("Variables - " + updstr + " : " + cno);
-                            console.log("Error: " + xhr.responseText);
-                        }
-                    } else if (xhr.readyState == 4) {
-                        alert("Error in updating");
-                        console.log("Error: " + xhr.responseText);
-                        console.log("Variables - " + updstr + " : " + nid);
-                        console.log(xhr);
-                    }
-                };
-                var data = "updstr=" + encodeURIComponent(updstr) + "&cno=" + encodeURIComponent(nid);
-                xhr.send(data);
-
-                // Check for sums
-                if ("noItemitWgtitLenitWiditHeiitQty".indexOf(col) !== -1) {
-                    conDetUpd();
-                }
-            }
-        }
-    }
+              // Check for sums
+              if ("noItemitWgtitLenitWiditHeiitQty".indexOf(col) !== -1) {
+                  conDetUpd();
+              }
+          }
+      }
+  }
 });
-
-
-
 document.getElementById("cnt_body").addEventListener("focusin", function (event) {
   var target = event.target;
-
   if (target.tagName === "TD") {
       cndta = target.innerHTML;
       event.stopPropagation();
   }
 });
-
 document.getElementById("cnt_body").addEventListener("keyup", function (event) {
   var target = event.target;
-
   if (target.tagName === "TD") {
-      var itid = target.closest("tr").getAttribute("data-id");
+      var itid = Number(target.closest("tr").getAttribute("data-id"));
       var col = target.getAttribute("data-col");
       var cval = target.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
       var mrkr = target;
       var oid = -1;
       var aid = -1;
-
       for (var i = 0; i < ofrt.length; i++) {
-          if (itid === ofrt[i].itID) {
+        if (itid === ofrt[i].itID) {
               oid = i;
               break;
           }
       }
-
       for (var j = 0; j < frt.length; j++) {
           if (itid === frt[j].itID) {
               aid = j;
               break;
           }
       }
-
       if (oid === -1) {
-          if (frt[aid][col] !== cval) {
+          if (frt[aid][col].toString() !== cval.toString()) {
               mrkr.classList.add("pending");
               mrkr.classList.remove("updated");
           } else {
@@ -1687,16 +2163,17 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
               mrkr.classList.remove("pending");
           }
       } else {
-          if (ofrt[oid][col] === cval) {
+          if (ofrt[oid][col].toString() === cval.toString()) {
               mrkr.classList.remove("updated");
               mrkr.classList.remove("pending");
           } else {
-              if (frt[aid][col] !== cval) {
-                  mrkr.classList.add("pending");
-                  mrkr.classList.remove("updated");
+              if (frt[aid][col].toString() !== cval.toString()) {
+
+                mrkr.classList.add("pending");
+                mrkr.classList.remove("updated");
               } else {
-                  mrkr.classList.add("updated");
-                  mrkr.classList.remove("pending");
+                mrkr.classList.add("updated");
+                mrkr.classList.remove("pending");
               }
           }
       }
@@ -1719,29 +2196,8 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
           ddFrtPop(td.innerHTML);
       });
   });
-  
-  document.getElementById("slist").addEventListener("click", function (event) {
-    event.stopPropagation();
-    var fld = "";
-    var chg = "";
-
-    Array.from(this.querySelectorAll(".frtLne")).forEach(function (frtLne) {
-        frtLne.childNodes.forEach(function (child) {
-            fld = child.dataset.marker;
-            chg = child.innerHTML;
-            document.getElementById("add" + fld).innerHTML = chg;
-        });
-    });
-
-    document.getElementById("dd").removeAttribute('marker');
-    document.getElementById("dd").classList.add("hideme");
-    clrDd();
-});
-
-
   //dropdown address book
- 
-  document.getElementById("snam").addEventListener("focusin", function (event) {
+document.getElementById("snam").addEventListener("focusin", function (event) {
     this.parentNode.appendChild(document.querySelector('#dd'));
     document.getElementById("dd").classList.remove("hideme");
     document.getElementById("dd").dataset.marker = "s";
@@ -1788,103 +2244,6 @@ document.querySelectorAll(".cndd").forEach(function (element) {
   });
 });
 
-document.getElementById("slist").addEventListener('click', function (event) {
-  var target = event.target;
-
-  if (target.classList.contains("addcard")) {
-      event.stopPropagation();
-
-      var updstr = "";
-      var cno = document.getElementById("cnID").value;
-      var fld = "";
-      var chg = "";
-      var mrkr = document.getElementById("dd").dataset.marker;
-      var crd = new Map();
-
-      Array.from(target.children).forEach(function (child) {
-          if (!child.classList.contains('add_trash')) {
-              fld = mrkr + child.classList[0];
-              chg = child.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-              document.getElementById(fld).value = chg;
-              document.getElementById(fld).classList.add("pending");
-              document.getElementById(fld + ".updated").classList.remove("updated");
-              updchkr();
-              crd.set(fld, chg);
-
-              if (chg === "") {
-                  updstr += fld + "=Null,";
-              } else {
-                  updstr += fld + "='" + chg.replace(/\'/g, "''") + "',";
-              }
-          }
-      });
-
-      updstr = updstr.substring(0, (updstr.length - 1));
-
-      if (mrkr === 'd' || mrkr === 'c') {
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", "/inc/job-dets-upd.php", true);
-          xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  if (xhr.responseText === "success") {
-                      crd.forEach(function (value, key) {
-                          document.getElementById(key).value = value;
-                          document.getElementById(key).classList.add("updated");
-                          document.getElementById(key + ".pending").classList.remove("pending");
-                      });
-                      updchkr();
-                  }
-              }
-          };
-
-          xhr.send("updstr=" + encodeURIComponent(updstr) + "&cno=" + encodeURIComponent(jbn));
-      } else {
-          cnDetUpd(updstr, cno, crd);
-      }
-
-      document.getElementById("dd").removeAttribute('marker');
-      document.getElementById("dd").classList.add("hideme");
-      clrDd();
-  }
-});
-document.getElementById("slist").addEventListener('click', function (event) {
-  var target = event.target;
-
-  if (target.classList.contains("img_trash")) {
-      event.stopPropagation();
-
-      var addCard = target.parentElement.parentElement;
-      var adBuild = {
-          nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          add1: addCard.querySelector(".add1").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          add2: addCard.querySelector(".add2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          add3: addCard.querySelector(".add3").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          st: addCard.querySelector(".st").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          pc: addCard.querySelector(".pc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          Ctc: addCard.querySelector(".Ctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-          Ph: addCard.querySelector(".Ph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-      };
-
-      var senBuild = JSON.stringify(adBuild);
-      var xhr = new XMLHttpRequest();
-
-      xhr.onreadystatechange = function () {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-              if (xhr.responseText.indexOf('Error') > -1) {
-                  alert('Address Card Removal Error');
-              } else {
-                  addCard.remove();
-              }
-          }
-      };
-
-      xhr.open("POST", "/inc/adrem.php", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(senBuild);
-  }
-});
 document.querySelectorAll("input").forEach(function(input) {
   input.addEventListener('keyup', function() {
       if (this.value !== this.getAttribute("value")) {
@@ -1921,55 +2280,91 @@ document.getElementById("client").addEventListener('keyup', function() {
   ddConPop(this.value);
 });
   //adding a supplier
-  document.getElementById("addsup").addEventListener('click', function () {
-    var jty = document.querySelector("#asup .supTy").innerText;
-    var jna = document.querySelector("#asup .supSu").innerText;
-    var jde = document.querySelector("#asup .supDe").innerText;
-    var jir = document.querySelector("#asup .supIr").innerText;
-    var jno = document.querySelector("#asup .supNo").innerText;
-    var jec = document.querySelector("#asup .supEc").innerText;
-    var nsup;
-
-    if (jbn === "" || jbn === 0) {
-        alert("A job needs to be created for notes to be added - addsup.click");
-    } else {
-        if (jty === "" && jna === "" && jde === "" && jir === "" && jno === "" && jec === "") {
-            alert("Cannot add an all blank entry");
-        } else {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.responseText.substring(0, 1) === '<') {
-                        alert("Error when trying to add supplier supplier!");
-                    } else {
-                        nsup = JSON.parse(xhr.responseText);
-                        sups.push(nsup[0]);
-                        console.log(sups);
-                        var txt = '<div class="supln" data-id="' + chknull(nsup[0].jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup[0].jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup[0].jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup[0].jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">$' + number_format(chknull(nsup[0].jsEst), 2, '.', ',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup[0].jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup[0].jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup[0].jsID) + '">Remove Supplier</div></div>';
-                        document.getElementById("supbody").insertAdjacentHTML('afterbegin', txt);
-                    }
-                    document.querySelector("#asup .supTy").innerText = "";
-                    document.querySelector("#asup .supSu").innerText = "";
-                    document.querySelector("#asup .supDe").innerText = "";
-                    document.querySelector("#asup .supIr").innerText = "";
-                    document.querySelector("#asup .supNo").innerText = "";
-                    document.querySelector("#asup .supEc").innerText = "";
-                }
-            };
-
-            xhr.open("POST", "/inc/job-sup-add.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("typ=" + jty + "&nam=" + jna + "&des=" + jde + "&ire=" + jir + "&not=" + jno + "&jobno=" + jbn + "&est=" + jec);
-        }
+document.getElementById("addsup").addEventListener('click', function () {
+  var nsup;
+  const kv = {};
+  const parentDiv = document.getElementById("asup");
+  
+  for (const childDiv of parentDiv.children) {
+    if (childDiv.id !== 'addsup') {
+        kv[childDiv.getAttribute('data-col')] = childDiv.innerHTML.trim().replace(/\n/g, '<br>') || null;
+        childDiv.textContent = '';
     }
+  }
+
+
+  if (jbn === "" || jbn === 0) {
+      alert("A job needs to be created for notes to be added - addsup.click");
+  } else {
+      if (Object.values(kv).every(value => value === null)){
+          alert("Cannot add an all blank entry");
+      } else {
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+              if (xhr.readyState == 4) {
+                console.log(xhr.responseText);
+                  if (xhr.responseText[0] !== '{') {
+                      alert("Error when trying to add supplier supplier!\n" + xhr.responseText);
+                  } else {
+                      nsup = JSON.parse(xhr.responseText);
+                      sups.push(nsup);
+                      var txt = '<div class="supln" data-id="' + chknull(nsup.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">$' + numberFormat(chknull(nsup.jsEst), 2, '.', ',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup.jsID) + '">Remove Supplier</div></div>';
+                      document.getElementById("supbody").insertAdjacentHTML('afterbegin', txt);
+                  }
+                  document.querySelector("#asup .supTy").innerText = "";
+                  document.querySelector("#asup .supSu").innerText = "";
+                  document.querySelector("#asup .supDe").innerText = "";
+                  document.querySelector("#asup .supIr").innerText = "";
+                  document.querySelector("#asup .supNo").innerText = "";
+                  document.querySelector("#asup .supEc").innerText = "";
+              }
+          };
+
+          xhr.open("POST", "/inc/job-sup-add.php", true);
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+          console.log(jbn);
+          console.log(JSON.stringify(kv));
+          console.log(encodeURIComponent(JSON.stringify(kv)));
+          xhr.send("jobno=" + jbn + "&crd=" + encodeURIComponent(JSON.stringify(kv)));
+      }
+  }
 });
 
   //deleting a supplier
-  document.getElementById("supbody").addEventListener("click", function (event) {
+  document.getElementById("supbody").addEventListener('click', function (event) {
     if (event.target.classList.contains("suprm")) {
         var nid = event.target.getAttribute("data-id");
+        fetch("/inc/job-sup-rem.php", {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: "id=" + encodeURIComponent(nid),
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Failed to remove supplier');
+          }
+          return response.text();
+      })
+      .then(function (data) {
+          if (data === "success") {
+              sups = sups.filter(val => val.jsID !== nid); // Filter out the removed supplier from sups array
+              var elementToRemove = document.querySelector(".supln[data-id='" + nid + "']");
+              if (elementToRemove) {
+                  elementToRemove.remove();
+              }
+          } else {
+              throw new Error('Failed to remove supplier');
+          }
+      })
+      .catch(function (error) {
+          console.log("Error: ", error.message);
+          alert("Error in removing supplier");
+      });
+    }
 
-        var xhr = new XMLHttpRequest();
+        /*var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) {
@@ -2002,6 +2397,7 @@ document.getElementById("client").addEventListener('keyup', function() {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send("id=" + nid);
     }
+    */
 });
 
   //updating a supplier
@@ -2010,7 +2406,6 @@ document.getElementById("client").addEventListener('keyup', function() {
     var target = event.target;
     var isLsup = target.classList.contains("lsup");
     var isSupln = target.parentNode.classList.contains("supln");
-
     if (isLsup && isSupln) {
         var nid = target.parentNode.getAttribute("data-id");
         var col = target.getAttribute("data-col");
@@ -2019,7 +2414,6 @@ document.getElementById("client").addEventListener('keyup', function() {
         if (col == "jsEst") {
             nval = nval.replace("$", "").replace(",", "");
         }
-
         var obj = target;
         var chkkr = 1;
 
@@ -2030,7 +2424,6 @@ document.getElementById("client").addEventListener('keyup', function() {
                 }
             }
         });
-
         if (chkkr == 1) {
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
@@ -2044,17 +2437,16 @@ document.getElementById("client").addEventListener('keyup', function() {
                                     obj.classList.add("updated");
                                     obj.classList.remove("pending");
                                     if (col == "jsEst") {
-                                        obj.innerHTML = "$" + number_format(chknull(nval), 2, '.', ',');
+                                        obj.innerHTML = "$" + numberFormat(chknull(nval), 2, '.', ',');
                                     }
+
                                 }
                             });
-
                             osups.forEach(function (val) {
                                 if (val.jsID == nid && val[col] == nval) {
                                     obj.classList.remove("updated");
                                 }
                             });
-
                             updchkr();
                         } else {
                             alert("Error in updating");
@@ -2090,7 +2482,6 @@ document.getElementById("supbody").addEventListener("keyup", function (event) {
   var target = event.target;
   var isLsup = target.classList.contains("lsup");
   var isSupln = target.parentNode.classList.contains("supln");
-
   if (isLsup && isSupln) {
       fldupd("sups", target);
   }
@@ -2131,6 +2522,7 @@ document.getElementById("dnam").addEventListener("focusin", function() {
 document.getElementById("dnam").addEventListener("keyup", function() {
   ddPop();
 });
-
+notebody.addEventListener('dragover', allowDrop);
+notebody.addEventListener('drop', drop);
  
 });

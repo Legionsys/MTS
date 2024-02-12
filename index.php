@@ -1,3 +1,17 @@
+<?php
+    session_start();
+    if (isset($_COOKIE['remember_user'])) {
+        // Assuming you have a valid session validation mechanism in your application
+        // Check if the user's session is still valid
+        if (isset($_SESSION['user_id'])) {
+            // If the session is valid, redirect to the dashboard
+            header('Location: dashboard.php');
+            exit();
+        }
+    }
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,10 +29,12 @@
     .box {
         <?php if (isset($_GET["error"])) {
             echo "height: 450px;";
+            echo "top: calc(50% - (450px /1.5));";
         }
 
         else {
             echo "height: 400px;";
+            echo "top: calc(50% - (400px /1.5));";
         }
 
         ?>
@@ -28,11 +44,13 @@
         <?php if (isset($_GET["error"])) {
             echo "height: 20px;";
             echo "padding: 5px;";
+            echo "margin-top: 2.5rem;";
         }
 
         else {
             echo "height: 0px;";
             echo "padding: 0px;";
+            echo "margin-top: 0rem;";
         }
 
         ?>
@@ -48,38 +66,47 @@
                 <h1 id="logintoregister">Login</h1>
             </div>
         </div>
-        <form action="/inc/uriel.php" method="post">
-            <div class="group">
-                <input class="inputMaterial" name="name" type="text" required />
-                <span class="highlight"></span>
-                <span class="bar"></span>
-                <label>Username</label>
-            </div>
-            <div class="group">
-                <input class="inputMaterial" name="pwd" type="password" required />
-                <span class="highlight"></span>
-                <span class="bar"></span>
-                <label>Password</label>
-            </div>
-            <div class="response"><?php if (isset($_GET["error"])) {
-        if ($_GET["error"]=="emptyinput") {
-            echo "<p>Fill in all Fields!</p>";
-        }
+        
+            <form action="/inc/uriel.php" method="post">
+                <div class="group">
+                    <input class="inputMaterial" name="name" type="text" required />
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <label>Username</label>
+                </div>
+                <div class="group">
+                    <input class="inputMaterial" name="pwd" type="password" required />
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                    <label>Password</label>
+                </div>
+                <!-- <div class="group rm">
+                    <label class="switch">
+                        <input type="checkbox" name="remember" value="1">
+                        <span class="slider round"></span>
+                    </label>
+                    <label id=rml>Remember Me</label>
+                </div> -->
+                <div class="response">
+                    <?php 
+                        if (isset($_GET["error"])) {
+                            if ($_GET["error"]=="emptyinput") {
+                                echo "<p>Fill in all Fields!</p>";
+                            }
+                            else if ($_GET["error"]=="wronglogin") {
+                                echo "<p>Incorrect Email/Username/Password</p>";
+                            }
+                            else {
+                            echo "<p>Unknown Error, please try again</p>";
+                            }
+                        }
+                    ?>          
+                </div>
+                <button id="buttonlogintoregister" type="submit" name="submit">Login</button>
+            </form>
 
-        else if ($_GET["error"]=="wronglogin") {
-            echo "<p>Incorrect Email/Username/Password</p>";
-        }
-        else {
-          echo "<p>Unknown Error, please try again</p>";
-        }
-    }
-
-    else {}
-
-    ?></div><button id="buttonlogintoregister" type="submit" name="submit">Login</button>
-        </form>
         <div id="footer-box">
-            <p class="footer-text">Need access? Please speak to the team at MTS</p>
+            <p class="footer-text">Need access? <br> Please speak to the team at Moorish Transport Services</p>
         </div>
     </div>
 </body>
