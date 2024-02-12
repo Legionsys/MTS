@@ -87,7 +87,7 @@ function createUser($conn, $name, $email, $scr, $pwd) {
     $stmt = mysqli_stmt_init($conn);
     
     $hashedPwd = password_hash($pwd, PASSWORD_DEFAULT);
-    
+    mysqli_stmt_prepare($stmt,$sql);
     mysqli_stmt_bind_param($stmt, "ssss", $name, $email, $scr, $hashedPwd);
     mysqli_stmt_execute($stmt);
     $resultData = mysqli_insert_id($conn);
@@ -111,7 +111,7 @@ function emptyInputlogin($username, $pwd) {
     return $result;
 }
 
-function loginUser($conn,$username,$pwd) {
+function loginUser($conn,$username,$pwd,$rm) {
     $uidExists = uidExists($conn,$username,$username);
 
     if ($uidExists === false) {
@@ -129,7 +129,29 @@ function loginUser($conn,$username,$pwd) {
         session_start();
         $_SESSION["userid"] = $uidExists["usersId"];
         $_SESSION["useruid"] = $uidExists["usersUid"];
+
         header("location: ../jsumm.php");
         exit();         
     }
+}
+function createToken($conn,$user){
+    $token = bin2hex(random_bytes(32));
+    $expiration = time() + (5 * 24 * 60 * 60);
+    setcookie('remember_user', $token, $expiration,'/','mts.legionsystems.com.au',true,true); // 5 days expiration
+
+    $sql = "INSERT INTO loginTokens (usersId,token,expTime) VALUES (?,?,?);";
+    $stmt = mysqli_stmt_init($conn);
+    
+    mysqli_stmt_prepare($stmt,$sql);
+    mysqli_stmt_bind_param($stmt, "sss", $user, $token, $expiration);
+    mysqli_stmt_execute($stmt);
+    $resultData = mysqli_insert_id($conn);
+    if ($resultData != null ) {
+        
+    } else {
+        return "ERROR on result";
+    }
+    mysqli_stmt_close($stmt);
+    
+    exit();
 }

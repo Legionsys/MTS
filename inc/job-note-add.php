@@ -66,22 +66,49 @@ if ($ntxt == '' and $namt != '') {
 }
 
 //return 'instered';
-$resultData = mysqli_insert_id($conn);
+$jnid = mysqli_insert_id($conn);
 
+mysqli_stmt_close($stmt);
+$sql = "select * from jobNote where jnID = ?;";
+$stmt = mysqli_stmt_init($conn);
+if (!mysqli_stmt_prepare($stmt, $sql)) {
+    echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmt);
+    exit();
+}
+// Bind parameter
+mysqli_stmt_bind_param($stmt, "i", $jnid);
+
+// Execute the query
+mysqli_stmt_execute($stmt);
+
+// Get result
+$resultSelect = mysqli_stmt_get_result($stmt);
+
+// Check if the retrieved data matches the inserted data
+$updatedData = mysqli_fetch_assoc($resultSelect);
+
+// Return inserted data in JSON format
+echo json_encode($updatedData);
+
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+
+/*
 if ($namt != null) {
     $namt = number_format($namt,2);
 }
 
 if ($resultData != null ) {
-    echo '<div class="tr" data-id="'.$resultData.'"><div contenteditable="true" class="ncol td">'.$ntxt.'</div>';
-    echo '<div contenteditable="true" class="namt td">'.$namt.'</div>';
+    echo '<div class="draggable-item tr" draggable="true" ondragstart="dragStart(event)" data-id="'.$resultData.'" data-ord="'.$ord.'"><div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div>';
+    echo '<div contenteditable="true" data-col="jnNote" class="ncol td">'.$ntxt.'</div>';
+    echo '<div contenteditable="true" data-col="jnAmt" class="namt td">'.$namt.'</div>';
     echo '<div class="ntra td"><div class="cmd_img" data-id="'.$resultData.'"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
 } else {
     echo "<script>console.log('Error with adding');</script>";
     exit();
 }
 mysqli_stmt_close($stmt);
-
+*/
 
 
 ?>

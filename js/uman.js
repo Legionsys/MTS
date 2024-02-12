@@ -3,492 +3,583 @@ nam = '';
 ema = '';
 scr = '';
 var myDetails = new Object();
-function useridchk(){
-    $.get("/inc/usrlst.php", function (data, status) {
-        $('#usrlist').html(data);
-      });
+function useridchk() {
+  fetch("/inc/usrlst.php")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.text();
+    })
+    .then(data => {
+      document.getElementById('usrlist').innerHTML = data;
+    })
+    .catch(error => {
+      console.error('Error fetching user list:', error);
+    });
+}
+function mechk() {
+  myDetails.name = document.getElementById("my_name").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  myDetails.email = document.getElementById("my_email").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  myDetails.scr = document.getElementById("my_scrn").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+  // You can uncomment the following lines if you need to make an additional AJAX request
+  /*
+  fetch("/inc/usrlst_me.php")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.text();
+    })
+    .then(data => {
+      document.getElementById('usrdet').innerHTML = data;
+    })
+    .catch(error => {
+      console.error('Error fetching user details:', error);
+    });
+  */
+}
+function usrclr() {
+  document.getElementById("upd_name").value = '';
+  document.getElementById("upd_email").value = '';
+  document.getElementById("upd_scrn").value = '';
+  document.getElementById("usract").innerHTML = 'ACTIVE';
+  document.getElementById("usract").classList.add("no-change");
+  document.getElementById("pwdchange").classList.add("no-change");
+  document.getElementById("usrupd").innerHTML = "ADD USER";
+  document.querySelector(".editusrcard").setAttribute("data-id", "0");
+  document.getElementById("upd_scrn").classList.remove("rejected", "approved");
+  document.querySelector("label[for=upd_scrn]").classList.remove("lab_rejected", "lab_approved");
+  document.querySelector("label[for=upd_scrn]").innerHTML = "Login Name";
+  nam = '';
+  ema = '';
+  scr = '';
+}
+function passclr() {
+  document.getElementById("Cur_pass").value = '';
+  document.getElementById("npo_pass").value = '';
+  document.getElementById("npt_pass").value = '';
+  document.getElementById("Cur_pass").classList.remove("approved", "rejected");
+  document.querySelector("label[for=Cur_pass]").classList.remove("lab_approved", "lab_rejected");
+  document.querySelector("label[for=Cur_pass]").innerHTML = "Current Password";
+  document.getElementById("passUpdBut").classList.add('no-change');
+  document.querySelectorAll('.valid').forEach(function (element) {
+    element.classList.remove('valid');
+    element.classList.add('invalid');
+  });
+}
 
-  };
-  function mechk(){
-    myDetails.name = $("#my_name").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    myDetails.email = $("#my_email").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    myDetails.scr = $("#my_scrn").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    /*$.get("/inc/usrlst_me.php", function (data, status) {
-        $('#usrdet').html(data);
-
-      });*/
-  };  
-  function usrclr(){
-    $("#upd_name").val('');
-    $("#upd_email").val('');
-    $("#upd_scrn").val('');
-    $("#usract").html('ACTIVE');
-    $("#usract").addClass("no-change");
-    $("#pwdchange").addClass("no-change");
-    $("#usrupd").html("ADD USER");
-    $(".editusrcard").attr("data-id","0");
-    $("#upd_scrn").removeClass("rejected").removeClass("approved").addClass("inp_std");
-    $("label[for=upd_scrn]").removeClass("lab_rejected").removeClass("lab_approved");
-    $("label[for=upd_scrn]").html("Login Name");
-    nam = '';
-    ema = '';
-    scr = '';
-    }
-  function passclr(){
-    $("#Cur_pass").val('');
-    $("#npo_pass").val('');
-    $("#npt_pass").val('');
-    $("#Cur_pass").removeClass("approved").removeClass("rejected");
-    $("label[for=Cur_pass]").removeClass("lab_approved").removeClass("lab_rejected");
-    $("label[for=Cur_pass]").html("Current Password");
-    $('#passUpdBut').addClass('no-change');
-    $('.valid').addClass('invalid').removeClass('valid');
-  }
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function () {
   var chk = [0,0,0,0,0,0];
+  var meNameInput = document.getElementById('my_name');
+  var meEmailInput = document.getElementById('my_email');
+  var meScrInput = document.getElementById('my_scrn');
+  var usrUpdMeBtn = document.getElementById('usrupdme');
+  var pwdChangeBtn = document.getElementById('me_pwd_ch');
+  var popElement = document.getElementById('pop');
+  var passwrdChgElement = document.getElementById('passwrd_chg');
+  var passUpdBut = document.getElementById('passUpdBut');
+  var actusrcard = document.querySelector('.actusrcard');
+  var npoPass = document.getElementById('npo_pass');
+  var curPass = document.getElementById('Cur_pass');
+  var labelForCurPass = document.querySelector("label[for=Cur_pass]");
+  var newPass = document.querySelector('.newp');
+  var nptPass = document.getElementById('npt_pass');
+  var lengthElem = document.getElementById('length');
+  var letterElem = document.getElementById('letter');
+  var capitalElem = document.getElementById('capital');
+  var numberElem = document.getElementById('number');
+  var matchPwdElem = document.getElementById('matchpwd');
+  var vpassElements = document.querySelectorAll('.vpas');
+
+
+
   useridchk();
   mechk();
 
-  //universal items
-
-  //Me items
-  $(".me_input").on("keyup", function(){
-    if (myDetails.name != $("#my_name").val() || myDetails.email != $("#my_email").val() || myDetails.scr != $("#my_scrn").val()) {
-      $("#usrupdme").removeClass("no-change");
+  // Add event listener to each input
+  meNameInput.addEventListener('input', handleInputChange);
+  meEmailInput.addEventListener('input', handleInputChange);
+  meScrInput.addEventListener('input', handleInputChange);
+  pwdChangeBtn.addEventListener('click', handlePwdChangeClick);
+  passUpdBut.addEventListener('click', handlePassUpdClick);
+  curPass.addEventListener('blur', handleCurPassBlur);
+  newPass.addEventListener('focus', function() {
+    indi = 1;
+  });
+  newPass.addEventListener('blur', function() {
+    indi = 0;
+  });
+  newPass.addEventListener('keyup', function() {
+    var pswd = npoPass.value;
+  
+    // Check length
+    if (pswd.length < 8) {
+      lengthElem.classList.remove('valid');
+      lengthElem.classList.add('invalid');
+      chk[0] = 0;
     } else {
-      $("#usrupdme").addClass("no-change");
+      lengthElem.classList.remove('invalid');
+      lengthElem.classList.add('valid');
+      chk[0] = 1;
     }
+  
+    // Validate letter
+    if (pswd.match(/[A-z]/)) {
+      letterElem.classList.remove('invalid');
+      letterElem.classList.add('valid');
+      chk[1] = 1;
+    } else {
+      letterElem.classList.remove('valid');
+      letterElem.classList.add('invalid');
+      chk[1] = 0;
+    }
+  
+    // Validate capital letter
+    if (pswd.match(/[A-Z]/)) {
+      capitalElem.classList.remove('invalid');
+      capitalElem.classList.add('valid');
+      chk[2] = 1;
+    } else {
+      capitalElem.classList.remove('valid');
+      capitalElem.classList.add('invalid');
+      chk[2] = 0;
+    }
+  
+    // Validate number
+    if (pswd.match(/\d/)) {
+      numberElem.classList.remove('invalid');
+      numberElem.classList.add('valid');
+      chk[3] = 1;
+    } else {
+      numberElem.classList.remove('valid');
+      numberElem.classList.add('invalid');
+      chk[3] = 0;
+    }
+  
+    // Validate matching passwords
+    if (pswd === nptPass.value && pswd !== '') {
+      matchPwdElem.classList.remove('invalid');
+      matchPwdElem.classList.add('valid');
+      chk[4] = 1;
+    } else {
+      matchPwdElem.classList.remove('valid');
+      matchPwdElem.classList.add('invalid');
+      chk[4] = 0;
+    }
+  
+    // Add all array values together
+    if (chk.includes(0)) {
+      passUpdBut.classList.add('no-change');
+    } else {
+      passUpdBut.classList.remove('no-change');
+    }
+  
+    console.log(chk.toString());
   });
 
-  $("#me_pwd_ch").click(function(){
-    //console.log("pwd Change CLK");
-    indi = 1;
-    $("#pop").addClass("obscr");
-    $("#passwrd_chg").removeClass('hide');
 
-  })
-  $('#passUpdBut').click(function(){
-    if ($(this).hasClass("no-change")) {
+
+  // Event handler function
+  function handleInputChange() {
+    if (myDetails.name !== meNameInput.value || myDetails.email !== meEmailInput.value || myDetails.scr !== meScrInput.value) {
+      usrUpdMeBtn.classList.remove('no-change');
+    } else {
+      usrUpdMeBtn.classList.add('no-change');
+    }
+  }
+  function handlePwdChangeClick() {
+    indi = 1;
+    popElement.classList.add('obscr');
+    passwrdChgElement.classList.remove('hide');
+  }
+  function handlePassUpdClick() {
+    if (passUpdBut.classList.contains('no-change')) {
       console.log("no-change no post");
     } else {
-      var myPass = new Object();
-      myPass.id = $(".actusrcard").attr("data-id");
-      myPass.npass = $("#npo_pass").val();
-      var senBuild = JSON.stringify(myPass);
+      var myPass = {
+        id: actusrcard.getAttribute('data-id'),
+        npass: npoPass.value
+      };
+  
       var xhr = new XMLHttpRequest();
-        
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4 && xhr.status == 200){
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
           console.log(xhr.responseText);
           
           if (xhr.responseText.search('Error') > -1) {
             alert("Password update failed, please report to page Admin ln 280");
-            
           } else {
             alert("Password update successful");
             passclr();
-            $("#pop").removeClass("obscr");
-            $("#passwrd_chg").addClass('hide');
+            popElement.classList.remove("obscr");
+            passwrdChgElement.classList.add('hide');
           }
         }
-
       };
+  
       xhr.open("POST", "/inc/usrpassupd.php", true);
       xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(senBuild);
+      xhr.send(JSON.stringify(myPass));
     }
-  })
-  $("#Cur_pass").blur(function() {
-    if ($("#Cur_pass").val() == ''){
-      $("#Cur_pass").removeClass("approved").removeClass("rejected");
-      $("label[for=Cur_pass]").removeClass("lab_approved").removeClass("lab_rejected");
-      $("label[for=Cur_pass]").html("Current Password");
+  }
+  function handleCurPassBlur() {
+    if (curPass.value === '') {
+      curPass.classList.remove('approved', 'rejected');
+      labelForCurPass.classList.remove('lab_approved', 'lab_rejected');
+      labelForCurPass.textContent = 'Current Password';
     } else {
-      var myPass = new Object();
-      myPass.id = $(".actusrcard").attr("data-id");
-      myPass.pass = $("#Cur_pass").val();
-      var senBuild = JSON.stringify(myPass);
+      var myPass = {
+        id: actusrcard.getAttribute('data-id'),
+        pass: curPass.value
+      };
+  
       var xhr = new XMLHttpRequest();
-        
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4 && xhr.status == 200){
+  
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
           console.log(xhr.responseText);
           console.log(xhr.responseText.search('Error'));
+  
           if (xhr.responseText.search('Error') > -1) {
-            console.log("rejected upd");
-            //password did not match make box red
-            $("#Cur_pass").removeClass("approved").addClass("rejected");
-            $("label[for=Cur_pass]").removeClass("lab_approved").addClass("lab_rejected");
-            $("label[for=Cur_pass]").html("Current Password - DOESN'T MATCH");
+            console.log('rejected upd');
+            // Password did not match, make box red
+            curPass.classList.remove('approved');
+            curPass.classList.add('rejected');
+            labelForCurPass.classList.remove('lab_approved');
+            labelForCurPass.classList.add('lab_rejected');
+            labelForCurPass.textContent = "Current Password - DOESN'T MATCH";
             chk[5] = 0;
           } else {
-            console.log("Approved upd");
-            //password matched make box green
-            $("#Cur_pass").removeClass("rejected").addClass("approved");
-            $("label[for=Cur_pass]").removeClass("lab_rejected").addClass("lab_approved");
-            $("label[for=Cur_pass]").html("Current Password - MATCH");
+            console.log('Approved upd');
+            // Password matched, make box green
+            curPass.classList.remove('rejected');
+            curPass.classList.add('approved');
+            labelForCurPass.classList.remove('lab_rejected');
+            labelForCurPass.classList.add('lab_approved');
+            labelForCurPass.textContent = 'Current Password - MATCH';
             chk[5] = 1;
           }
         }
-
       };
-      xhr.open("POST", "/inc/usrpasschk.php", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(senBuild);
-  }
-  })
-  $('.newp').keyup(function() {
-    var pswd = $("#npo_pass").val();
-    
-    //check length
-    if (pswd.length < 8 ) {
-      $("#length").removeClass("valid").addClass("invalid");
-      chk[0] = 0;
-    } else {
-      $("#length").removeClass("invalid").addClass("valid");
-      chk[0] = 1;
-    }
-    //validate letter
-    if ( pswd.match(/[A-z]/) ) {
-      $('#letter').removeClass('invalid').addClass('valid');
-      chk[1] = 1;
-    } else {
-      $('#letter').removeClass('valid').addClass('invalid');
-      chk[1] = 0;
-    }
-    //validate capital letter
-    if ( pswd.match(/[A-Z]/) ) {
-      $('#capital').removeClass('invalid').addClass('valid');
-      chk[2] = 1;
-    } else {
-      $('#capital').removeClass('valid').addClass('invalid');
-      chk[2] = 0;
-    }
-    //validate number
-    if ( pswd.match(/\d/) ) {
-      $('#number').removeClass('invalid').addClass('valid');
-      chk[3] = 1;
-    } else {
-      $('#number').removeClass('valid').addClass('invalid');
-      chk[3] = 0;
-    }
-    if (pswd == $("#npt_pass").val() && pswd != '') {
-      $('#matchpwd').removeClass('invalid').addClass('valid');
-      chk[4] = 1;
-    } else {
-      $('#matchpwd').removeClass('valid').addClass('invalid');
-      chk[4] = 0;
-    }
-    //add all of the array together
-    if (chk.includes(0)){
-      $('#passUpdBut').addClass('no-change');
-    } else {
-      $('#passUpdBut').removeClass('no-change');
-    };
-    console.log(chk.toString());
-    }).focus(function(){
-      indi = 1;
-    }).blur(function(){
-      indi = 0;
-    });
-  $(".vpas").mousedown(function(){
-    //alert($(this).attr("lnk"));
-    var x = document.getElementById($(this).attr("lnk"));
-    x.type = "text";
-  }).mouseup(function(){
-    var x = document.getElementById($(this).attr("lnk"));
-    x.type = "password";
-  });
-  $("#me_usract").click(function(){
-    if (confirm("Note that this action will deactivate your account and log you out.\nDo you still want to continue?")) {
-      //process to update account active status
-      indi = 1;
-      //update Server to change status
-      idn = $(".actusrcard").attr("data-id");
-      fun = 'status';
-      upd = 1;
-      $.post(
-        "/inc/userman.php",
-        { idn: idn, funct: fun, val: upd},
-        function (data, status) {
-          //alert(status);
-          if (status == 'success') {
-          //confirm and log out
-            alert('Your account has been deactivated and you will now be logged out');
-            window.location = '/inc/logout.inc.php';
-          } else {
-            alert('Error trying to update users status');
-            console.log("Error: " + response.responseText);          
-          }
-        }
-      ).fail(function (response) {
-        alert('Error trying to update users status');
-        console.log("Error: " + response.responseText);
-      });
-
-    }
-  })
-  $("#usrupdme").click(function(){
-    if(!$("#usrupdme").hasClass("no-change")) {
-      //build JSON
-      var myNew = new Object();
-      myNew.id = $(".actusrcard").attr("data-id");
-      myNew.name = $("#my_name").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-      myNew.email = $("#my_email").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-      myNew.scr = $("#my_scrn").val().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-      var senBuild = JSON.stringify(myNew);
-      //console.log(senBuild);
-      //Send request and process
-      var xhr = new XMLHttpRequest();
-      
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4 && xhr.status == 200){
-          //console.log(xhr.responseText);
-          if (xhr.responseText.search('Error') > -1) {
-            alert('Updating User Details Failed');
-          } else {
-            mechk();
-            $("#usrupdme").addClass("no-change");
-          }
-        }
   
-      };
-      xhr.open("POST", "/inc/userupd.php", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(senBuild);
+      xhr.open('POST', '/inc/usrpasschk.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify(myPass));
     }
+  }
+
+vpassElements.forEach(function(element) {
+  // Add mousedown event listener
+  element.addEventListener('mousedown', function() {
+    // Get the target input element based on lnk attribute
+    var targetInput = document.getElementById(element.getAttribute('lnk'));
+    // Change the type attribute to "text"
+    targetInput.type = 'text';
   });
 
-  $(".clr").click(function(){
-    usrclr()
-  })
-
-  //user table items
-  $("#usrlist").on("click", ".usrcrd", function(){
-    if (indi == 0){
-      usrclr();
-      $(".editusrcard").attr("data-id",$(this).attr("data-id"));
-      nam = $(this).children(".usrnam").html();
-      ema = $(this).children(".usreml").html();
-      scr = $(this).children(".usrscrn").html();
-      $("#upd_name").val(nam);
-      $("#upd_email").val(ema);
-      $("#upd_scrn").val(scr);
-      
-      if ($(this).children(".usract").html() == "ACTIVE") {
-        $("#usract").html('ACTIVE');
-        $("#usract").removeClass("no-change");
-      } else {
-        $("#usract").html('INACTIVE');
-        $("#usract").removeClass("no-change");
-      }
-      $("#pwdchange").html('RESET PASSWORD');
-      $("#pwdchange").removeClass("no-change");
-      $("#usrupd").html("UPDATE");
-    }
-    indi = 0;   
-  })
-
-  $("#usrlist").on("click", ".usract", function(){
+  // Add mouseup event listener
+  element.addEventListener('mouseup', function() {
+    // Get the target input element based on lnk attribute
+    var targetInput = document.getElementById(element.getAttribute('lnk'));
+    // Change the type attribute to "password"
+    targetInput.type = 'password';
+  });
+});
+document.getElementById("me_usract").addEventListener("click", function() {
+  if (confirm("Note that this action will deactivate your account and log you out.\nDo you still want to continue?")) {
+    // Process to update account active status
     indi = 1;
-    //update Server to change status
-    idn = $(this).parent(".usrcrd").attr("data-id");
-    fun = 'status';
-    if ($(this).html() == "ACTIVE") {
-      upd = 1;
+
+    // Update server to change status
+    var idn = document.querySelector(".actusrcard").getAttribute("data-id");
+    var fun = 'status';
+    var upd = 1;
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          // Confirm and log out
+          alert('Your account has been deactivated and you will now be logged out');
+          window.location = '/inc/logout.inc.php';
+        } else {
+          alert('Error trying to update users status');
+          console.log("Error: " + xhr.responseText);
+        }
+      }
+    };
+
+    xhr.open("POST", "/inc/userman.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("idn=" + idn + "&funct=" + fun + "&val=" + upd);
+  }
+});
+document.getElementById("usrupdme").addEventListener("click", function() {
+  if (!document.getElementById("usrupdme").classList.contains("no-change")) {
+    // Build JSON
+    var myNew = new Object();
+    myNew.id = document.querySelector(".actusrcard").getAttribute("data-id");
+    myNew.name = document.getElementById("my_name").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    myNew.email = document.getElementById("my_email").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    myNew.scr = document.getElementById("my_scrn").value.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    var senBuild = JSON.stringify(myNew);
+    
+    // Send request and process
+    var xhr = new XMLHttpRequest();
+    
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        // console.log(xhr.responseText);
+        if (xhr.responseText.search('Error') > -1) {
+          alert('Updating User Details Failed');
+        } else {
+          mechk();
+          document.getElementById("usrupdme").classList.add("no-change");
+        }
+      }
+    };
+    
+    xhr.open("POST", "/inc/userupd.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(senBuild);
+  }
+});
+document.querySelector(".clr").addEventListener("click", function() {
+  usrclr();
+});
+//user table items
+document.getElementById("usrlist").addEventListener("click", function(event) {
+  var target = event.target;
+  if (target.classList.contains("usrcrd") && indi === 0) {
+    usrclr();
+    document.querySelector(".editusrcard").setAttribute("data-id", target.getAttribute("data-id"));
+    nam = target.querySelector(".usrnam").innerHTML;
+    ema = target.querySelector(".usreml").innerHTML;
+    scr = target.querySelector(".usrscrn").innerHTML;
+    document.getElementById("upd_name").value = nam;
+    document.getElementById("upd_email").value = ema;
+    document.getElementById("upd_scrn").value = scr;
+
+    var usractValue = target.querySelector(".usract").innerHTML;
+    if (usractValue === "ACTIVE") {
+      document.getElementById("usract").innerHTML = "ACTIVE";
+      document.getElementById("usract").classList.remove("no-change");
     } else {
-      upd = 0;
-    }  
-    marker = $(this);
-    $.post(
-      "/inc/userman.php",
-      { idn: idn, funct: fun, val: upd},
-      function (data, status) {
-        //alert(status);
-        if (status == 'success') {
-          if (upd == 1) {
-            marker.html("INACTIVE");
+      document.getElementById("usract").innerHTML = "INACTIVE";
+      document.getElementById("usract").classList.remove("no-change");
+    }
+
+    document.getElementById("pwdchange").innerHTML = "RESET PASSWORD";
+    document.getElementById("pwdchange").classList.remove("no-change");
+    document.getElementById("usrupd").innerHTML = "UPDATE";
+  }
+  indi = 0;
+});
+document.getElementById("usrlist").addEventListener("click", function(event) {
+  var target = event.target;
+  if (target.classList.contains("usract")) {
+    indi = 1;
+    // Update server to change status
+    var parentUsrCrd = target.closest(".usrcrd");
+    idn = parentUsrCrd.getAttribute("data-id");
+    fun = 'status';
+    upd = target.innerHTML === "ACTIVE" ? 1 : 0;
+    marker = target;
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          if (upd === 1) {
+            marker.innerHTML = "INACTIVE";
           } else {
-            marker.html("ACTIVE");
+            marker.innerHTML = "ACTIVE";
           }
         } else {
           alert('Error trying to update users status');
-          console.log("Error: " + response.responseText);          
+          console.log("Error: " + xhr.responseText);
         }
       }
-    ).fail(function (response) {
-      alert('Error trying to update users status');
-      console.log("Error: " + response.responseText);
-    });
+    };
 
-  })
-
-  $("#usrlist").on("click", ".pwdreset", function(){
+    xhr.open("POST", "/inc/userman.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("idn=" + idn + "&funct=" + fun + "&val=" + upd);
+  }
+});
+document.getElementById("usrlist").addEventListener("click", function(event) {
+  var target = event.target;
+  if (target.classList.contains("pwdreset")) {
     indi = 1;
-    idn = $(this).parent(".usrcrd").attr("data-id");
+    // Update server to generate temporary password
+    var parentUsrCrd = target.closest(".usrcrd");
+    idn = parentUsrCrd.getAttribute("data-id");
     fun = 'pwdres';
-    //pop up shield
-    $("#pop").addClass("obscr");
-    $(".pwdresalrt").html('Generating Temporary Password');
-    $(".pwdresalrt").removeClass("hide");
-    $.post(
-      "/inc/userman.php",
-      { idn: idn, funct: fun},
-      function (data, status) {
-        //alert(status);
-        if (status == 'success') {
-          $(".pwdresalrt").html('New Password is <br><br>' + data);
+
+    // Pop up shield
+    document.getElementById("pop").classList.add("obscr");
+    document.querySelector(".pwdresalrt").innerHTML = 'Generating Temporary Password';
+    document.querySelector(".pwdresalrt").classList.remove("hide");
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          document.querySelector(".pwdresalrt").innerHTML = 'New Password is <br><br>' + xhr.responseText;
         } else {
-          $(".pwdresalrt").html('ERROR WITH PASSWORD RESET');
+          document.querySelector(".pwdresalrt").innerHTML = 'ERROR WITH PASSWORD RESET';
           alert('Error trying to reset password');
-          console.log("Error: " + response.responseText);          
+          console.log("Error: " + xhr.responseText);
         }
       }
-    ).fail(function (response) {
-      $(".pwdresalrt").html('ERROR WITH PASSWORD RESET');
-      alert('Error trying to reset password');
-      console.log("Error: " + response.responseText);
-    });
-  });
-  //User edit items
-  $(".usr_input").on("keyup", function(){
-    if ($("#upd_name").val() != '' && $("#upd_email").val() != '' && $("#upd_scrn").val() != '' && !$("#upd_scrn").hasClass("invalid")) {
-      if (nam != $("#upd_name").val() || ema != $("#upd_email").val() || scr != $("#upd_scrn").val()) {
-        $("#usrupd").removeClass("no-change");
-      } else {
-        $("#usrupd").addClass("no-change");
-      }
+    };
+
+    xhr.open("POST", "/inc/userman.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send("idn=" + idn + "&funct=" + fun);
+  }
+});
+//User edit items
+document.querySelector(".usr_input").addEventListener("keyup", function() {
+  var updName = document.getElementById("upd_name").value;
+  var updEmail = document.getElementById("upd_email").value;
+  var updScr = document.getElementById("upd_scrn");
+
+  if (updName !== '' && updEmail !== '' && !updScr.classList.contains("invalid")) {
+    if (nam !== updName || ema !== updEmail || scr !== updScr.value) {
+      document.getElementById("usrupd").classList.remove("no-change");
     } else {
-      $("#usrupd").addClass("no-change");
+      document.getElementById("usrupd").classList.add("no-change");
     }
-  });
-  $("#usrupd").click(function(){
-    if ($(this).hasClass("no-change")) {
-      
+  } else {
+    document.getElementById("usrupd").classList.add("no-change");
+  }
+});
+document.getElementById("usrupd").addEventListener("click", function() {
+  if (this.classList.contains("no-change")) {
+    // No change action
+  } else {
+    var usrD = {};
+    usrD.id = document.querySelector(".editusrcard").getAttribute("data-id");
+    usrD.name = document.getElementById("upd_name").value;
+    usrD.email = document.getElementById("upd_email").value;
+    usrD.scr = document.getElementById("upd_scrn").value;
+    var senBuild = JSON.stringify(usrD);
+    console.log(senBuild);
+
+    if (document.querySelector(".editusrcard").getAttribute("data-id") === '0') {
+      document.getElementById("pop").classList.add("obscr");
+      document.querySelector(".pwdresalrt").innerHTML = 'Creating New User';
+      document.querySelector(".pwdresalrt").classList.remove("hide");
+      document.querySelector(".passwrd_reset_splash").classList.remove("hide");
     } else {
-      var usrD = new Object();
-      usrD.id = $(".editusrcard").attr("data-id");
-      usrD.name = $("#upd_name").val();
-      usrD.email = $("#upd_email").val();
-      usrD.scr = $("#upd_scrn").val();
-      var senBuild = JSON.stringify(usrD);
-      console.log(senBuild);
-      if ($(".editusrcard").attr("data-id") == '0') {
-        $("#pop").addClass("obscr");
-        $(".pwdresalrt").html('Creating New User');
-        $(".pwdresalrt").removeClass("hide");      
-        $(".passwrd_reset_splash").removeClass("hide");      
-      } else {
-        
-      }
-      
-      //Send request and process
-      var xhr = new XMLHttpRequest();
-      
-      xhr.onreadystatechange = function(){
-        if(xhr.readyState == 4 && xhr.status == 200){
-          console.log(xhr.response);
-          console.log(xhr.responseText);
-          if (xhr.responseText.search('Error') > -1) {
-            if ($(".editusrcard").attr("data-id") == "0") {
-              $(".pwdresalrt").html('Error creating user');
-            } else {
-              alert('Updating User Details Failed');
-            }
+      // Handle update case
+    }
+
+    // Send request and process
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log(xhr.response);
+        console.log(xhr.responseText);
+
+        if (xhr.responseText.search('Error') > -1) {
+          if (document.querySelector(".editusrcard").getAttribute("data-id") === "0") {
+            document.querySelector(".pwdresalrt").innerHTML = 'Error creating user';
           } else {
-            if ($(".editusrcard").attr("data-id") == "0") {
-              $(".editusrcard").attr("data-id",xhr.responseText.split("-")[1]);
-              $(".pwdresalrt").html('New User Created <br> Password is <br>' + xhr.responseText.split("-")[2]);
-              $("#usract").html('ACTIVE');
-              $("#usract").removeClass("no-change");
-              $("#pwdchange").html('RESET PASSWORD');
-              $("#pwdchange").removeClass("no-change");
-              $("#usrupd").html("UPDATE");
-              console.log(xhr.responseText);
-            } else {
-              alert('Updating User Details Success');
-            }            
-            useridchk();
-            nam = $("#upd_name").val();
-            ema = $("#upd_email").val();
-            scr = $("#upd_scrn").val();
-            $("#usrupd").addClass("no-change");
-            
+            alert('Updating User Details Failed');
           }
+        } else {
+          if (document.querySelector(".editusrcard").getAttribute("data-id") === "0") {
+            document.querySelector(".editusrcard").setAttribute("data-id", xhr.responseText.split("-")[1]);
+            document.querySelector(".pwdresalrt").innerHTML = 'New User Created <br> Password is <br>' + xhr.responseText.split("-")[2];
+            document.getElementById("usract").innerHTML = 'ACTIVE';
+            document.getElementById("usract").classList.remove("no-change");
+            document.getElementById("pwdchange").innerHTML = 'RESET PASSWORD';
+            document.getElementById("pwdchange").classList.remove("no-change");
+            document.getElementById("usrupd").innerHTML = "UPDATE";
+            console.log(xhr.responseText);
+          } else {
+            alert('Updating User Details Success');
+          }
+          useridchk();
+          nam = document.getElementById("upd_name").value;
+          ema = document.getElementById("upd_email").value;
+          scr = document.getElementById("upd_scrn").value;
+          document.getElementById("usrupd").classList.add("no-change");
         }
-        
-      };
-      xhr.open("POST", "/inc/userupd.php", true);
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(senBuild);
-      
-    }
-  })
-  $("#upd_scrn").blur(function(){
-    if ($("#upd_scrn").val() == '') {
-      $("#upd_scrn").removeClass("rejected").removeClass("approved").addClass("inp_std");
-      $("label[for=upd_scrn]").removeClass("lab_rejected").removeClass("lab_approved");
-      $("label[for=upd_scrn]").html("Login Name");
-    } else {
-    var uScr = new Object();
-    uScr.id = $(".editusrcard").attr("data-id")
-    uScr.scr = $("#upd_scrn").val();
+      }
+    };
+
+    xhr.open("POST", "/inc/userupd.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(senBuild);
+  }
+});
+document.getElementById("upd_scrn").addEventListener("blur", function() {
+  if (document.getElementById("upd_scrn").value == '') {
+    document.getElementById("upd_scrn").classList.remove("rejected", "approved");
+    document.querySelector("label[for=upd_scrn]").classList.remove("lab_rejected", "lab_approved");
+    document.querySelector("label[for=upd_scrn]").innerHTML = "Login Name";
+  } else {
+    var uScr = { id: document.querySelector(".editusrcard").getAttribute("data-id"), scr: document.getElementById("upd_scrn").value };
     var senBuild = JSON.stringify(uScr);
     var xhr = new XMLHttpRequest();
-      
-    xhr.onreadystatechange = function(){
-      if(xhr.readyState == 4 && xhr.status == 200){
+
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
         console.log(xhr.responseText);
         console.log(xhr.responseText.search('Error'));
         if (xhr.responseText.search('Error') > -1) {
           console.log("rejected upd");
-          //password did not match make box red
-          $("#upd_scrn").removeClass("approved").removeClass("inp_std").addClass("rejected");
-          $("label[for=upd_scrn]").removeClass("lab_approved").addClass("lab_rejected");
-          $("label[for=upd_scrn]").html("DUPLICATE LOGIN NAME FOUND");
-          $("#usrupd").addClass("no-change");
-          
+          // Password did not match; make box red
+          document.getElementById("upd_scrn").classList.remove("approved", "inp_std");
+          document.querySelector("label[for=upd_scrn]").classList.remove("lab_approved").add("lab_rejected");
+          document.querySelector("label[for=upd_scrn]").innerHTML = "DUPLICATE LOGIN NAME FOUND";
+          document.getElementById("usrupd").classList.add("no-change");
         } else {
           console.log("Approved upd");
-          //password matched make box green
-          $("#upd_scrn").removeClass("rejected").removeClass("inp_std").addClass("approved");
-          $("label[for=upd_scrn]").removeClass("lab_rejected").addClass("lab_approved");
-          $("label[for=upd_scrn]").html("LOGIN NAME UNIQUE");
-          if (nam != $("#upd_name").val() || ema != $("#upd_email").val() || scr != $("#upd_scrn").val()) {
-            $("#usrupd").removeClass("no-change");
+          // Password matched; make box green
+          document.getElementById("upd_scrn").classList.remove("rejected", "inp_std");
+          document.querySelector("label[for=upd_scrn]").classList.remove("lab_rejected").add("lab_approved");
+          document.querySelector("label[for=upd_scrn]").innerHTML = "LOGIN NAME UNIQUE";
+          if (nam != document.getElementById("upd_name").value || ema != document.getElementById("upd_email").value || scr != document.getElementById("upd_scrn").value) {
+            document.getElementById("usrupd").classList.remove("no-change");
           } else {
-            $("#usrupd").addClass("no-change");
+            document.getElementById("usrupd").classList.add("no-change");
           }
-
         }
       }
-
     };
+
     xhr.open("POST", "/inc/usrscrchk.php", true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(senBuild);
-
-}})
-  //pop up functions
-  $("#pop").on("click",".pwdresalrt", function(event) {
+  }
+});
+//pop up functions
+document.getElementById("pop").addEventListener("click", function(event) {
+  var pwdResAlert = event.target.closest(".pwdresalrt");
+  if (pwdResAlert) {
     event.stopPropagation();
-    
-  })
-  $("#pop").on("click",".passwrd_chg_splash", function(event) {
+  }
+});
+document.getElementById("pop").addEventListener("click", function(event) {
+  var passwrdChgSplash = event.target.closest(".passwrd_chg_splash");
+  if (passwrdChgSplash) {
     event.stopPropagation();
-    
-  })
-  $("#pop").click(function () {
-    if (indi == 0) {
-    $("#pop").removeClass("obscr");
-    $("#passwrd_chg").addClass('hide');
-    $(".pwdresalrt").addClass("hide");      
-    $(".passwrd_reset_splash").addClass("hide");      
-    }
-  });  
-
-
-
-
+  }
+});
+document.getElementById("pop").addEventListener("click", function () {
+  if (indi === 0) {
+    document.getElementById("pop").classList.remove("obscr");
+    document.getElementById("passwrd_chg").classList.add('hide');
+    document.querySelector(".pwdresalrt").classList.add("hide");
+    document.querySelector(".passwrd_reset_splash").classList.add("hide");
+  }
+});
 
 });

@@ -305,7 +305,7 @@
     <div id="pri_dets" class="cont">
         <div class="div_client pdd">
             <div class="group">
-                <input id="client" class="inputMaterial" name="clientName" type="text" required />
+                <input id="client" class="inputMaterial" name="clientName" type="text" required autocomplete="off"/>
                 <span id="client_span" class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Client </label>
@@ -398,7 +398,7 @@
             <div id="j_signor_head" class="job_add_title">Consignor</div>
             <div id="j_signor_body" class="j_add_body">
                 <div class="jac ja_name">
-                    <input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required />
+                    <input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required autocomplete="off" />
                 </div>
                 <div class="jac ja_add1">
                     <input id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required />
@@ -439,7 +439,7 @@
             <div id="j_signee_head" class="job_add_title">Consignee</div>
             <div id="j_signee_body" class="j_add_body">
                 <div class="jac ja_name">
-                    <input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required />
+                    <input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required autocomplete="off" />
                 </div>
                 <div class="jac ja_add1">
                     <input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required />

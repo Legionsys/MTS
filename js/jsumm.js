@@ -4,230 +4,308 @@ var srchInv;
 var srchJob;
 var actcli = [];
 var inact = [];
-function joblstUpd(){
-  var wild = $("#search-all").val();
-  var cli =  srchCli;
+
+function joblstUpd() {
+  var wild = document.getElementById("search-all").value;
+  var cli = srchCli;
   var job = srchJob;
   var inv = srchInv;
   console.log(wild + " - " + cli + " - " + job + " - " + inv);
-  //Update jobs
-  $.post(
-    "/inc/job-summ-upd.php",
-    { wild: wild, cli: cli, job: job, inv: inv },
-    function (data, status) {
-      $("#job_board").html(data);
-    }
-  );
-};
 
+  // Create a new XMLHttpRequest object
+  var xhr = new XMLHttpRequest();
+
+  // Configure it: specify the request type (POST), the URL, and whether it should be asynchronous
+  xhr.open("POST", "/inc/job-summ-upd.php", true);
+
+  // Set the request header for the form data
+  xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+  // Define the callback function to handle the response
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      // Update the content of the element with the response data
+      document.getElementById("job_board").innerHTML = xhr.responseText;
+    }
+  };
+
+  // Convert the data to a URL-encoded string
+  var formData = "wild=" + encodeURIComponent(wild) + "&cli=" + encodeURIComponent(cli) + "&job=" + encodeURIComponent(job) + "&inv=" + encodeURIComponent(inv);
+
+  // Send the request with the form data
+  xhr.send(formData);
+}
 function urlUpdate() {
-  var filters;
-  if (srchAll == 'null' || srchAll == false) {
-    filters = 'wild=null';
+  var filters = [];
+
+  // Handle 'wild' parameter
+  if (srchAll !== 'null' && srchAll !== false) {
+    filters.push('wild=' + encodeURIComponent(srchAll));
   } else {
-    filters = 'wild=' + srchAll;
+    filters.push('wild=null');
   }
-  if (srchCli == 'null' || srchCli == false) {
-    filters = filters + '&cli=null';
+
+  // Handle 'cli' parameter
+  if (srchCli !== 'null' && srchCli !== false) {
+    filters.push('cli=' + encodeURIComponent(srchCli));
   } else {
-    filters = filters + '&cli=' + srchCli;
+    filters.push('cli=null');
   }
-  if (srchInv == 'null' || srchInv == false) {
-    filters = filters + '&inv=null';
+
+  // Handle 'inv' parameter
+  if (srchInv !== 'null' && srchInv !== false) {
+    filters.push('inv=' + encodeURIComponent(srchInv));
   } else {
-    filters = filters + '&inv=' + srchInv;
+    filters.push('inv=null');
   }
-  if (srchJob == 'null' || srchJob == false){
-    filters = filters + '&job=null';
+
+  // Handle 'job' parameter
+  if (srchJob !== 'null' && srchJob !== false) {
+    filters.push('job=' + encodeURIComponent(srchJob));
   } else {
-    filters = filters + '&job=' + srchJob;
+    filters.push('job=null');
   }
-  var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + filters;
-  window.history.pushState({path:newurl},'',newurl);
-};
+
+  // Construct the new URL
+  var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + filters.join('&');
+
+  // Update the URL without reloading the page
+  window.history.pushState({ path: newurl }, '', newurl);
+}
+
 function cliupd() {
-  $.get("/inc/lstcli.php", function (data, status) {
-    var clients = $.parseJSON(data);
-    $.each(clients, function (i,v){
-      if(v.act == "1"){
-        actcli.push(v);
-      } else {
-        inact.push(v);
-      }
-      if (srchCli == v.clientId) {
-        $("#clisel").html(v.clientName);
-      }
-    });
-    //console.log(actcli);
-  }).done(function(){
+  var xhr = new XMLHttpRequest();
+
+  // Configure the request: specify the request type (GET) and the URL
+  xhr.open("GET", "/inc/lstcli.php", true);
+
+  // Define the callback function to handle the response
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      // Parse the JSON response
+      var clients = JSON.parse(xhr.responseText);
+
+      // Iterate over the clients array
+      clients.forEach(function (v) {
+        if (v.act === "1") {
+          actcli.push(v);
+        } else {
+          inact.push(v);
+        }
+
+        // Update the HTML if srchCli matches
+        if (srchCli == v.clientId) {
+          document.getElementById("clisel").innerHTML = v.clientName;
+        }
+      });
+
+      // Uncomment the following line if you want to log actcli
+      // console.log(actcli);
+    }
+  };
+
+  // Send the request
+  xhr.send();
+
+  // Use the `onload` event to ensure that the request is completed before calling clilstupd
+  xhr.onload = function () {
     clilstupd();
-  });
+  };
 }
-function clilstupd(){
-  $("#actclilst").html("");
-  $.each(actcli, function (i,v){
-    if($('#search-cli').val() == ''){
-      $("#actclilst").append(
-        '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/hide.svg" alt="hide client"></div></div>'
-      )
-    } else {
-      if (v.clientName.toLowerCase().includes($('#search-cli').val().toLowerCase())){
-      $("#actclilst").append(
-        '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/hide.svg" alt="hide client"></div></div>'
-      )}
+
+function clilstupd() {
+  var searchCliValue = document.getElementById('search-cli').value.toLowerCase();
+
+  // Clear the content of the elements
+  document.getElementById("actclilst").innerHTML = "";
+  document.getElementById("deaclilst").innerHTML = "";
+
+  // Iterate over the 'actcli' array
+  actcli.forEach(function (v) {
+    if (searchCliValue === '' || v.clientName.toLowerCase().includes(searchCliValue)) {
+      // Append content to 'actclilst' based on search criteria
+      document.getElementById("actclilst").innerHTML +=
+        '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/hide.svg" alt="hide client"></div></div>';
     }
   });
-  $("#deaclilst").html("");
-  $.each(inact, function (i,v){
-    if($('#search-cli').val() == ''){
-      $("#deaclilst").append(
-        '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/view.svg" alt="view client"></div></div>'
-      )
-    } else {
-      if (v.clientName.toLowerCase().includes($('#search-cli').val().toLowerCase())){
-        $("#deaclilst").append(
-          '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/view.svg" alt="view client"></div></div>'
-        )
-      }
+
+  // Iterate over the 'inact' array
+  inact.forEach(function (v) {
+    if (searchCliValue === '' || v.clientName.toLowerCase().includes(searchCliValue)) {
+      // Append content to 'deaclilst' based on search criteria
+      document.getElementById("deaclilst").innerHTML +=
+        '<div class="selCli" data-id="' + v.clientId + '"><div class="scname">' + v.clientName + '</div><div class="vtog"><img src="img/view.svg" alt="view client"></div></div>';
     }
   });
 }
-var getUrlParameter = function getUrlParameter(sParam) {
+
+function getUrlParameter(sParam) {
   var sPageURL = window.location.search.substring(1),
       sURLVariables = sPageURL.split('&'),
       sParameterName,
       i;
 
   for (i = 0; i < sURLVariables.length; i++) {
-      sParameterName = sURLVariables[i].split('=');
+    sParameterName = sURLVariables[i].split('=');
 
-      if (sParameterName[0] === sParam) {
-          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-      }
+    if (sParameterName[0] === sParam) {
+      return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+    }
   }
   return false;
-};
-$(window).on("load", function () {
+}
+window.onload = function () {
   //console.log(window.location.href);
   //console.log(window.location.protocol + "//" + window.location.host + window.location.pathname + '?foo=bar');
   srchAll = getUrlParameter('wild');
   srchInv = getUrlParameter('inv');
   srchJob = getUrlParameter('job');
   srchCli = getUrlParameter('cli');
-  if (srchAll != "null" && srchAll != false ) {
-    $("#search-all").val(srchAll);
+  
+  // Update the value of the search-all input
+  if (srchAll !== "null" && srchAll !== false) {
+    document.getElementById("search-all").value = srchAll;
   } else {
     srchAll = 'null';
-  };
-  if (srchInv == "null" || srchInv == false) {
+  }
+
+  // Handle srchInv and set the corresponding radio button
+  if (srchInv === "null" || srchInv === false) {
     srchInv = 'All';
-  };
-  $("input[name='inv_Tog'][value='"+srchInv+"']").prop('checked', true);
-  if (srchJob == "null" || srchJob == false) {
+  }
+  var invTogRadio = document.querySelector("input[name='inv_Tog'][value='" + srchInv + "']");
+  if (invTogRadio) {
+    invTogRadio.checked = true;
+  }
+
+  // Handle srchJob and set the corresponding radio button
+  if (srchJob === "null" || srchJob === false) {
     srchJob = 'Act';
   }
-  $("input[name='job_Tog'][value='"+srchJob+"']").prop('checked', true);
+  var jobTogRadio = document.querySelector("input[name='job_Tog'][value='" + srchJob + "']");
+  if (jobTogRadio) {
+    jobTogRadio.checked = true;
+  }
+
+  // Call the functions joblstUpd and cliupd
   joblstUpd();
   cliupd();
-});
-$(document).ready(function () {
+};
+
+document.addEventListener("DOMContentLoaded", function () {
   //search update
-  $("#search-all").keyup(function () {
-    srchAll = $("#search-all").val();
+  document.getElementById("search-all").addEventListener("keyup", function () {
+    srchAll = document.getElementById("search-all").value;
     joblstUpd();
   });
-  $("#search-all").change(function () {
+  document.getElementById("search-all").addEventListener("change", function () {
     urlUpdate();
-  });  
-
-  $("input[type='radio']").change(function(){
-    srchInv = $("input[name='inv_Tog']:checked").val();
-    srchJob = $("input[name='job_Tog']:checked").val();
-    urlUpdate();
-    joblstUpd();
   });
-  $('#search-cli').keyup(function() {
-    clilstupd()
-  })
 
-  $("#clisel").click(function () {
-    event.stopPropagation();
-    $("#clilst").removeClass("hidden");
-    var value = $("#search-cli").val();
-    $("#search-cli").focus().val('').val(value);
-  });
-  $("body").click(function () {
-    console.log("body click");
-    $("#clilst").addClass("hidden");
-  });
-  $("#clilst").click(function () {
-    event.stopPropagation();
-  });
-  $(".clilstr").click(function(){
-    if($("#actclilst").hasClass("hidden")){
-      $("#actclilst").removeClass("hidden");
-      $("#deaclilst").addClass("hidden");
-      $("#actimg").html('<img src="img/down.svg" alt="Open list">');
-      $("#decimg").html('<img src="img/left.svg" alt="Open list">');
-    } else {
-      $("#deaclilst").removeClass("hidden");
-      $("#actclilst").addClass("hidden");
-      $("#decimg").html('<img src="img/down.svg" alt="Open list">');
-      $("#actimg").html('<img src="img/left.svg" alt="Open list">');
-    }
-  })
-  $('#cliclr').click(function(){
-    srchCli = 'null';
-    $("#clisel").html();
-    $('#search-cli').val('');
-    urlUpdate();
-    joblstUpd();
-  })
-
-  $("#clilst").on('click',".scname", function () {
-    console.log($(this).parents().attr("data-id"));
-    console.log($(this).html());
-    srchCli = $(this).parents().attr("data-id");
-    $("#clisel").html($(this).html());
-    $("#clilst").addClass("hidden");
-    urlUpdate();
-    joblstUpd();
-  })
-  $("#clilst").on('click',".vtog", function () {
-    event.stopPropagation();
-    console.log('vtogclick - ' + $(this).parents().attr("data-id"));
-    console.log('vtogclick - ' + $(this).parents().parents().attr("id"));
-    console.log($(this).parents().parents().attr("id").substring(0,3));
-    var obj = {};
-    var ind = 0;
-    var clId = $(this).parents().attr("data-id");
-    //check if Active of Deactive list
-    if($(this).parents().parents().attr("id").substring(0,3) == 'act') {
-      //if Active
-      inact.unshift(actcli[actcli.findIndex(x => x.clientId === clId)]);
-      actcli = $(actcli).not($.grep(actcli, function(e){ return e.clientId == clId; })).get();
-    } else if($(this).parents().parents().attr("id").substring(0,3) == 'dea') {
-      //If Deactivated
-      ind = 1;
-      actcli.unshift(inact[inact.findIndex(x => x.clientId === clId)]);
-      inact = $(inact).not($.grep(inact, function(e){ return e.clientId == clId; })).get();
-    } else {
-      //Error thrown
-      alert('Please note that there was an issue trying to update the status of the selected client. Please contact IT with the client name that you were trying to update.');
-      return false;
-    }
-    clilstupd()
-    $.post(
-      "/inc/cliact_upd.php",
-      { cli: clId, mkr: ind },
-      function (data, status) {
-        console.log(data);
-        console.log(status);
-      }
-    ).fail(function (response) {
-      console.log("Error: " + response.responseText);
-
+  var radioInputs = document.querySelectorAll("input[type='radio']");
+  radioInputs.forEach(function (input) {
+    input.addEventListener("change", function () {
+      srchInv = document.querySelector("input[name='inv_Tog']:checked").value;
+      srchJob = document.querySelector("input[name='job_Tog']:checked").value;
+      urlUpdate();
+      joblstUpd();
     });
+  });
 
-  })
+  document.getElementById("search-cli").addEventListener("keyup", function () {
+    clilstupd();
+  });
+
+  document.getElementById("clisel").addEventListener("click", function (event) {
+    event.stopPropagation();
+    document.getElementById("clilst").classList.remove("hidden");
+    var value = document.getElementById("search-cli").value;
+    document.getElementById("search-cli").focus();
+    document.getElementById("search-cli").value = value;
+  });
+
+  document.body.addEventListener("click", function () {
+    console.log("body click");
+    document.getElementById("clilst").classList.add("hidden");
+  });
+
+  document.getElementById("clilst").addEventListener("click", function (event) {
+    event.stopPropagation();
+  });
+
+  document.querySelector(".clilstr").addEventListener("click", function () {
+    if (document.getElementById("actclilst").classList.contains("hidden")) {
+      document.getElementById("actclilst").classList.remove("hidden");
+      document.getElementById("deaclilst").classList.add("hidden");
+      document.getElementById("actimg").innerHTML = '<img src="img/down.svg" alt="Open list">';
+      document.getElementById("decimg").innerHTML = '<img src="img/left.svg" alt="Open list">';
+    } else {
+      document.getElementById("deaclilst").classList.remove("hidden");
+      document.getElementById("actclilst").classList.add("hidden");
+      document.getElementById("decimg").innerHTML = '<img src="img/down.svg" alt="Open list">';
+      document.getElementById("actimg").innerHTML = '<img src="img/left.svg" alt="Open list">';
+    }
+  });
+
+  document.getElementById("cliclr").addEventListener("click", function () {
+    srchCli = 'null';
+    document.getElementById("clisel").innerHTML = '';
+    document.getElementById("search-cli").value = '';
+    urlUpdate();
+    joblstUpd();
+  });
+
+  document.getElementById("clilst").addEventListener("click", function (event) {
+    if (event.target.classList.contains("scname")) {
+      console.log(event.target.closest(".selCli").getAttribute("data-id"));
+      console.log(event.target.innerHTML);
+      srchCli = event.target.closest(".selCli").getAttribute("data-id");
+      document.getElementById("clisel").innerHTML = event.target.innerHTML;
+      document.getElementById("clilst").classList.add("hidden");
+      urlUpdate();
+      joblstUpd();
+    }
+  });
+
+  document.getElementById("clilst").addEventListener("click", function (event) {
+    if (event.target.classList.contains("vtog")) {
+      event.stopPropagation();
+      console.log('vtogclick - ' + event.target.closest(".selCli").getAttribute("data-id"));
+      console.log('vtogclick - ' + event.target.closest(".selCli").parentNode.getAttribute("id"));
+      console.log(event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3));
+      var obj = {};
+      var ind = 0;
+      var clId = event.target.closest(".selCli").getAttribute("data-id");
+
+      //check if Active of Deactive list
+      if (event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'act') {
+        //if Active
+        inact.unshift(actcli[actcli.findIndex(x => x.clientId === clId)]);
+        actcli = actcli.filter(function (e) {
+          return e.clientId != clId;
+        });
+      } else if (event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'dea') {
+        //If Deactivated
+        ind = 1;
+        actcli.unshift(inact[inact.findIndex(x => x.clientId === clId)]);
+        inact = inact.filter(function (e) {
+          return e.clientId != clId;
+        });
+      } else {
+        //Error thrown
+        alert('Please note that there was an issue trying to update the status of the selected client. Please contact IT with the client name that you were trying to update.');
+        return false;
+      }
+      clilstupd();
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "/inc/cliact_upd.php", true);
+      xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log(xhr.responseText);
+        }
+      };
+      xhr.send("cli=" + clId + "&mkr=" + ind);
+    }
+  });
 });

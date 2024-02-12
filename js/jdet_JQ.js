@@ -1,8 +1,21 @@
 var mcnf;
 var mcnl = [];
 var climkr;
-var jbno;
 var timeout = null;
+var jdets = [];
+var sups = [];
+var notes = [];
+var cnot = [];
+var frt = [];
+var ojdets = [];
+var osups = [];
+var onotes = [];
+var ocnot = [];
+var ofrt = [];
+var jbn;
+var upd;
+var actcn;
+var pauseReq = false;
 
 
 
@@ -39,6 +52,195 @@ if (tots != parseFloat(0)) {
   $('#ahead').html("Amount");
 }
 };
+function getSearchParams(k){
+  var p={};
+  location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
+  return k?p[k]:p;
+ };
+ function firstpop(){
+  if (jbn != null && jbn !="0") {
+      var jobn = "00000" + jbn;
+      $("#jbnum").html(jbn);
+      $("#jobnum").html("Job - " + jobn.substring(jobn.length - 5));
+  } else {
+      $("#jbnum").html("New Job");
+  };
+  upd = "y";
+  fr = 'Y';
+  jbdu();
+  jbsu();
+  jbnot();  
+  jbcon();  
+  confrt('');
+  fr = '';
+
+};
+function jsupd(){
+  $(jdets).each(function (i, val) {
+      $.each(val, function (k, v) {
+      if (k == "ac_cb" || k == "inv_c" ) {
+          if (v !== null){
+              $('#' + k).prop('checked', true);
+          }
+      } else {
+          $("#" + k).val(v).attr('value',chknull(v));
+      }
+      });
+  });
+};
+function chknull(value) {
+  //return value;
+  if ($.isNumeric(value)) {
+    return value;
+  }
+  if (value != null){
+    return value;
+  } 
+  if ($.isEmptyObject(value)) {
+    return '';
+  } else {
+    return value;
+  }
+  
+}
+function jsupupd() {
+  $(sups).each(function (i, val) {
+      var txt = "";
+      txt = '<div class="supln" data-id="' + chknull(val.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup">$' + number_format(chknull(val.jsEst),2,'.',',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div></div>';
+      $("#supbody").append(txt);
+  });
+};
+function jnotupd() {
+  $("#notebody").html('');
+  $(notes).each(function (i, val) {
+      var txt = "";
+      txt = '<div class="tr" data-id="' + chknull(val.jnID) + '"><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + number_format(chknull(val.jnAmt),2,'.',',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
+      $("#notebody").append(txt);
+      
+  });
+  namt_tot();
+};
+function jconupd() {
+  $(cnot).each(function (i, val) {
+      var txt = "";
+      txt = '<div data-id="' + chknull(val.cnID) + '" class="ccnt_card"><div class="cnnum">' + chknull(val.cnNum) + '</div><input type="checkbox" class="mcnprnt" name="mprint" value="' + chknull(val.cnID) + '"><div class="cnscomp">' + chknull(val.snam) + '</div><div class="cnrcomp">' + chknull(val.rnam) + '</div><div class="cnitm">' + chknull(val.titm) + ' itms</div><div class="cnwgt">' + chknull(val.twgt) + ' kg</div><div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2,}).format(chknull(val.tcub)) + ' m3</div></div>';
+      $("#contlst").append(txt);
+  });
+};
+
+
+
+function jbdu(){
+  var frdu = fr;
+  var ind = "job";
+  $.post("/inc/job-init.php", { jbn: jbn , indi: ind }, function (data, status) {
+    jdets = $.parseJSON(data);
+    if (frdu == 'Y') {
+      ojdets = JSON.parse(JSON.stringify(jdets));
+    }
+    if (data.substring(0,1) == '<') {
+      $('#coll').append(data);
+    } else {
+      if (upd === "y") {
+        jsupd();
+    }}
+  }).fail(function (response) {
+    console.log("Failure Job Details - " + jbn);
+    console.log("Error: " + response.responseText);
+    console.log(response);
+  });
+};
+function jbsu(){
+  var frsu = fr;
+  var ind = "sup";
+  $.post("/inc/job-init.php", 
+  { jbn: jbn , indi: ind }, 
+  function (data, status) {
+    if (data.substring(0,1) == '<') {
+      $('#coll').append(data);
+    } else {
+      sups = $.parseJSON(data);
+      if (frsu == 'Y'){
+      osups = JSON.parse(JSON.stringify(sups));
+      }
+      if (upd === "y") {
+        jsupupd();
+      }
+    }
+  }).fail(function (response) {
+      console.log("Failure Supplier - " + jbn);
+      console.log("Error: " + response.responseText);
+      console.log(response);
+  });    
+};
+function jbnot(){
+  var ind = "not";
+  var frnot = fr;
+  $.post("/inc/job-init.php", 
+  { jbn: jbn , indi: ind }, 
+  function (data, status) {
+    if (data.substring(0,1) == '<') {
+      $('#coll').append(data);
+    } else {
+      notes = $.parseJSON(data);
+      if (frnot = 'Y') {
+        onotes = JSON.parse(JSON.stringify(notes));
+      }
+      if (upd === "y") {
+          jnotupd();
+    }}
+  }).fail(function (response) {
+      console.log("Failure Notes - " + jbn);
+      console.log("Error: " + response.responseText);
+      console.log(response);
+  });   
+};
+function jbcon(){
+  var ind = "con";
+  var frcon = fr;
+  $.post("/inc/job-init.php", 
+  { jbn: jbn , indi: ind }, 
+  function (data, status) {
+    if (data.substring(0,1) == '<') {
+      $('#coll').append(data);
+    } else {
+      cnot = $.parseJSON(data);
+      if (frcon == 'Y') {
+        ocnot = JSON.parse(JSON.stringify(cnot));
+      }
+      if (upd === "y") {
+          jconupd();
+      }}
+  }).fail(function (response) {
+      console.log("Failure Con-note - " + jbn);
+      console.log("Error: " + response.responseText);
+      console.log(response);
+  });   
+};
+function confrt(cnn){
+  var frfr = fr;
+  var ind = "frt";
+  $.post("/inc/job-init.php", 
+  { jbn: jbn , indi: ind }, 
+  function (data, status) {
+    if (data.substring(0,1) == '<') {
+      $('#coll').append(data);
+    } else {
+      frt = $.parseJSON(data);
+      if (frfr == 'Y') {
+        ofrt = JSON.parse(JSON.stringify(frt));
+      }
+      if (cnn != '') {
+        frtload(cnn);
+      }
+    }
+  }).fail(function (response) {
+      console.log("Failure Freight - " + jbn);
+      console.log("Error: " + response.responseText);
+      console.log(response);
+  }); 
+};
+
 function conDetUpd(){
   var tQty = 0;
   var tWgt = 0;
@@ -84,28 +286,63 @@ function conDetUpd(){
   $('#cn_m3').html(number_format(tM3,3,'.',',') + " m3");
 };
 function cnotUpd(){
-  if (jbno == "" || jbno == 0) {
+  if (jbn == "" || jbn == 0) {
 
   } else {
     var cnlist = mcnl.toString();
-    $.post("/inc/job-con-lst.php", { jbno: jbno, chkcn: cnlist }, function (data, status) {
-    
-      $("#contlst").html(data);
-    }).fail(function (response) {
-      console.log("Error: " + response.responseText);
-    });
+    $("#contlst").html('');
+    jconupd();
   }
 };
 function cnotCHK(){
-  $('input:checkbox.mcnprnt').each(function (){
-    
+  $('input:checkbox.mcnprnt').each(function (){    
     if (jQuery.inArray(this.value,mcnl) !== -1) {
       this.checked = true;
-    }
-    
+    }    
 })
-
 };
+function fldupd(init,obj){
+  var live = [];
+  var olive = [];
+  var indi = '';
+  var nid = -1;
+  var oind = -1;
+  var ind = -1;
+  var col = '';
+  if (init == "sups") {
+    live = sups;
+    olive = osups;
+    indi = "jsID"
+    nid = obj.parents(".supln").attr("data-id");
+    col = obj.attr("data-col");
+  }
+  $(olive).each(function (i, val) {
+    if (val[indi] == nid) {
+      oind = i;
+      return false;
+    }
+  });
+  $(live).each(function (i, val) {
+    if (val[indi] == nid) {
+      ind = i;
+      return false;
+    }
+  });
+  if (oind == -1 || olive[oind][col] != obj.html()) {
+    if (live[ind][col] != obj.html()) {
+      obj.removeClass("updated"); 
+      obj.addClass("pending"); 
+    } else {
+      obj.addClass("updated"); 
+      obj.removeClass("pending"); 
+    }
+  } else {
+    obj.removeClass("updated"); 
+    obj.removeClass("pending"); 
+  }
+};
+
+
 function clrDd(){
   $("#slist").html("");
 };
@@ -178,31 +415,36 @@ function ddConPop(val){
   }
 };
 function cnDetUpd(updstr,cno,upd) {
-  $.post(
-      "/inc/job-conn-upd.php",
-      { updstr: updstr, cno: cno },
-      function (data, status) {
-        $("#contlst").html(data);
-        if (status == "success") {
-          for (let [key, value] of upd) {
-            $("#" + key + ".pending").removeClass("pending");
-            $("#" + key).attr("value",value).addClass("updated");
-            
-          }
+  $.post("/inc/job-conn-upd.php",{ updstr: updstr, cno: cno },function (data, status) {
+    if (status == "success") {
+      var oin = -1;
+      $(ocnot).each(function (i,val){
+        if (val.cnID == cno) {
+          oin = i;
+          return false;
+      }});
+
+      for (let [key, value] of upd) {
+        $("#" + key + ".pending").removeClass("pending");
+        if (oin == -1 || chknull(ocnot[oin][key]) != value) {
+          $("#" + key).attr("value",value).addClass("updated");
         } else {
-          alert("Error in updating");
-          console.log("Variables - " + updstr + " : " + cno);
-          console.log("Error: " + response.responseText);
+          $("#" + key + ".pending").removeClass("updated");
         }
+        updchkr();
+        cnot[actcn][key] = value;
       }
-    ).fail(function (response) {
+    } else {
       alert("Error in updating");
-      console.log("Error: " + response.responseText);
       console.log("Variables - " + updstr + " : " + cno);
-      console.log(response);
-
-
-    });
+      console.log("Error: " + response.responseText);
+    }
+  }).fail(function (response) {
+    alert("Error in updating");
+    console.log("Error: " + response.responseText);
+    console.log("Variables - " + updstr + " : " + cno);
+    console.log(response);
+  });
 };
 function ddFrtPop(val){
   clrDd()
@@ -213,11 +455,9 @@ function ddFrtPop(val){
   } else {
     $(".ddbrtxt").html("Getting Suggestions");
     $(".load-3").removeClass("hideme");
-    
     //Get data from Server
     $.post("/inc/frtbklst.php", { stxt: stxt }, function (data, status) {
       $("#slist").html(data);
-      
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
     });
@@ -225,16 +465,111 @@ function ddFrtPop(val){
     $(".load-3").addClass("hideme");
   }
 };
+function updchkr(){
+  var pend = document.getElementsByClassName('pending');
+  //var updd = document.getElementsByClassName('updated');
+ 
+  if (pend.length > 0){
+    $("#updcheck").removeClass("chkgood");
+    $("#updcheck").addClass("chkpend");
+    $("#updcheck").html("Click me to update");
+  } else {
+    $("#updcheck").removeClass("chkpend");
+    $("#updcheck").addClass("chkgood");
+    $("#updcheck").html("All fields up to date");
+  }
+}
+function frtload(cno){
+  var all = false;
+  var oind = -1;
+  $("#cnt_body").html('');
+  $(frt).each(function(i, val) {
+    if (val.cnID == cno) {
+      oind = -1;
+      $(ofrt).each(function(i,oval) {
+        if (oval.itID == val.itID) {
+          oind = i;
+          return false;
+        }
+      })
+      var txt = "";
+      txt = '<tr data-id="' + val.itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + val.senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + val.noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn">' + val.psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + val.itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + val.itLen + '</td>';
+      txt = txt + '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + val.itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + val.itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + val.itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + val.unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class">' + val.class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + val.sRisk + '</td>';
+      txt = txt + '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + val.pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + val.pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr><div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
+      $("#cnt_body").append(txt);                
+      $("#cnt_body tr").each(function(){
+        if ($(this).attr("data-id") == val.itID){
+          $(this).find('td[id]').each (function() {
+              if (oind == -1) {
+                $(this).addClass("updated");
+              } else {
+                if ($(this).html() != ofrt[oind][$(this).attr("data-col")]) {
+                  $(this).addClass("updated");
+                }
+              }
+
+          });                          
+        }
+      })
+
+    }
+
+  });
+
+  if (pauseReq == true) {
+    pauseReq = false;
+  }
+}
+function ccntLoad(cno){
+  var oin = -1;
+  $("#cnt_body").html('');
+  $(ocnot).each(function (i,val){
+    if (val.cnID == cno) {
+      oin = i;
+      return false;
+  }});
+  
+  $(cnot).each(function (i, val) {
+    if (val.cnID == cno) {
+      actcn = i;
+      $.each(val, function (k, v) {
+        if (k == "Pb") {
+          $('#' + v).prop('checked', true);
+        } else {
+          $("#" + k).val(v).attr('value',chknull(v));
+          if (oin == -1) {
+            $("#" + k).addClass("updated");
+            $("#" + k).removeClass("pending");
+          } else {
+            if (ocnot[oin][k] != v) {
+              $("#" + k).addClass("updated");
+              $("#" + k).removeClass("pending");
+            } else {
+              $("#" + k).removeClass("pending");
+              $("#" + k).removeClass("updated");
+            }
+          }
+        }
+      });
+  }});
+  frtload(cno);
+  $("#boscr").removeClass("hideme");
+}
+
+
+
 $(document).ready(function () {
-  console.log(window.location.href);
+  //console.log(window.location.href);
   $(window).on('popstate', function(event) {
     alert("pop");
   });
+  actcn = null;
   climkr = 0;
-  jbno = $("#jbnum").text().trim();
+  jbn = getSearchParams("job_no");
+  firstpop();
   namt_tot();
   cnotUpd();
-
+  updchkr();
 
   $("#slist").on('mouseenter',".contcard", function () {
     climkr = 1;
@@ -256,10 +591,7 @@ $(document).ready(function () {
       updstr = updstr + 'contPh="' + $(this).children(".lstPh").html().replace(/\'/g,"''") + '",'
       updstr = updstr + 'contEm="' + $(this).children(".lstEm").html().replace(/\'/g,"''") + '"'
       updstr = updstr.replace('=""','=NULL')
-      $.post(
-        "/inc/job-dets-upd.php",
-        { updstr: updstr, cno: jbno },
-        function (data, status) {}
+      $.post("/inc/job-dets-upd.php",{ updstr: updstr, cno: jbn },function (data, status) {}
       ).fail(function (response) {
         console.log("Error: " + response.responseText);
       });
@@ -269,6 +601,7 @@ $(document).ready(function () {
       $("#cliContPh").val($(this).children(".lstcph").html()).addClass("pending");
       $("#cliContEm").val($(this).children(".lstctc").html()).addClass("pending");
       $("#cliContEm2").val($(this).children(".lstctc2").html()).addClass("pending");
+      updchkr();
       
       card.set("client",$(this).children(".lstcli").html());
       card.set("cliContact",$(this).children(".lstcont").html());
@@ -276,42 +609,32 @@ $(document).ready(function () {
       card.set("cliContEm",$(this).children(".lstctc").html());
       card.set("cliContEm2",$(this).children(".lstctc2").html());
       var client = $(this).children(".lstcli").html().replace(/\'/g,"''");
-      $.post(
-        "/inc/job-cli-ch.php",
-        { client: client, jobno: jbno },
-        function (data, status) {
+      $.post("/inc/job-cli-ch.php",{ client: client, jobno: jbn },function (data, status) {
           $("#jbnum").html(data);
-          jbno = data;
+          jbn = data;
           insertJob = ("000000" + data).slice(-5);
           $("#jobnum").html("Job Specific Information - " + insertJob);
-          $.post(
-            "/inc/job-dets-upd.php",
-            { updstr: updstr, cno: jbno },
-            function (data, status) {
+          $.post("/inc/job-dets-upd.php",{ updstr: updstr, cno: jbn },function (data, status) {
               if (status == "success") {
                 for (let [key, value] of card) {
                   $("#" + key + ".pending").removeClass("pending");
                   $("#" + key).attr("value",value).addClass("updated");
-                  
                 }  
+                updchkr();
               }
             }
           ).fail(function (response) {
             console.log("Error: " + response.responseText);
           });
-
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);
       }); 
-      //var jbno = $("#jbnum").text();
       updstr = updstr + 'contd="' + $(this).children(".lstcont").html().replace(/\'/g,"''") + '",'
       updstr = updstr + 'contPh="' + $(this).children(".lstcph").html().replace(/\'/g,"''") + '",'
       updstr = updstr + 'contEm="' + $(this).children(".lstctc").html().replace(/\'/g,"''") + '",'
       updstr = updstr + 'contEm2="' + $(this).children(".lstctc2").html().replace(/\'/g,"''") + '"'
       updstr = updstr.replace('=""','=NULL')
-
-
     } else {
       $("#"+ mrkr +"Ctc").val($(this).children(".lstNam").html());
       $("#"+ mrkr +"Ph").val($(this).children(".lstPh").html());
@@ -321,38 +644,25 @@ $(document).ready(function () {
       card.set(mrkr +"Ctc",$(this).children(".lstNam").html());
       card.set(mrkr +"Ph",$(this).children(".lstPh").html());
       if (mrkr == 'r' || mrkr == 'c'){
-        $.post(
-          "/inc/job-dets-upd.php",
-          { updstr: updstr, cno: jbno },
-          function (data, status) {}
+        $.post("/inc/job-dets-upd.php",{ updstr: updstr, cno: jbn },function (data, status) {}
         ).fail(function (response) {
           console.log("Error: " + response.responseText);
         });        
       } else {
-
         cnDetUpd(updstr,cno,card);
       }
     }
     $("#dd").removeAttr('marker');
     $("#dd").addClass("hideme");
-    clrDd();  
-
-    
-  });  
-
-
-
+    clrDd();
+    });
   $("input[name=clientName]").on({
     change: function(){
       if (climkr != 1) {
       var client = $("input[name=clientName]").val();
-      
-      $.post(
-        "/inc/job-cli-ch.php",
-        { client: client, jobno: jbno },
-        function (data, status) {
+      $.post("/inc/job-cli-ch.php",{ client: client, jobno: jbn },function (data, status) {
           $("#jbnum").html(data);
-          jbno = data;
+          jbn = data;
           insertJob = ("000000" + data).slice(-5);
           $("#jobnum").html("Job Specific Information - " + insertJob);
         }
@@ -361,10 +671,8 @@ $(document).ready(function () {
       });   
     }}, 
     keydown: function(e) {
-
       if (e.which === 9) {
         climkr = 0;
-
       }
     }
   });
@@ -373,24 +681,17 @@ $(document).ready(function () {
     var fldId = $(this).attr("id");
     var field = $(this).attr("name");
 
-    $.post(
-      "/inc/job-inf-ch.php",
-      { det: field, upd: ent, jobno: jbno },
-      function (data,status) {
-
-        if (status == 'success'){
-          $("#" + fldId).attr("value",ent);
-          $("#" + fldId + ".pending").removeClass("pending");
-          $("#" + fldId).addClass("updated");
-        };
-      }
-    ).fail(function (response) {
+    $.post("/inc/job-inf-ch.php",{ det: field, upd: ent, jobno: jbn },function (data,status) {
+      if (status == 'success'){
+        $("#" + fldId).attr("value",ent);
+        $("#" + fldId + ".pending").removeClass("pending");
+        $("#" + fldId).addClass("updated");
+        updchkr();
+      };
+    }).fail(function (response) {
       console.log("Error: " + response.responseText);
-
     });
   });
-
-
   //job status toggles
   $(".chkbx").on({
     change: function(){
@@ -402,58 +703,67 @@ $(document).ready(function () {
         }
       var col = $(this).attr("data-par");
 
-      $.post(
-        "/inc/job_add_upd.php",
-        { col: col, val: val, jno: jbno },
+      $.post("/inc/job_add_upd.php",
+        { col: col, val: val, jno: jbn },
         function (data, status) {
-
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);
       });      
     }
   });
-
-
   //address fields
   $(".jadd").on({
     change: function(){
       var val = $(this).val();
-      //var jbno = $("#jbnum").text();
       var did = $(this).attr("id");
       var col = $(this).attr("name");
-      $.post(
-        "/inc/job_add_upd.php",
-        { col: col, val: val, jno: jbno },
-        function (data, status) {
+      var cur = '';
+      var og = '';
+      $.post("/inc/job_add_upd.php",{ col: col, val: val, jno: jbn },function (data, status) {
           $('#' + did).attr("value",val);
           $('#' + did + ".pending").removeClass("pending");
-          $('#' + did).addClass("updated");
+          $(jdets).each(function (i, val) {
+            $.each(val, function (k, v) {
+              if (k == did) {
+                cur = v;
+              }
+            });
+          });
+          $(ojdets).each(function (i, val) {
+            $.each(val, function (k, v) {
+              if (k == did) {
+                og = v;
+              }
+            });
+          });
+          if (val == og) {
+            $('#' + did).removeClass("updated");
+          } else {
+            $('#' + did).addClass("updated");
+          }
+          updchkr();
         }
       ).fail(function (response) {
         console.log("Error: " + response.responseText);0
       });      
     }
-  ,
-    focus: function(){
-      if ($(this).attr('id') == "cnam" || $(this).attr('id') == "dnam" ) {
+  ,focus: function(){
+    if ($(this).attr('id') == "cnam" || $(this).attr('id') == "dnam" ) {
 
-      } else {
-        $("#dd").removeAttr('marker');
-        $("#dd").addClass("hideme");
-        clrDd();        
-
-      }
-    }
-
-  ,
-    keyup : function(){
+    } else {
+      $("#dd").removeAttr('marker');
+      $("#dd").addClass("hideme");
+      clrDd();        
+  }}
+  ,keyup : function(){
       if ($(this).val() == $(this).attr("value")) {
         $('#' + $(this).attr("id") + ".pending").removeClass("pending");
       } else {
         $('#' + $(this).attr("id") + ".updated").removeClass("updated");
         $(this).addClass("pending");
       }
+      updchkr();
     }
   
   }
@@ -464,18 +774,14 @@ $(document).ready(function () {
   $("img[id=newn]").click(function () {
     var nnote = $("#nnt").html();
     var namt = $("#nna").text().replace(",", "").replace("$", "");
-    //var jbno = $("#jbnum").text();
-    if (jbno == "" || jbno == 0) {
+    if (jbn == "" || jbn == 0) {
       alert("A job needs to be created for notes to be added - newn.click");
     } else {
       if ($.isNumeric(namt) || namt == "") {
         if (nnote == "" && namt == "") {
           alert("Cannot add a note with no text or amount");
         } else {
-          $.post(
-            "/inc/job-note-add.php",
-            { txt: nnote, amt: namt, jobno: jbno },
-            function (data, status) {
+          $.post("/inc/job-note-add.php",{ txt: nnote, amt: namt, jobno: jbn },function (data, status) {
               $("#notebody").append(data);
               $("#nnt").text("");
               $("#nna").text("");
@@ -483,7 +789,6 @@ $(document).ready(function () {
             }
           ).fail(function (response) {
             console.log("Error: " + response.responseText);
-
           });
         }
       } else {
@@ -494,45 +799,85 @@ $(document).ready(function () {
   //deleting a note
   $("#notebody").on("click", ".ntrash", function () {
     var nid = $(this).parents().attr("data-id");
-    
     $.post("/inc/job-note-rem.php", { jnid: nid }, function (data, status) {
-      $(".tr[data-id=" + nid + "]").remove();
-      namt_tot();
+      if (status == "success") {
+        $(notes).each(function (i, val) {
+          if (val.jnID == nid) {
+            notes.splice(i,1);
+          }
+        })
+        console.log(notes);
+        $(".tr[data-id=" + nid + "]").remove();
+      } else {
+      alert("Error in removing supplier");
+      console.log("Variables - " + nid);
+      console.log("Error: " + response.responseText);
+    }
+    namt_tot();
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
-
     });
-
   });
   //updating a note
   var nodta = "";
   $("#notebody").on("focusout",".tr .td", function () {
-    if (col == "jnAmt") {
-      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
-    };
+
     var nid = $(this).parents(".tr").attr("data-id");
     var col = $(this).attr("data-col");
-    var val = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
-    var updstr = "";
+    var chkkr = 1;
+    var mrkr = $(this);
+    var ind = -1;
+    console.log("Note data -- " + col);
+    if (col == "jnAmt") {
+      $(this).html(number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",","));
+      var nval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\,/g, "").replace("$","");
+      console.log(nval);
+    } else {
+      var nval1 = $(this).html().replace(/<div>/g,"&zzz;").replace(/<br>/g,"&zzz;");
+      var nval = nval1.replace(/(<([^>]+)>)/ig,"").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&zzz;/g,"<br>");
+    };
           //Collect vars
+    $(notes).each(function (i, val) {
+      if (nid == val.jnID) {
+        ind = i;
+        if (val[col] == nval){
+          chkkr = 0;
+        }
+        return false;
+      }})
 
+    if (chkkr == 1) {
       //send data and update
-      $.post(
-        "/inc/job-note-upd.php",
-        { updstr: val, ref: col, cno: nid },
+      console.log(col + " : " + nval + " : " + nid);
+      $.post("/inc/job-note-upd.php",
+        { updstr: nval, ref: col, cno: nid },
         function (data, status) {
           //$("#contlst").html(data);
           if (status == "success") {
+            notes[ind][col] = nval;
+            mrkr.addClass("updated");
+            mrkr.removeClass("pending");
+            $(onotes).each(function (i, val) {
+              if (val["jnID"] == nid) {
+                if (val[col] == nval) {
+                  mrkr.removeClass("updated");
+                }              
+              }
+            });
+            updchkr();
+            if (col == "jnNote") {
+              mrkr.html(nval);
+            }
           } else {
             alert("Error in updating");
-            console.log(col + " : " + val + " : " + nid);
+            console.log(col + " : " + nval + " : " + nid);
             console.log("Error: " + response.responseText);
           }
         }
       ).fail(function (response) {
         alert("Error in updating");
         console.log("Error: " + response.responseText);
-        console.log(col + " : " + val + " : " + nid);
+        console.log(col + " : " + nval + " : " + nid);
         console.log(response);
 
       });      
@@ -540,27 +885,70 @@ $(document).ready(function () {
       if (col == "jnAmt") {
         namt_tot();
       }
-   
+    }
   });
+  $("#notebody").on("keyup",".tr .td", function () {
+    var nid = $(this).parents(".tr").attr("data-id");
+    var col = $(this).attr("data-col");
+    if (col == "jnAmt") {
+      var cval = number_format($(this).html().replace(/\,/g, "").replace("$",""),2,".",",");
+    } else {
+      var cval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    }
+    var mrkr = $(this);
+    var ind = -1;
+    var oind = -1;
+    //find data in array
+    $(notes).each(function (i, val) {
+      if (nid == val.jnID) {
+        ind = i;
+        return false;
+    }})
+    $(onotes).each(function (i, val) {
+      if (nid == val.jnID) {
+        oind = i;
+        return false;
+    }})
+    if (notes[ind][col] == cval) {
+      mrkr.removeClass("pending")
+      mrkr.addClass("updated")
+      if (onotes[oind][col] == cval) {
+        mrkr.removeClass("updated")
+      } 
+    } else {
+      mrkr.addClass("pending")
+      mrkr.removeClass("updated")
+    }
+    updchkr();
+  });
+  
   $("#cnt_body").on("focus", "tr td", function () {
     nodta = $(this).html();
   });
 
   //adding a Connote
   $("img[id=acn]").click(function () {
-    //var jbno = $("#jbnum").text();
-    if (jbno != "" && jbno != 0) {
-      $.post("/inc/job-conn-add.php", { jobno: jbno }, function (data, status) {
-        $("#contlst").append(data);
+    if (jbn != "" && jbn != 0) {
+      $.post("/inc/job-conn-add.php", { jobno: jbn }, function (data, status) {
+        var txt = '';
+        if (data.substring(0,1) == '<') {
+          $('#coll').append(data);
+          //txt = data;
+        } else {
+          var obj = $.parseJSON(data);
+          cnot.push(obj[0]);
+          ocnot.push(obj[0]);
+          ccntLoad(obj[0].cnID);
+        }
+        //$("#contlst").append(txt);
       }).fail(function (response) {
         console.log("Error: " + response.responseText);
-
       });      
     } else {
       alert("A job needs to be created for notes to be added - acn.click");
-
     }
   });
+
   //multi CN compile
   $("img[id=mcn]").click(function () {
     var cnlst = mcnl.toString();
@@ -570,8 +958,7 @@ $(document).ready(function () {
       alert("Please select some con-notes to add to the package");
     }
   });
-
-  //printing a connote
+//printing a connote
   $("#scnprt").click(function(){
     var cno = $("#cnID").val();
     window.open("/cndl.php?CNID=" + cno,'_blank');
@@ -581,7 +968,32 @@ $(document).ready(function () {
     var cno = $("#cnID").val();
    $.post("/inc/job-con-copy.php", { cn: cno }, function (data, status) {
       if(status == "success") {
-        alert("New connote created on this job\nConnote number is - " + data);
+        var njn = parseInt(data);
+        var conum = '00000' + njn;
+        var ncnum = 'E' + conum.substring(conum.length - 5);
+        alert("New connote created on this job\nConnote number is - " + ncnum + "\nLoading new connote now! please wait for confirmation con note is ready");
+        cnot.push(JSON.parse(JSON.stringify(cnot[actcn])));
+        //set new actcn
+        actcn = cnot.length -1;
+        cnot[actcn]["cnID"] = njn;
+        cnot[actcn]["cnNum"] = ncnum;
+        //update the connote id and number
+        $("#cnID").val(njn).attr('value',chknull(njn));
+        $("#cnNum").val(ncnum).attr('value',chknull(ncnum));
+        //update the frt array to include new rows
+        pauseReq = true;
+        confrt(njn);
+
+        function waiting() {
+          console.log(pauseReq);
+          if (pauseReq == true) {
+            setTimeout(function(){waiting()},100);
+          } else {
+            alert("Connote " + ncnum + " is ready for use");
+          }
+        }
+        waiting();
+        
       } else {
         alert("There was an error copying this connote,\n" + data);
       }
@@ -594,14 +1006,24 @@ $(document).ready(function () {
   //moving a con-note
   $("#cnmove").click(function () {
     var cno = $("#cnID").val();
-    //var jbno = $("#jobnum").text().replace("Job - ","");
-    let ej = prompt("Please enter the destination job number?",jbno);
+    let ej = prompt("Please enter the destination job number?",jbn);
     dj = ej*1;
     if (dj != $("#jbnum").text() && dj != "" && dj != "0") {
       $.post("/inc/job-con-move.php", { cno: cno, dj: dj }, function (data, status) {
         if(status == "success") {
+          $(cnot).each(function (i, val) {
+            if (val.cnID == cno) {
+              cnot.splice(i,1);
+            }
+          })
           if (confirm("Move was successful, would you like to go to job " + ej + "?")){
             window.location.href = "/jdet.php?job_no="+dj;
+          } else {
+            //jconupd();
+            $("#boscr").addClass("hideme");
+            actcn = null;
+            clrcnt();
+            cnotUpd();
           }
         } else {
           alert("There was an error moving this connote,\n" + data);
@@ -619,6 +1041,7 @@ $(document).ready(function () {
       var cno = $("#cnID").val();
       $.post("/inc/job-con-move.php", { cno: cno, dj: "0" }, function (data, status) {
         if(status == "success") {
+          cnot.splice(actcn,1);
           $("#boscr").addClass("hideme");
           clrcnt();
           cnotUpd();    
@@ -653,42 +1076,18 @@ $(document).ready(function () {
 
   $("#contlst").on('click',".ccnt_card", function () {
     var nid = $(this).attr("data-id");
+    
     if (mcnf == "Y") {
       mcnf = "";
       return;
     }
-    //Get data from Server
-    $.post("/inc/job-conn-sel.php", { cnid: nid }, function (data, status) {
-      var json = $.parseJSON(data);
-      //Preliminary Data
-
-      //cycle Data
-      $(json).each(function (i, val) {
-        $.each(val, function (k, v) {
-          if (k == "Pb") {
-            $('#' + v).prop('checked', true);
-          } else {
-            $("#" + k).val(v).attr('value',v);
-          }
-        });
-      });
-
-      $("#boscr").removeClass("hideme");
-    }).fail(function (response) {
-      console.log("Error: " + response.responseText);
-    });
-    $.post("/inc/job-conn-rows.php", { cnid: nid }, function (data, status) {
-      //$("#cn_rows").html(data);
-      $("#cnt_body").html(data);
-      conDetUpd();
-    }).fail(function (response) {
-      console.log("Error: " + response.responseText);
-
-    });
+    ccntLoad(nid);
+    
   });
   //connote functions
   $("#boscr").click(function () {
     $("#boscr").addClass("hideme");
+    actcn = null;
     clrcnt();
     cnotUpd();
     
@@ -716,23 +1115,28 @@ $(document).ready(function () {
   });
   $(".cndd").change(function () {
     var upd = new Map();
+    var updstr;
+    var fld;
+    var chg = $(this).val().replace(/\'/g,"''");
+    var cno = $("#cnID").val();
+
     if ($(this).attr('type') == 'radio') {
-      var fld = 'Pb';
+      fld = 'Pb';
     } else {
-      var fld = $(this).attr("id");
+      fld = $(this).attr("id");
     }
-      var chg = $(this).val();
-      var cno = $("#cnID").val();
-      upd.set(fld,chg);
-      if (chg == "") {
-        var updstr = fld + "=Null,"
-      } else {
-        var updstr = fld + "='" + chg.replace(/\'/g,"''") + "',";
-      }
-      updstr = updstr.substring(0,(updstr.length - 1));
 
+    upd.set(fld,chg);
+
+    if (chg == "") {
+      updstr = fld + "=Null,"
+    } else {
+      updstr = fld + "='" + chg + "',";
+    }
+    
+    updstr = updstr.substring(0,(updstr.length - 1));
     cnDetUpd(updstr,cno,upd);
-
+    
   });
   function clrcnt(){
     $('.radios').prop('checked', false);
@@ -741,6 +1145,8 @@ $(document).ready(function () {
         
       } else {
         $(this).val('');
+        $(this).removeClass("updated");
+        $(this).removeClass("pending");
       }
     })
   }
@@ -748,12 +1154,13 @@ $(document).ready(function () {
   $("img[id=ncl]").click(function () {
     var cnum = $("#cnID").val();
     $("#ncn td").each(function () {
+
       if ($(this).html() == "") {
         var dta = null;
       } else {
         var dta = $(this).html();
       }
-      
+
       switch ($(this).attr("data-col")) {
         case "senRef":
           sref = dta;
@@ -809,16 +1216,22 @@ $(document).ready(function () {
           break;
       }
     });
-
-
+    
+    
     //post
-    $.post(
-      "/inc/job-confrt-add.php",
+    $.post("/inc/job-confrt-add.php",
       { cnum: cnum, sref: sref, nitm: nitm, psn: psn, itWgt: itWgt, itLen: itLen, itWid: itWid, itHei: itHei, itQty: itQty, unNum: unNum, dcls: dcls, sRisk: sRisk, pkGr: pkGr,pkDes: pkDes},
       function (data, status) {
-        $("#cnt_body").html(data);
-        conDetUpd();
         if (status == "success") {
+          var rtrn = $.parseJSON(data)
+          frt.push(rtrn[0]);
+          var txt = "";
+          txt = '<tr data-id="' + frt[frt.length - 1].itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef updated">' + frt[frt.length - 1].senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem updated">' + frt[frt.length - 1].noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn updated">' + frt[frt.length - 1].psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt updated">' + frt[frt.length - 1].itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen updated">' + frt[frt.length - 1].itLen + '</td>';
+          txt = txt + '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid updated">' + frt[frt.length - 1].itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei updated">' + frt[frt.length - 1].itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty updated">' + frt[frt.length - 1].itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum updated">' + frt[frt.length - 1].unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class updated">' + frt[frt.length - 1].class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk updated">' + frt[frt.length - 1].sRisk + '</td>';
+          txt = txt + '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr updated">' + frt[frt.length - 1].pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes updated">' + frt[frt.length - 1].pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr><div class="ntra td"><div class="cmd_img" data-id="' + frt[frt.length - 1].jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
+          $("#cnt_body").append(txt);   
+          console.log(txt);
+          conDetUpd();
         } else {
           alert("Error in updating");
         }
@@ -833,8 +1246,14 @@ $(document).ready(function () {
 //delete con note line
   $("#cnt_body").on("click", ".cntrash", function () {
     var nid = $(this).parents("tr").attr("data-id");
+    var ind = 0;
     $.post("/inc/job-confrt-rem.php", { frid: nid }, function (data, status) {
       $("#cnt_body tr[data-id=" + nid + "]").remove();
+      $(frt).each(function(i,val){
+        if(val.itID == nid) {
+          frt.splice(i,1);
+        }
+      })
       conDetUpd();
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
@@ -848,16 +1267,37 @@ $(document).ready(function () {
 
     var nid = $(this).parents("tr").attr("data-id");
     var col = $(this).attr("data-col");
+    var nval = $(this).html().trim();
+    var mrkr = $(this);
     if ($(this).html() != cndta) {
       //Collect vars
       var updstr = col + "='" + $(this).html().trim() + "'";
       //send data and update
-      $.post(
-        "/inc/con-rows-upd.php",
-        { updstr: updstr, cno: nid },
-        function (data, status) {
+      $.post("/inc/con-rows-upd.php",{ updstr: updstr, cno: nid },function (data, status) {
           //$("#contlst").html(data);
           if (status == "success") {
+            $(frt).each(function (i,val){
+              if (val.itID == nid) {
+                frt[i][col] = nval;
+              }
+            })
+            var oind = -1;
+            $(ofrt).each(function(i,oval) {
+              if (oval.itID == nid) {
+                oind = i;
+                return false;
+              }
+            })
+            if (oind != -1) {
+
+            }
+            if (oind == -1 || chknull(ofrt[oind][col]) != nval) {
+              mrkr.addClass("updated");
+              mrkr.removeClass("pending");
+            } else {
+              mrkr.removeClass("pending");
+              mrkr.removeClass("updated");
+            }
           } else {
             alert("Error in updating");
             console.log("Variables - " + updstr + " : " + cno);
@@ -875,11 +1315,53 @@ $(document).ready(function () {
         conDetUpd();
       }
     }
-     
   });
   $("#cnt_body").on("focusin", "tr td", function () {
     cndta = $(this).html();
     event.stopPropagation();
+  });
+  $("#cnt_body").on("keyup", "tr td", function () {
+    //set frt & ofrt values
+    var itid = $(this).parents("tr").attr("data-id");
+    var col = $(this).attr("data-col");
+    var cval = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    var mrkr = $(this);
+    var oid = -1;
+    var aid = -1;
+    $(ofrt).each(function (i, val) {
+      if (itid == val.itID) {
+        oid = i;
+        return false;
+      }
+    });
+    $(frt).each(function (i, val) {
+      if (itid == val.itID) {
+        aid = i;
+        return false;
+      }
+    });
+    if (oid == -1) {
+      if (frt[aid][col] != cval) {
+        mrkr.addClass("pending")
+        mrkr.removeClass("updated")
+      } else {
+        mrkr.addClass("updated")
+        mrkr.removeClass("pending")
+      }
+    } else {
+      if (ofrt[oid][col] == cval) {
+        mrkr.removeClass("updated")
+        mrkr.removeClass("pending")
+      } else {
+      if (frt[aid][col] != cval) {
+        mrkr.addClass("pending")
+        mrkr.removeClass("updated")
+      } else {
+        mrkr.addClass("updated")
+        mrkr.removeClass("pending")
+      }}
+    }
+
 
   });
   //dropdown add frt line
@@ -922,7 +1404,9 @@ $(document).ready(function () {
     keyup: function(){
       $(this).addClass("pending");
       $("#snam" + ".updated").removeClass("updated");
+      updchkr();
       ddPop();
+
     }
   });
   $("#rnam").on({
@@ -970,6 +1454,7 @@ $(document).ready(function () {
           chg = $(this).html().replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
           $("#" + fld).val(chg).addClass("pending");
           $("#" + fld + ".updated").removeClass("updated");
+          updchkr();
           crd.set(fld,chg);
           if (chg == "") {
             updstr = updstr + fld + "=Null,"
@@ -980,15 +1465,13 @@ $(document).ready(function () {
       });
       updstr = updstr.substring(0,(updstr.length - 1));
       if (mrkr == 'd' || mrkr == 'c'){
-        $.post(
-          "/inc/job-dets-upd.php",
-          { updstr: updstr, cno: jbno },
-          function (data, status) {
+        $.post("/inc/job-dets-upd.php",{ updstr: updstr, cno: jbn },function (data, status) {
             if(status == "success"){
             for (let [key, value] of crd) {
               $("#" + key).attr("value",value).addClass("updated");
               $("#" + key + ".pending").removeClass("pending")
             }}
+            updchkr();
           }
         ).fail(function (response) {
           console.log("Error: " + response.responseText);
@@ -1033,6 +1516,7 @@ $(document).ready(function () {
 
 
   });
+
 $("input").on({
   keyup: function(){
     if ($(this).val() != $(this).attr("value")) {
@@ -1040,8 +1524,8 @@ $("input").on({
       $(this).addClass("pending");
     } else {
       $("#" + $(this).attr("id") + ".pending").removeClass("pending");
-      
     }
+    updchkr();
   }
 
 })
@@ -1083,18 +1567,27 @@ $("input").on({
     var jir = $("#asup .supIr").html();
     var jno = $("#asup .supNo").html();
     var jec = $("#asup .supEc").html();
-    //var jbno = $("#jbnum").text();
-    if (jbno == "" || jbno == 0) {
+    var nsup;
+    if (jbn == "" || jbn == 0) {
       alert("A job needs to be created for notes to be added - addsup.click");
     } else {
       if (jty == "" && jna == "" && jde == "" && jir == "" && jno == "" && jec == "") {
         alert("Cannot add an all blank entry");
       } else {
-        $.post(
-          "/inc/job-sup-add.php",
-          { typ: jty, nam: jna, des: jde, ire: jir, not: jno, jobno: jbno, est: jec },
+        $.post("/inc/job-sup-add.php",{ typ: jty, nam: jna, des: jde, ire: jir, not: jno, jobno: jbn, est: jec },
           function (data, status) {
-            $("#supbody").prepend(data);
+            if (data.substring(0,1) == '<') {
+              $('#coll').append(data);
+              alert("Error when trying to add supplier supplier!")
+            } else {
+              nsup = $.parseJSON(data);
+              sups.push(nsup[0]);
+              console.log(sups);
+              var txt = "";
+              txt = '<div class="supln" data-id="' + chknull(nsup[0].jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup[0].jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup[0].jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup[0].jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">$' + number_format(chknull(nsup[0].jsEst),2,'.',',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup[0].jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup[0].jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup[0].jsID) + '">Remove Supplier</div></div>';
+              $("#supbody").prepend(txt);
+            }
+            //$("#supbody").prepend(data);
             $("#asup .supTy").text("");
             $("#asup .supSu").text("");
             $("#asup .supDe").text("");
@@ -1113,8 +1606,19 @@ $("input").on({
     var nid = $(this).attr("data-id");
 
     $.post("/inc/job-sup-rem.php", { id: nid }, function (data, status) {
-      $(".supln[data-id=" + nid + "]").remove();
-      namt_tot();
+      if (status == "success") {
+        $(sups).each(function (i, val) {
+          if (val.jsID == nid) {
+            sups.splice(i,1);
+          }
+        })
+
+        $(".supln[data-id=" + nid + "]").remove();
+      } else {
+      alert("Error in removing supplier");
+      console.log("Variables - " + nid);
+      console.log("Error: " + response.responseText);
+    }
     }).fail(function (response) {
       console.log("Error: " + response.responseText);
     });
@@ -1126,35 +1630,62 @@ $("input").on({
 
     var nid = $(this).parents(".supln").attr("data-id");
     var col = $(this).attr("data-col");
-    var val = $(this).html();
-    $.post(
-      "/inc/job-sup-upd.php",
-      { updstr: val, ref: col, cno: nid },
-      function (data, status) {
-        //$("#contlst").html(data);
-        if (status == "success") {
-        } else {
-          alert("Error in updating");
-          console.log("Variables - " + updstr + " : " + cno);
-          console.log("Error: " + response.responseText);
+    var nval = $(this).html();
+    if (col == "jsEst") {
+      nval = nval.replace("$","").replace(",","")
+    }
+    var obj = $(this);
+    var chkkr = 1;
+    $(sups).each(function (i, val) {
+      if (nid == val.jsID) {
+        if (val[col] == nval){
+        chkkr = 0;
         }
-      }
-    ).fail(function (response) {
-      alert("Error in updating");
-      console.log("Error: " + response.responseText);
-      console.log("Variables - " + updstr + " : " + nid);
-      console.log(response);
-    });      
-
-     
+      }})
+    if (chkkr == 1) {
+      $.post("/inc/job-sup-upd.php",{ updstr: nval, ref: col, cno: nid },function (data, status) {
+          //$("#contlst").html(data);
+          if (status == "success") {
+            console.log(data);
+            $(sups).each(function (i, val) {
+              if (val["jsID"] == nid) {
+                sups[i][col] = nval;
+                obj.addClass("updated");
+                obj.removeClass("pending");
+                if (col == "jsEst") {
+                  obj.html("$" + number_format(chknull(nval),2,'.',','))
+                }
+              }
+            });
+            $(osups).each(function (i, val) {
+              if (val["jsID"] == nid) {
+                if (val[col] == nval) {
+                  obj.removeClass("updated");
+                }              
+              }
+            });
+            updchkr();
+          } else {
+            alert("Error in updating");
+            console.log("Variables - " + val + " : " + col + " : " + nid);
+            console.log("Error: " + response.responseText);
+            console.log(response);
+          }
+        }
+      ).fail(function (response) {
+        alert("Error in updating");
+        console.log("Error: " + response.responseText);
+        console.log("Variables - " + val + " : " + col + " : " + nid);
+        console.log(response);
+      }); 
+    }     
   });
   $("#supbody").on("focus", ".supln .lsup", function () {
     nodta = $(this).html();
   });
-
-
-
-
+  $("#supbody").on("keyup", ".supln .lsup", function () {
+    fldupd("sups",$(this));
+  });
 
   $(".j_det_info").on("focus", function(){
     if ($(this).attr('id') == "client" || $(this).attr('id') == "cliContact" ) {
