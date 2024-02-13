@@ -1674,7 +1674,7 @@ document.getElementById('cncopy').addEventListener('click', function () {
     if (xhr.readyState == 4) {
       if (xhr.status == 200) {
         var data = xhr.responseText;
-        if (data === 'success') {
+        if (!isNaN(Number(data))) {
           var njn = parseInt(data);
           var conum = '00000' + njn;
           var ncnum = 'E' + conum.substring(conum.length - 5);
@@ -1727,7 +1727,8 @@ document.getElementById('cnmove').addEventListener('click', function () {
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
           var data = xhr.responseText;
-          if (data === 'success') {
+
+          if (!isNaN(Number(data))) {
             cnot.forEach(function (val, i) {
               if (val.cnID == cno) {
                 cnot.splice(i, 1);
@@ -1764,7 +1765,7 @@ document.getElementById('cndel').addEventListener('click', function () {
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
           var data = xhr.responseText;
-          if (data === 'success') {
+          if (!isNaN(Number(data))) {
             cnot.splice(actcn, 1);
             document.getElementById('boscr').classList.add('hideme');
             clrcnt();
