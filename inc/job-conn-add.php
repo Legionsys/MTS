@@ -1,7 +1,7 @@
 <?php
 //set vars and checks    
 if (isset($_POST['jobno'])) {
-    $jbno = trim($_POST['jobno']);
+    $jbno = trim(urldecode($_POST['jobno']));
 };
 
 require_once 'dbh.inc.php';

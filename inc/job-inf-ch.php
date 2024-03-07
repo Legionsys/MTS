@@ -2,7 +2,7 @@
 //set vars and checks    
     $newd = $jbno = $jcol = NULL;
     if (isset($_POST["upd"])) {
-        $newd = trim($_POST["upd"]);
+        $newd = trim(urldecode($_POST["upd"]));
     };
 
     if (isset($_POST['jobno'])) {

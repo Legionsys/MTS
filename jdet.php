@@ -166,7 +166,34 @@
             </div>
 
         </div>
-
+        <div id="cnhl" class="cnblock">
+            <div class="cntitle">
+                <p>Con Note Highlights</p>
+            </div>
+            <div class="bg_box">
+                <div class="hl_box">
+                    <h2>Del & Rec<br>Points</h2>
+                    <label class="switch HL">
+                        <input class="hli" type="checkbox" data-point="P" onclick="hlChange()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="hl_box">
+                    <h2>Sender's<br>Signature</h2>
+                    <label class="switch HL" data-point="S">
+                        <input class="hli" type="checkbox" data-point="S" onclick="hlChange()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="hl_box">
+                    <h2>Receiver's<br>Signature</h2>
+                    <label class="switch HL" data-point="R">
+                        <input class="hli" type="checkbox" data-point="R" onclick="hlChange()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
         <div id="frtdet" class="cnblock">
             <div id="frt_ctnr">
                 <table id="cnTbl" class="cnt_frt_tbl">
@@ -313,7 +340,7 @@
         </div>
         <div class="div_jobRef pdd">
             <div class="group">
-                <input id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required />
+                <input id="jobRef" class="inputMaterial  j_det_info" name="jobRef" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab">Refernce/PO#</label>
@@ -321,7 +348,7 @@
         </div>
         <div class="div_cliContact pdd">
             <div class="group">
-                <input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required />
+                <input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Contact </label>
@@ -329,7 +356,7 @@
         </div>
         <div class="div_cliContPh pdd">
             <div class="group">
-                <input id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required />
+                <input id="cliContPh" class="inputMaterial  j_det_info" name="contPh" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Contact Phone </label>
@@ -337,7 +364,7 @@
         </div>
         <div class="div_cliContEm pdd">
             <div class="group">
-                <input id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required />
+                <input id="cliContEm" class="inputMaterial  j_det_info" name="contEm" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Contact Email </label>
@@ -345,7 +372,7 @@
         </div>
         <div class="div_cliContEm2 pdd">
             <div class="group">
-                <input id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required />
+                <input id="cliContEm2" class="inputMaterial  j_det_info" name="contEm2" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> 2nd Contact Email </label>
@@ -353,7 +380,7 @@
         </div>
         <div class="div_puDate pdd">
             <div class="group">
-                <input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required />
+                <input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab">Pick Up Date</label>
@@ -361,7 +388,7 @@
         </div>
         <div class="div_doDate pdd">
             <div class="group">
-                <input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required />
+                <input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab">Drop Off Date</label>
@@ -383,7 +410,7 @@
         </div>
         <div class="div_invNum pdd">
             <div class="group">
-                <input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required />
+                <input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Invoice Number </label>
@@ -442,37 +469,37 @@
                     <input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required autocomplete="off" />
                 </div>
                 <div class="jac ja_add1">
-                    <input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required />
+                    <input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_add2">
-                    <input id="dadd2" class="jadd" name="dadd2" type="text" required />
+                    <input id="dadd2" class="jadd" name="dadd2" type="text" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_add3">
-                    <input id="dadd3" class="jadd" name="dadd3" type="text" required />
+                    <input id="dadd3" class="jadd" name="dadd3" type="text" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_st">
-                    <input id="dst" class="jadd" name="dst" type="text" placeholder="State" required />
+                    <input id="dst" class="jadd" name="dst" type="text" placeholder="State" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_pc">
-                    <input id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required />
+                    <input id="dpc" class="jadd" name="dpc" type="text" placeholder=" P/C" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_ct">
-                    <input id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required />
+                    <input id="dCtc" class="jadd" name="dCtc" type="text" placeholder=" Name" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_ph">
-                    <input id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required />
+                    <input id="dPh" class="jadd" name="dPh" type="text" placeholder=" Phone" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_em">
-                    <input id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required />
+                    <input id="dEm" class="jadd" name="dEm" type="text" placeholder=" Email" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_ct">
-                    <input id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required />
+                    <input id="j_e_ct2" class="jadd" name="dCtc2" type="text" placeholder=" Name" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_ph">
-                    <input id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required />
+                    <input id="j_e_ph2" class="jadd" name="dPh2" type="text" placeholder=" Phone" required autocomplete="off"/>
                 </div>
                 <div class="jac ja_em">
-                    <input id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required />
+                    <input id="j_e_em2" class="jadd" name="dEm2" type="text" placeholder=" Email" required autocomplete="off"/>
                 </div>
             </div>
         </div>
@@ -534,7 +561,7 @@
     </div>
 </div>-->
 <!--</section>-->
-<script src="/js/jdet.js?ver=1223"></script>
+<script src="/js/jdet.js?ver=0224b"></script>
 <?php 
 
 include_once 'footer.php'

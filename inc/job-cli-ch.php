@@ -1,7 +1,7 @@
 <?php
 //set vars and checks    
     if (isset($_POST['client'])) {
-        $client = trim($_POST['client']);
+        $client = rawurldecode(trim($_POST['client']));
     };
 
     if (isset($_POST['jobno'])) {
