@@ -12,7 +12,7 @@ define("FS_ROOT", realpath(dirname(__FILE__)));
 require_once FS_ROOT.'/dbh.inc.php';
 
 if (isset($_POST['crd'])) {
-    $crd = trim($_POST['crd']);
+    $crd = trim(urldecode($_POST['crd']));
     $crdData = json_decode($crd, true);
     // Check if JSON decoding was successful
     if ($crdData === null) {

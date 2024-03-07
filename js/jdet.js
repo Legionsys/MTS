@@ -18,6 +18,14 @@ var actcn;
 var pauseReq = false;
 let draggedItem = null;
 
+function urldecoder(str){
+  return str.replace(/&amp;/g, '&')
+  .replace(/&lt;/g, '<')
+  .replace(/&gt;/g, '>')
+  .replace(/&quot;/g, '"')
+  .replace(/&#39;/g, "'");
+}
+
 function numberFormat(number, decimals, decPoint, thousandsSep) {
   number = Number(number).toFixed(decimals);
 
@@ -33,7 +41,6 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 
   return x1 + x2;
 }
-
 function namtTot() {
   var tots = parseFloat(0);
 
@@ -57,7 +64,6 @@ function namtTot() {
     aheadElement.innerHTML = 'Amount';
   }
 }
-
 function getSearchParams(k) {
   var p = {};
   location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (s, key, value) {
@@ -65,7 +71,6 @@ function getSearchParams(k) {
   });
   return k ? p[k] : p;
 }
-
 function firstpop() {
   if (typeof jbn === 'number' && jbn !== 0) {   //jbn !== null && jbn !== "0") {
     var jobn = "000000" + jbn;
@@ -84,7 +89,6 @@ function firstpop() {
   }
 
 }
-
 function jsupd() {
   jdets.forEach(function (val) {
     Object.entries(val).forEach(function ([k, v]) {
@@ -104,21 +108,6 @@ function chknull(value) {
     return '';
   }
   return value;
-}
-
-
-function chknull_old(value) {
-  if (typeof value === 'number' && !isNaN(value)) {
-    return value;
-  }
-  if (value !== null && typeof value !== 'undefined') {
-    return value;
-  }
-  if (typeof value === 'object' && value !== null && Object.keys(value).length === 0) {
-    return '';
-  } else {
-    return value;
-  }
 }
 function jsupupd() {
   const fragment = document.createDocumentFragment(); // Create a document fragment
@@ -149,25 +138,6 @@ function jsupupd() {
 
   document.getElementById('supbody').appendChild(fragment); // Append the fragment to the DOM
 }
-
-
-
-function jsupupd_old() {
-  sups.forEach(function (val) {
-    var txt = '';
-    txt += '<div class="supln" data-id="' + chknull(val.jsID) + '">';
-    txt += '<div contenteditable="true" data-col="jsName" class="supSu lsup">' + chknull(val.jsName) + '</div>';
-    txt += '<div contenteditable="true" data-col="jsType" class="supTy lsup">' + chknull(val.jsType) + '</div>';
-    txt += '<div contenteditable="true" data-col="jsDesc" class="supDe lsup">' + chknull(val.jsDesc) + '</div>';
-    txt += '<div contenteditable="true" data-col="jsEst" class="supEc lsup">$' + numberFormat(chknull(val.jsEst), 2, '.', ',') + '</div>';
-    txt += '<div contenteditable="true" data-col="jsInvRec" class="supIr lsup">' + chknull(val.jsInvRec) + '</div>';
-    txt += '<div contenteditable="true" data-col="jsNotes" class="supNo lsup">' + chknull(val.jsNotes) + '</div>';
-    txt += '<div class="suprm td" data-id="' + chknull(val.jsID) + '">Remove Supplier</div>';
-    txt += '</div>';
-
-    document.getElementById('supbody').insertAdjacentHTML('beforeend', txt);
-  });
-}
 function jnotupd() {
   notebody.innerHTML = '';
 
@@ -181,19 +151,7 @@ function jnotupd() {
     item.setAttribute('data-ord', chknull(val.jnOrd));
     item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
     notebody.appendChild(item);
-    /*txt += '<div class="tr draggable-item" data-id="' + chknull(val.jnID) + '" draggable="true" ondragstart="dragStart(event)">';
-    //txt += '<div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div>';
-    txt += '<div data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div>';
-    //txt += '<div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div>';
-    txt += '<div data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div>';
-    txt += '<div class="ntra td">';
-    txt += '<div class="cmd_img" data-id="' + chknull(val.jnID) + '">';
-    txt += '<img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg">';
-    txt += '</div></div></div>';
-
-    notebody.insertAdjacentHTML('beforeend', txt);*/
   });
-
   namtTot();
 }
 function jconupd() {
@@ -425,61 +383,6 @@ function conDetUpd() {
     document.getElementById('cn_titm').innerHTML = numberFormat(tQty, 0, '.', ',');
     document.getElementById('cn_twgt').innerHTML = numberFormat(tWgt, 1, '.', ',') + " kg";
     document.getElementById('cn_m3').innerHTML = numberFormat(tM3, 3, '.', ',') + " m3";
-
-
-
-
-
-
-
-
-
-
-  /*var tQty = 0;
-  var tWgt = 0;
-  var tM3 = 0;
-  var len = 0;
-  var wid = 0;
-  var hei = 0;
-  var qty = 0;
-
-  document.querySelectorAll('#cnt_body tr').forEach(function (row) {
-    if (row.getAttribute("data-id") !== "no") {
-      row.querySelectorAll('td').forEach(function (cell) {
-        if (cell.getAttribute('data-col') === 'noItem') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            tQty += parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        } else if (cell.getAttribute('data-col') === 'itWgt') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            tWgt += parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        } else if (cell.getAttribute('data-col') === 'itLen') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            len = parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        } else if (cell.getAttribute('data-col') === 'itWid') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            wid = parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        } else if (cell.getAttribute('data-col') === 'itHei') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            hei = parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        } else if (cell.getAttribute('data-col') === 'itQty') {
-          if (!isNaN(cell.innerHTML.replace(",", ""))) {
-            qty = parseFloat(cell.innerHTML.replace(",", ""));
-          }
-        }
-      });
-
-      tM3 += len * wid * hei * qty / 1000000;
-    }
-  });
-
-  document.getElementById('cn_titm').innerHTML = numberFormat(tQty, 0, '.', ',');
-  document.getElementById('cn_twgt').innerHTML = numberFormat(tWgt, 1, '.', ',') + " kg";
-  document.getElementById('cn_m3').innerHTML = numberFormat(tM3, 3, '.', ',') + " m3";*/
 }
 function parseCell(row, dataCol) {
   var cell = row.querySelector(`td[data-col="${dataCol}"]`);
@@ -666,7 +569,100 @@ function convertToObject(data) {
 
   return result;
 }
-function cnDetUpd(cno, upd) {
+function sendUpdate(id,ori,upd) {
+  const sndata = new Map();
+  sndata.set('id', id);
+  sndata.set('ori', ori);
+  sndata.set('Data', convertToObject(upd));
+  console.log(sndata);
+  console.log(JSON.stringify(Object.fromEntries(sndata)));
+  console.log(encodeURIComponent(JSON.stringify(Object.fromEntries(sndata))));
+  fetch("/inc/blkupd.php", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'lnk=' + encodeURIComponent(JSON.stringify(Object.fromEntries(sndata))),
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Failed to Update note');
+    }
+    return response.text();
+  })
+  .then((data, status) => {
+    console.log(data);
+    if (data === 'success') {
+      let actref = [];
+      let oactref = [];
+      var idvar;
+      const nonkeys = ['hl'];
+      //determine reference array from ori
+      if (ori === 'jobDetails') {
+        actref = jdets;
+        oactref = ojdets;
+        idvar = 'jobID';
+      } else if (ori === 'jobNotes') {
+        actref = notes;
+        oactref = onotes;
+        idvar = 'jnID';
+      } else if (ori === 'jobSupplier') {
+        actref = sups;
+        oactref = osups;
+        idvar = 'jsID';
+      } else if (ori === 'conDetails') {
+        actref = frt;
+        oactref = ofrt;
+        idvar = 'itID';
+      } else if (ori === 'conNote') {
+        actref = cnot;
+        oactref = ocnot;
+        idvar = 'cnID';
+      } else {
+        alert('Error: Unknown Origin reference - ' + ori)
+        exit
+      }
+      //match id in reference array 
+      var oin = -1;
+      oactref.forEach((val, i) => {
+        if (val[idvar] === id) {
+          oin = i;
+          return false;
+        }
+      });
+      //check key value pairs within form and adjust depending on match to reference array
+      for (const [key, value] of Object.entries(convertToObject(upd))) {
+        if (key === idvar) {
+        } else if (nonkeys.includes(key)) {
+          //special key operations
+        } else {
+        let element = document.getElementById(key);
+
+        element.classList.remove('pending');
+
+        if (oin === -1 || chknull(oactref[oin][key]) !== value) {
+          element.value = value;
+          element.classList.add('updated');
+        } else {
+          element.classList.remove('updated');
+        }
+
+        updchkr();
+      }
+      actref[actcn][key] = value;
+      }
+    } else {
+      alert('Error in updating');
+      console.log('Variables - ' + id +' - ' + ori + ' - ' + upd);
+    }
+  })
+  .catch(error => {
+    alert('Error in updating');
+    console.log('Error: ' + error);
+    console.log('Variables - ' + id +' - ' + ori + ' - ' + upd);
+  });
+}
+function cnDetUpd_old(cno, upd) {
   console.log('cndetupd');
   const nupd = convertToObject(upd);
   fetch("/inc/job-conn-upd.php", {
@@ -678,6 +674,7 @@ function cnDetUpd(cno, upd) {
   })
   .then(response => response.text())
   .then((data, status) => {
+    console.log(data);
     if (data === 'success') {
 
       var oin = -1;
@@ -688,6 +685,8 @@ function cnDetUpd(cno, upd) {
         }
       });
       for (const [key, value] of Object.entries(nupd)) {
+        if (key === 'hl') {
+        } else {
         const element = document.getElementById(key);
 
         element.classList.remove('pending');
@@ -700,13 +699,13 @@ function cnDetUpd(cno, upd) {
         }
 
         updchkr();
+      }
         cnot[actcn][key] = value;
       }
     } else {
       alert('Error in updating');
       console.log('Variables - ' + cno);
       console.log(upd);
-      console.log('Error: ' + response.responseText);
     }
   })
   .catch(error => {
@@ -838,6 +837,19 @@ function ccntLoad(cno) {
           }
         } else if (k == "jobID") {
 
+        } else if (k == "hl") {
+          if (val[k] != null) {
+            var checkboxes = document.querySelectorAll('.hli');
+            checkboxes.forEach(function(checkbox) {
+                var dataPoint = checkbox.getAttribute('data-point');
+                // Check if the data-point value exists in val[k]
+                if (val[k].includes(dataPoint)) {
+                    checkbox.checked = true;
+                } else {
+                    checkbox.checked = false;
+                }
+            });
+          }
         } else {
           var element = document.getElementById(k);
           if (element) {
@@ -866,6 +878,33 @@ function ccntLoad(cno) {
 
   frtload(cno);
   document.getElementById('boscr').classList.remove('hideme');
+}
+function clich(client){
+  var updclient = encodeURIComponent(client);
+  fetch("/inc/job-cli-ch.php", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: "client=" + updclient + "&jobno=" + jbn,
+  }).then(response => response.text()).then(data => {
+
+    document.getElementById("jbnum").innerHTML = data;
+    jbn = Number(data) || 0;
+    insertJob = ("000000" + data).slice(-5);
+    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?job_no=' + jbn;
+
+    // Update the URL without reloading the page
+    window.history.pushState({ path: newurl }, '', newurl);
+
+    document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
+    document.getElementById('client').classList.remove("pending");
+    document.getElementById('client').value = client;
+    document.getElementById('client').classList.add("updated");
+    updchkr();
+  }).catch(error => {
+    console.error('Error:', error);
+  });
 }
 //Dragging Note items
 function dragStart(event) {
@@ -942,40 +981,31 @@ function logOrderChange() {
   console.log('Order Changed:', newOrder);
 }
 
-function logOrderChange_old() {
-  const items = document.querySelectorAll('.draggable-item');
-  const newOrder = Array.from(items).map(item => item.getAttribute('data-id')).join('|');
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/inc/job-not-ordch.php", true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) {
-        var data = xhr.responseText;
-        console.log("sup response");
-        console.log(data);
-      } else {
-        console.log("Failure Notes - " + jbn);
-        console.log("Error: " + xhr.responseText);
-        console.log(xhr);
-      }
-    }
-  };
-
-  xhr.onerror = function () {
-    console.log("Error in making the request.");
-  };
-
-  xhr.send("nord=" + newOrder + "&job=" + jbn);
-  console.log("nord=" + newOrder + "&job=" + jbn);
-  console.log('Order Changed:', newOrder);
-}
 
 function handleClick(event) {
   // Handle click on the drag handle
   event.stopPropagation();
 }
+function hlChange(){
+  var cno = document.getElementById("cnID").value;
+  var crd = new Map();
+  const checkboxes = document.querySelectorAll('.hli');
+  // String to store checked data-ids
+  let checkedIdsString = "";
+  // Loop through each checkbox
+  checkboxes.forEach(function(checkbox) {
+    // Check if the checkbox is checked
+    if (checkbox.checked) {
+      // If checked, add its data-id to the string
+      checkedIdsString += checkbox.getAttribute('data-point');
+    }
+  });
+  // Compile map of data
+  crd.set("hl", checkedIdsString);
+  //update server
+  sendUpdate(cno,'conNote', crd);
+}
+
 
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
@@ -1023,7 +1053,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updstr += 'contPh="' + event.target.querySelector(".lstPh").innerHTML.replace(/'/g, "''") + '",';
         updstr += 'contEm="' + event.target.querySelector(".lstEm").innerHTML.replace(/'/g, "''") + '"';
         updstr = updstr.replace('=""', '=NULL');
-  
+        
         fetch("/inc/job-dets-upd.php", {
           method: 'POST',
           headers: {
@@ -1036,11 +1066,11 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Error:', error);
         });
       } else if (mrkr == 'client') {
-        document.getElementById("client").value = target.querySelector(".lstcli").innerHTML;
-        document.getElementById("cliContact").value = target.querySelector(".lstcont").innerHTML;
-        document.getElementById("cliContPh").value = target.querySelector(".lstcph").innerHTML;
-        document.getElementById("cliContEm").value = target.querySelector(".lstctc").innerHTML;
-        document.getElementById("cliContEm2").value = target.querySelector(".lstctc2").innerHTML;
+        document.getElementById("client").value = urldecoder(target.querySelector(".lstcli").innerHTML);
+        document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
+        document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
+        document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
+        document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
   
         document.getElementById("client").classList.add("pending");
         document.getElementById("cliContact").classList.add("pending");
@@ -1050,56 +1080,35 @@ document.addEventListener('DOMContentLoaded', function () {
   
         updchkr();
   
-        card.set("client", target.querySelector(".lstcli").innerHTML);
-        card.set("cliContact", target.querySelector(".lstcont").innerHTML);
-        card.set("cliContPh", target.querySelector(".lstcph").innerHTML);
-        card.set("cliContEm", target.querySelector(".lstctc").innerHTML);
-        card.set("cliContEm2", target.querySelector(".lstctc2").innerHTML);
+        card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
+        card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+        card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+        card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
 
-        sncrd.set("contd", target.querySelector(".lstcont").innerHTML);
-        sncrd.set("contPh", target.querySelector(".lstcph").innerHTML);
-        sncrd.set("contEm", target.querySelector(".lstctc").innerHTML);
-        sncrd.set("contEm2", target.querySelector(".lstctc2").innerHTML);
+        sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
+        sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+        sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+        sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
         
-        var client = target.querySelector(".lstcli").innerHTML.replace(/'/g, "''");
-        fetch("/inc/job-cli-ch.php", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: "client=" + client + "&jobno=" + jbn,
+        var client = urldecoder(target.querySelector(".lstcli").innerHTML);
+        clich(client);
+        fetch("/inc/job-dets-upd.php", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+          body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(sncrd))) + "&cno=" + jbn,
         }).then(response => response.text()).then(data => {
-
-          document.getElementById("jbnum").innerHTML = data;
-          jbn = Number(data) || 0;
-          insertJob = ("000000" + data).slice(-5);
-          var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?job_no=' + jbn;
-
-          // Update the URL without reloading the page
-          window.history.pushState({ path: newurl }, '', newurl);
-
-          document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
-          fetch("/inc/job-dets-upd.php", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            //body: "updstr=" + updstr + "&cno=" + jbn,
-            body: "updstr=" + JSON.stringify(Object.fromEntries(sncrd)) + "&cno=" + jbn,
-          }).then(response => response.text()).then(data => {
-            if (data == "success") {
-              for (let [key, value] of card) {
-                document.getElementById(key).classList.remove("pending");
-                document.getElementById(key).value = value;
-                document.getElementById(key).classList.add("updated");
-              }
-              updchkr();
-            } else {
-              alert(data);
+          if (data == "success") {
+            for (let [key, value] of card) {
+              document.getElementById(key).classList.remove("pending");
+              document.getElementById(key).value = value;
+              document.getElementById(key).classList.add("updated");
             }
-          }).catch(error => {
-            console.error('Error:', error);
-          });
+            updchkr();
+          } else {
+            alert(data);
+          }
         }).catch(error => {
           console.error('Error:', error);
         });
@@ -1133,7 +1142,8 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error:', error);
           });
         } else {
-          cnDetUpd(cno, card);
+          sendUpdate(cno,'conNote', card);
+          //cnDetUpd(cno, card);
         }
       }
   
@@ -1189,9 +1199,10 @@ document.addEventListener('DOMContentLoaded', function () {
                   }
               }
           };
-          xhr.send("updstr=" + JSON.stringify(Object.fromEntries(crd)) + "&cno=" + encodeURIComponent(jbn));
+          xhr.send("updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(crd))) + "&cno=" + encodeURIComponent(jbn));
       } else {
-          cnDetUpd(cno, crd);
+        sendUpdate(cno,'conNote', crd);
+        //cnDetUpd(cno, crd);
       }
 
       document.getElementById("dd").removeAttribute('marker');
@@ -1227,7 +1238,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     xhr.open("POST", "/inc/adrem.php", true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(senBuild);
+    xhr.send(encodeURIComponent(senBuild));
     } else if (target.classList.contains("frtLne") || target.parentElement.classList.contains("frtLne")) {
       //fix this one
       event.stopPropagation();
@@ -1247,32 +1258,11 @@ document.addEventListener('DOMContentLoaded', function () {
       clrDd();
     }
 
-
-
-
-
-
-
-
-
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
       var client = document.querySelector("input[name=clientName]").value;
-      fetch("/inc/job-cli-ch.php", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: "client=" + client + "&jobno=" + jbn,
-      }).then(response => response.text()).then(data => {
-        document.getElementById("jbnum").innerHTML = data;
-        jbn = Number(data) || 0;
-        insertJob = ("000000" + data).slice(-5);
-        document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
-      }).catch(error => {
-        console.error('Error:', error);
-      });
+      clich(client);
     }
   });
   
@@ -1284,18 +1274,17 @@ document.addEventListener('DOMContentLoaded', function () {
   
   document.querySelectorAll(".j_det_info").forEach(function (element) {
     element.addEventListener('change', function () {
+      var card = new Map();
       var ent = element.value;
       var fldId = element.id;
-      var field = element.name;
-  
-      fetch("/inc/job-inf-ch.php", {
+      card.set(element.name, ent);
+      fetch("/inc/job-dets-upd.php", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: "det=" + field + "&upd=" + ent + "&jobno=" + jbn,
+        body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(card))) + "&cno=" + jbn,
       }).then(response => response.text()).then(function (data) {
-        console.log(data);
         if (data.slice(0,7) === 'success') {
           document.getElementById(fldId).value = ent;
           document.getElementById(fldId).classList.remove("pending");
@@ -1335,13 +1324,13 @@ document.addEventListener('DOMContentLoaded', function () {
       var col = input.name;
       var cur = '';
       var og = '';
-  
+      var valprep = encodeURIComponent(val);
       fetch("/inc/job_add_upd.php", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: "col=" + col + "&val=" + val + "&jno=" + jbn,
+        body: "col=" + col + "&val=" + valprep.replace(/\+/g, '%2B') + "&jno=" + jbn,
       }).then(response => response.text()).then(function (data) {
         if (data.slice(0,7) === 'success') {
         document.getElementById(did).setAttribute("value", val);
@@ -1409,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('newn').addEventListener('click', function () {
     var nnote = document.getElementById('nnt').innerHTML;
     var namt = document.getElementById('nna').textContent.replace(",", "").replace("$", "");
-  
+    var encodedVal = encodeURIComponent(nnote);
     if (jbn === "" || jbn == 0) {
       alert("A job needs to be created for notes to be added - newn.click");
     } else {
@@ -1422,7 +1411,7 @@ document.addEventListener('DOMContentLoaded', function () {
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: "txt=" + nnote + "&amt=" + namt + "&jobno=" + jbn,
+            body: "txt=" + encodedVal.replace(/\+/g, '%2B') + "&amt=" + namt + "&jobno=" + jbn,
           }).then(response => response.text()).then(function (data) {
             nnote = JSON.parse(data);
             notes.push(nnote);
@@ -1519,13 +1508,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(nval);
         console.log(col);
         console.log(nid);
-
+        var encodedVal = encodeURIComponent(nval);
         fetch("/inc/job-note-upd.php", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
-          body: "updstr=" + nval + "&ref=" + col + "&cno=" + nid,
+          body: "updstr=" + encodedVal.replace(/\+/g, '%2B') + "&ref=" + col + "&cno=" + nid,
         }).then(response => response.text()).then(function (data) {
           if (data === "success") {
             console.log(ind);
@@ -1864,21 +1853,25 @@ document.querySelectorAll('.cndd').forEach(function (element) {
 
     upd.set(fld, chg);
 
-    if (chg === '') {
+    /*if (chg === '') {
       updstr = fld + '=Null,';
     } else {
       updstr = fld + "='" + chg + "',";
     }
 
-    updstr = updstr.substring(0, (updstr.length - 1));
-    cnDetUpd(cno, upd);
+    updstr = updstr.substring(0, (updstr.length - 1));*/
+    sendUpdate(cno,'conNote', upd);
+    //cnDetUpd(cno, upd);
   });
 });
 function clrcnt() {
   document.querySelectorAll('.radios').forEach(function (radio) {
     radio.checked = false;
   });
-
+  var checkboxes = document.querySelectorAll('.hli');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
   document.querySelectorAll('#cn-frame input').forEach(function (input) {
     if (input.type === 'radio') {
       // Handling radio buttons if needed
@@ -2023,7 +2016,7 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
           alert("Error in updating");
       }
   };
-  var data = "cnum=" + encodeURIComponent(cnum) + "&kv=" + JSON.stringify(kv);
+  var data = "cnum=" + encodeURIComponent(cnum) + "&kv=" + encodeURIComponent(JSON.stringify(kv));
   //var data = "cnum=" + encodeURIComponent(cnum) + "&sref=" + encodeURIComponent(sref) + "&nitm=" + encodeURIComponent(nitm) + "&psn=" + encodeURIComponent(psn) + "&itWgt=" + encodeURIComponent(itWgt) + "&itLen=" + encodeURIComponent(itLen) + "&itWid=" + encodeURIComponent(itWid) + "&itHei=" + encodeURIComponent(itHei) + "&itQty=" + encodeURIComponent(itQty) + "&unNum=" + encodeURIComponent(unNum) + "&dcls=" + encodeURIComponent(dcls) + "&sRisk=" + encodeURIComponent(sRisk) + "&pkGr=" + encodeURIComponent(pkGr) + "&pkDes=" + encodeURIComponent(pkDes);
   xhr.send(data);
 });
@@ -2288,8 +2281,10 @@ document.getElementById("addsup").addEventListener('click', function () {
   
   for (const childDiv of parentDiv.children) {
     if (childDiv.id !== 'addsup') {
-        kv[childDiv.getAttribute('data-col')] = childDiv.innerHTML.trim().replace(/\n/g, '<br>') || null;
-        childDiv.textContent = '';
+      const col = childDiv.getAttribute('data-col');
+      const val = childDiv.innerText.trim().replace(/\n/g, '<br>').replace(/\+/g, '%2B'); // Encode '+' as '%2B'
+      kv[col] = val || null;
+      childDiv.textContent = '';
     }
   }
 
@@ -2323,9 +2318,6 @@ document.getElementById("addsup").addEventListener('click', function () {
 
           xhr.open("POST", "/inc/job-sup-add.php", true);
           xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-          console.log(jbn);
-          console.log(JSON.stringify(kv));
-          console.log(encodeURIComponent(JSON.stringify(kv)));
           xhr.send("jobno=" + jbn + "&crd=" + encodeURIComponent(JSON.stringify(kv)));
       }
   }
@@ -2364,41 +2356,6 @@ document.getElementById("addsup").addEventListener('click', function () {
           alert("Error in removing supplier");
       });
     }
-
-        /*var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var data = xhr.responseText;
-                    if (data === "success") {
-                        sups.forEach(function (val, i) {
-                            if (val.jsID == nid) {
-                                sups.splice(i, 1);
-                            }
-                        });
-
-                        var elementToRemove = document.querySelector(".supln[data-id='" + nid + "']");
-                        if (elementToRemove) {
-                            elementToRemove.remove();
-                        }
-                    } else {
-                        alert("Error in removing supplier");
-                        console.log("Variables - " + nid);
-                        console.log("Error: " + data);
-                    }
-                } else {
-                    alert("Error in removing supplier");
-                    console.log("Variables - " + nid);
-                    console.log("Error status: " + xhr.status);
-                }
-            }
-        };
-
-        xhr.open("POST", "/inc/job-sup-rem.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.send("id=" + nid);
-    }
-    */
 });
 
   //updating a supplier
@@ -2410,7 +2367,7 @@ document.getElementById("addsup").addEventListener('click', function () {
     if (isLsup && isSupln) {
         var nid = target.parentNode.getAttribute("data-id");
         var col = target.getAttribute("data-col");
-        var nval = target.innerHTML.trim();
+        var nval = target.innerHTML.trim().replace(/\n/g, '<br>');
 
         if (col == "jsEst") {
             nval = nval.replace("$", "").replace(",", "");
@@ -2431,6 +2388,7 @@ document.getElementById("addsup").addEventListener('click', function () {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
                         var data = xhr.responseText;
+                        console.log(data);
                         if (data === "success") {
                             sups.forEach(function (val, i) {
                                 if (val.jsID == nid) {
@@ -2451,20 +2409,20 @@ document.getElementById("addsup").addEventListener('click', function () {
                             updchkr();
                         } else {
                             alert("Error in updating");
-                            console.log("Variables - " + val + " : " + col + " : " + nid);
+                            console.log("Variables - " + nval + " : " + col + " : " + nid);
                             console.log("Error: " + data);
                         }
                     } else {
                         alert("Error in updating");
-                        console.log("Variables - " + val + " : " + col + " : " + nid);
+                        console.log("Variables - " + nval + " : " + col + " : " + nid);
                         console.log("Error status: " + xhr.status);
                     }
                 }
             };
-
+            var encodedVal = encodeURIComponent(nval.replace(/\+/g, '%2B').replace(/\&/g, '%26'));
             xhr.open("POST", "/inc/job-sup-upd.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.send("updstr=" + nval + "&ref=" + col + "&cno=" + nid);
+            xhr.send("updstr=" + encodedVal + "&ref=" + encodeURI(col) + "&cno=" + nid);
         }
     }
 });

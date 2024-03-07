@@ -11,6 +11,12 @@ if (isset($_GET['CNID'])) {
 } else {
     exit();
 }
+$MKR = '';
+if (isset($_GET['mrkr'])) {
+    $MKR = $_GET['mrkr'];
+}
+
+
 //pull data from Server
 $sql = "SELECT * FROM `conNotes` WHERE cnID in ($CNID);";
 
@@ -34,419 +40,472 @@ if (mysqli_num_rows($resultData) > 0){
         //add page -- create loop for multiple connote output inc content
         $pdf->SetMargins(10,2,2,false);
         $pdf->SetAutoPageBreak(true,2);
-        $pdf->AddPage();
+        for ($i = 0; $i < 2; $i++) {
+            $pdf->AddPage();
 
-        //add content
-        //header
-        $pdf->SetLineStyle(array('width' => 0.1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(125,125,125)));
-        $pdf->Image(__DIR__.'/img/MT-PTY-Logo x 8.jpg',10,1.5,68,20);
-        $pdf->SetFont('Helvetica','',14);
-        $pdf->Cell(75,20,'',0,0,'C'); //You need to have logo inserted
-        $pdf->SetFont('Helvetica','',8);
-        $pdf->Cell(30,20,'ABN 54 157 699 815',0,0,'C',false,'',0,false,'','B');
-        $pdf->SetFont('Helvetica','B',12);
-        $pdf->Cell(35,20,'  (08) 9455 5002',0,0,'L',false,'',0,false,'','B');
-        $pdf->SetFont('Helvetica','B',10);
-        $pdf->Cell(41,9,'',0,0,'L',false,'',0,false,'','B');
-        $pdf->Cell(22,9,'Contract No.',0,0,'L');
-        $pdf->SetFont('Helvetica','',14);
-        $pdf->SetTextColor(255,0,0);
-        $pdf->Cell(28,9,$cnote,0,1,'C');
-        $pdf->SetFont('Helvetica','B',10);
-        $pdf->SetTextColor(0,0,0);
-        $pdf->Cell(142,5,'',0,0);
-        $pdf->Cell(91,5,'accounts@moorishtransport.com.au',0,1,'L',false,'',0,false,'','B');
-        $pdf->Cell(142,6,'',0,0);
-        $pdf->Cell(91,6,'enquiries@moorishtransport.com.au',0,1,'L',false,'',0,false,'','B');
-        //spacer line
-        $pdf->Cell(233,2,'',0,1,'',false,'',0,true);
-        //Header Row Addresses
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->Cell(92,6,'SENDER',1,0,'L',true,'',0,false,'','C');
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(92,6,'RECEIVER',1,1,'L',true,'',0,false,'','C');
-
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(92,6,"Company\nName",1,'L',false,0);
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->MultiCell(92,6,"Company\nName",1,'L',false,1);
-        $pdf->Cell(92,6,'Address',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(92,6,'Address',1,1,'L',false,'',0,false,'','T');
-        $pdf->Cell(92,6,'',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(92,6,'',1,1,'L',false,'',0,false,'','T');
-        $pdf->Cell(69,6,'',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
-        $pdf->Cell(13,6,'Postcode',1,0,'C',false,'',0,false,'','T');
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(69,6,'',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
-        $pdf->Cell(13,6,'Postcode',1,1,'C',false,'',0,false,'','T');
-        $pdf->MultiCell(60,6,"Contact\nName",1,'L',false,0);
-        $pdf->Cell(32,6,'Ph',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->MultiCell(60,6,"Contact\nName",1,'L',false,0);
-        $pdf->Cell(32,6,'Ph',1,1,'L',false,'',0,false,'','T');
-        $pdf->Cell(188,3,'',0,1,'',false,'',0,true); //Spacer line
-
-        //row 3
-        $pdf->SetFont('Helvetica','',7);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->MultiCell(79,6,"ALL drivers MUST answer these questions and sign below\nbefore entering the road network.",1,'L',true,0);
-        $pdf->SetFont('Helvetica','B',7.5);
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(30,6,'Who Pays For Freight',1,0,'L',true,'',0,false,'','C');
-
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->Cell(75,6,'OTHER PARTY',1,1,'L',true,'',0,false,'','C');
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked to ensure all relevant permits,\napprovals etc are current and available (where applicable).",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',7);
-        //$pdf->Cell(30,6,'',1,0,'L',false,'',0,false,'','C');
-        $pdf->SetTextColor(125,125,125);
-        $pdf->Cell(10,6,'SEND',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(10,6,'REC',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(10,6,'OTH',1,0,'C',false,'',0,false,'','C');
-        $pdf->SetTextColor(0,0,0);
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->MultiCell(75,6,"Company\nName",1,'L',false,1);
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked the load to ensure the Dimension of the load\nis compliant prior to travelling on the road.",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6.75);
-        $pdf->MultiCell(30,6,"Account\nNo.",1,'L',false,0);
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->Cell(75,6,"Address",1,1,'L',false,'',0,false,'','T');
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked to ensure the load is restrained securely prior\nto the vehicle travelling on the road.",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6.75);
-        $pdf->MultiCell(30,6,"Quote\nNo.",1,'L',false,0);
-
-        $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(30,6,"Contact\nName",1,'L',false,0);
-        $pdf->Cell(24,6,'Ph',1,0,'L',false,'',0,false,'','T');
-        $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
-        $pdf->Cell(11,6,'Postcode',1,1,'C',false,'',0,false,'','T');
-        $pdf->MultiCell(69,9,"You have checked to ensure the loading does not affect the centre of gravity for the vehicle. (The Main Roads Static Rollover Threshold (SRT) Calculator may be utilised).",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,9,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,9,'',0,1,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(69,6,'You are verifying you are suitably trained in load restraint methods.',1,0,'L',false,'',0,false,'','C');
-        //$pdf->MultiCell(69,6,"You are verifying you are suitably trained in load restraint methods.",1,'L',false,0,'','',true,0,false,true,0,'C');
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->MultiCell(69,6,"You have checked the proposal route is approved for the particular vehicle combination to travelling on the road.",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
-        $pdf->SetFont('Helvetica','',6);
-        /*$pdf->MultiCell(69,6,"Do you have a route planned this is safe and legal for your\nCombination",1,'L',false,0);
-        $pdf->SetFont('Helvetica','B',7);
-        $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line*/
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(79,13,'Drivers Signature:',1,1,'L',false,'',0,false,'','T');
-        $pdf->Cell(233,2,"",0,1,'',false,'',0,true);
-
-        //table - header
-        $pdf->SetFont('Helvetica','B',5.5);
-        $pdf->MultiCell(30,7,"SENDER'S REF No.\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(13,7,"No. OF\nITEMS",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(64,7,"PROPER SHIPPING NAME\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(17,7,"WEIGHT\n(KG)",1,'C',true,0,'','',true,0,false,true,0,'M',true);
-        $pdf->MultiCell(48,7,"CUBIC SIZE\n ",1,'C',true,0,'','',true,0,false,true,0,'M',true);
-        $pdf->SetFillColor(200,5,0);
-        $pdf->MultiCell(12,7,"UN No.\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(12,7,"CLASS\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(12,7,"SUB\nRISK",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(12,7,"PACKING\nGROUP",1,'C',true,0,'','',true,3,false,true,7,'M',true);
-        $pdf->MultiCell(13,7,"PACKAGER\nDESC.",1,'C',true,1,'','',true,3,false,true,7,'M',true);
-        //table rows - default
-        $pdf->Cell(30,7,'',1,0);
-        $pdf->Cell(13,7,'',1,0);
-        $pdf->Cell(64,7,'',1,0);
-        $pdf->Cell(17,7,'',1,0);
-        $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(13,7,'',1,1);
-        //row-2
-        $pdf->Cell(30,7,'',1,0);
-        $pdf->Cell(13,7,'',1,0);
-        $pdf->Cell(64,7,'',1,0);
-        $pdf->Cell(17,7,'',1,0);
-        $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(13,7,'',1,1);
-        //row-3
-        $pdf->Cell(30,7,'',1,0);
-        $pdf->Cell(13,7,'',1,0);
-        $pdf->Cell(64,7,'',1,0);
-        $pdf->Cell(17,7,'',1,0);
-        $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(13,7,'',1,1);
-        //row-4
-        $pdf->Cell(30,7,'',1,0);
-        $pdf->Cell(13,7,'',1,0);
-        $pdf->Cell(64,7,'',1,0);
-        $pdf->Cell(17,7,'',1,0);
-        $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(13,7,'',1,1);
-        //row-5
-        $pdf->Cell(30,7,'',1,0);
-        $pdf->Cell(13,7,'',1,0);
-        $pdf->Cell(64,7,'',1,0);
-        $pdf->Cell(17,7,'',1,0);
-        $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(12,7,'',1,0);
-        $pdf->Cell(13,7,'',1,1);
-        //Totals Row
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->Cell(30,7,'TOTALS',1,0,'R',true);
-        $pdf->SetFillColor(255,200,150);
-        $pdf->Cell(13,7,'',1,0,'C',true);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->Cell(64,7,'',1,0,'',true);
-        $pdf->SetFillColor(255,200,150);
-        $pdf->Cell(17,7,'',1,0,'',true);
-        $pdf->Cell(48,7,'m3',1,0,'R',true,'',0,false,'T','C');
-        $pdf->SetFillColor(200,5,0);
-        $pdf->Cell(12,7,'',1,0,'',true);
-        $pdf->Cell(12,7,'',1,0,'',true);
-        $pdf->Cell(12,7,'',1,0,'',true);
-        $pdf->Cell(12,7,'',1,0,'',true);
-        $pdf->Cell(13,7,'',1,1,'',true);
-        $pdf->Cell(233,1,"",0,1,'',false,'',0,true);
-        //Signatures
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->Cell(112,4,"SENDER'S SIGNATURE AND DECLARATION",1,0,'',true,'',0,true);
-        $pdf->Cell(121,4,"RECEIVER'S SIGNATURE",1,1,'',true,'',0,true);
-        $pdf->SetFont('Helvetica','B',6);
-        $pdf->MultiCell(112,13,"I AGREE TO THE CONDITIONS ON THE TERMS AND CONDITIONS PAGE OF THIS CONTRACT,\nREQUEST MOORISH TO DELIVER THE GOODS AND DECLARE:\nTHESE GOODS DO NOT CONTAINER ANY UNAUTHORISED EXPLOSIVES OR INCENDIARY DEVICES; ANY\nDANGEROUS GOODS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED AND LABELLED CORRECTLY;\nAND I AM AWARE THESE GOODS WILL BE SUBJECT TO SECURITY SCREENING AND CLEARING.",1,'L',false,0,'','',true,3,false,true,7,'M',true);
-        $pdf->Cell(51,8,"RECEIVED IN GOOD CONDITION",1,0,'',false,'',0,true,'T','T');
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->Cell(70,14.75,"    Print Name",1,2,'',false,'',0,true,'T','T');
-        $pdf->Cell(70,4,"    Date          /            /",1,2,'',false,'',0,true,'T','C');
-        $pdf->Cell(70,4,"    Time",1,1,'',false,'',0,true,'T','C');
-        $pdf->Cell(233,3,"Please print minimum 2 copies, one for reciever, one for POD.",0,1,'',false,'',0,true,'T','B');
-        //floating Sig sections
-        $pdf->SetXY(10,190);
-        $pdf->Cell(39,10,"   Signature",1,0,'',false,'',0,true,'T','T');
-        $pdf->MultiCell(73,6,"Print\nName",1,'L',false,1);
-        //$pdf->Cell(73,6," Print Name",1,2,'',false,'',0,true,'T','T');
-        $pdf->Cell(39,1,"",0,0,'',false,'',0,true,'T','T');
-        $pdf->Cell(73,4," Date          /            /",1,2,'',false,'',0,true,'T','C');
-        $pdf->SetXY(122,185);
-        $pdf->Cell(51,15," Signature",1,0,'',false,'',0,true,'T','T');
-        //$pdf->SetFont('zapfdingbats','',10);// 3 for tick || 39
-        //$pdf->Cell(188,6,"",1,1,'',false,'',0,true);
-        //$pdf->Cell(188,0.2,"",1,1,'',false,'',0,true);//double thick border
-
-        //delivery title
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->SetXY(202,87);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->StartTransform();
-        $pdf->Rotate(90);
-        $pdf->Cell(63,6,'DELIVERY POINT  PICK UP POINT',1,1,'C',true,'',0,false,'T','C');
-        $pdf->StopTransform();
-        //Delivery fields
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->SetXY(208,24);
-        $pdf->Cell(35,10.5,'Depart Depot',1,2,'L',False,'',0,false,'T','T');
-        $pdf->Cell(35,10.5,'Arrival Time',1,2,'L',False,'',0,false,'T','T');
-        $pdf->Cell(35,10.5,'Departure Time',1,2,'L',False,'',0,false,'T','T');
-        $pdf->Cell(35,10.5,'Arrival Time',1,2,'L',False,'',0,false,'T','T');
-        $pdf->Cell(35,10.5,'Departure Time',1,2,'L',False,'',0,false,'T','T');
-        $pdf->Cell(35,10.5,'Return Depot',1,1,'L',False,'',0,false,'T','T');
-
-        //OSC
-        $pdf->SetXY(91,89);
-        $pdf->SetFont('Helvetica','B',8);
-        $pdf->SetFillColor(255,80,0);
-        $pdf->Cell(152,6.4,'ONFORWARDING / SPECIAL INSTRUCTIONS / COMMENTS (DELAY)',1,2,'L',true,'',0,false,'','C');
-        $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
-        $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
-        $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
-        $pdf->Cell(92,6.4,'',1,0,'L',false,'',0,false,'','C');
-        $pdf->SetFont('Helvetica','B',10);
-        $pdf->Cell(32,9,'Contract No.',0,0,'L',false,'',0,false,'','C');
-        $pdf->SetFont('Helvetica','',14);
-        $pdf->SetTextColor(255,0,0);
-        $pdf->Cell(28,9,$cnote,0,1,'C');
-        $pdf->SetTextColor(0,0,0);
-/*
-        //billing tick and boxes
-        $pdf->SetFont('zapfdingbats','',12);
-        $pdf->SetXY(81.5,69);
-        $pdf->SetFont('Helvetica','',6);
-        $pdf->Rect(93,70.5,3,3);
-        $pdf->Rect(103.5,70.5,3,3);
-        $pdf->Rect(114,70.5,3,3);
-        $pdf->Cell(9.5,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(7,6,"S",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(1,6,"R",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(6,6,"O",0,0,'C',false,'',0,false,'','C');
-*/
-
-        //table header subtext
-        $pdf->SetFont('Helvetica','B',5);
-        $pdf->SetXY(53,127);
-        $pdf->Cell(64,7,"FREIGHT DESCRIPTION",0,0,'C',false,'',0,false,'','T');
-        $pdf->MultiCell(17,7,"",0,'C',false,0);
-        $pdf->Cell(48,7,"LENGTH CM X WIDTH CM X HEIGHT CM X QUANTITY",0,0,'C',false,'',0,false,'','T');
-
-        //bolded lines
-        $pdf->SetLineStyle(array('width' => 0.5, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0,0,0)));
-        $pdf->SetXY(208.25,55);
-        $pdf->Cell(34.5,0.2,"",1,1,'',false,'',0,true);
-        $pdf->SetXY(182,123.25);
-        $pdf->Cell(0.2,48.5,"",1,1,'',false,'',0,true);
-
-        //Data into Cells
-        //Sender
-        $pdf->SetXY(20,30);
-        $pdf->SetFont('Helvetica','',12);
-        $pdf->Cell(82,6,str_replace("&nbsp"," ",$row['snam']),0,2,''); //Company Name
-        $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['sadd1']),0,2,''); //Add1
-        $pdf->SetXY(10,42);
-        $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['sadd2']),0,2,''); //Add2
-        $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['sadd3']),0,0,''); //Add3
-        $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['sst']),0,0,'C',false,'',0,false,'','B');
-        $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['spc']),0,1,'C',false,'',0,false,'','B');
-        $pdf->Cell(9,6,'',0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['sCtc']),0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['sPh']),0,0,'C',false,'',0,false,'','C');
-        //Receiver
-        $pdf->SetXY(116,30);
-        $pdf->SetFont('Helvetica','',12);
-        $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['rnam']),0,2,''); //Company Name
-        $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['radd1']),0,2,''); //Add1
-        $pdf->SetXY(106,42);
-        $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['radd2']),0,2,''); //Add2
-        $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['radd3']),0,0,''); //Add3
-        $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['rst']),0,0,'C',false,'',0,false,'','B');
-        $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['rpc']),0,1,'C',false,'',0,false,'','B');
-        $pdf->Cell(105,6,'',0,0,'C',false,'',0,false,'','C');
-        $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['rCtc']),0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['rPh']),0,0,'C',false,'',0,false,'','C');
-        //Other Party
-        $pdf->SetXY(101,69);
-        $pdf->SetFont('Helvetica','',12);
-        $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['onam']),0,2,''); //Company Name
-        $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['oadd1']),0,2,''); //Add1
-        $pdf->Cell(36,6,str_replace("&nbsp;"," ",$row['oCtc']),0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(35,6,str_replace("&nbsp;"," ",$row['oPh']),0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['ost']),0,0,'C',false,'',0,false,'','B');
-        $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['opc']),0,1,'C',false,'',0,false,'','B');
-        //biller tick
-        $pdf->SetFont('zapfdingbats','',12);
-        if ($row['pAcc']=='s') {
-        $pdf->SetXY(35,68);
-        $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
-        } else if ($row['pAcc']=='r') {
-        $pdf->SetXY(50,68);
-        $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
-        } else if ($row['pAcc']=='o') {
-        $pdf->SetXY(65,68);
-        $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
-        }
-        $pdf->SetFont('Helvetica','',14);
-        $pdf->SetXY(25,75);
-        $pdf->Cell(24,6,str_replace("&nbsp;"," ",$row['pAcc']),0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(13,6,'',0,0,'L',false,'',0,false,'','C');
-        $pdf->Cell(26,6,str_replace("&nbsp;"," ",$row['pQuo']),0,0,'L',false,'',0,false,'','C');
-
-        //OSC
-        $pdf->SetFont('Helvetica','',14);
-        $pdf->MultiCell(152,19.2,str_replace("<br>",'\n',str_replace("&nbsp;"," ",$row['osc'])),0,'L',false,0,91,95.4,true,0,false,true,0,'C');
-
-        $ccnid = $row['cnID'];
-        $sql = "SELECT * FROM `conDets` WHERE cnID = $ccnid and frtDie is Null order by class desc LIMIT 5;";
-
-        $rsltDt = mysqli_query($conn,$sql);
-        if (mysqli_num_rows($rsltDt) > 0){
-            //set up vars
-            $lnnum = 0;//row number
-            $titm = 0;//item total
-            $twgt = 0;//weight total
-            $tcub = 0;//cubic total
-            $hei = 130;
-            while ($frln = mysqli_fetch_assoc($rsltDt)) {
-                $lnnum ++;//row number
-                if ($lnnum > 5) {goto bout;}
-        //Freight Table
-                $pdf->SetFont('Helvetica','',11);
-                $pdf->SetXY(10,$hei);
-                $pdf->Cell(30,7,str_replace("&nbsp;"," ",$frln['senRef']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['noItem']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(64,7,str_replace("&nbsp;"," ",$frln['psn']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(17,7,str_replace("&nbsp;"," ",$frln['itWgt']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itLen']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itWid']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itHei']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itQty']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['unNum']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['class']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['sRisk']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['pkGr']),0,0,'C',false,'',0,false,'T','C');
-                $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['pkDes']),0,1,'C',false,'',0,false,'T','C');
-                //update vars
-                $titm = $titm + $frln['noItem'];//item total
-                $twgt = $twgt + $frln['itWgt'];//weight total
-                $tcub = $tcub + (($frln['itLen']*$frln['itWid']*$frln['itHei'])/1000000)*$frln['itQty'];//cubic total
-                $hei = $hei + 7;        
-
+            //add content
+            //header
+            $pdf->SetLineStyle(array('width' => 0.1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(125,125,125)));
+            // Set the fill color to light yellow (255, 255, 204)
+            $pdf->SetFillColor(255, 255, 102);
+            if (strpos($MKR,"P") !== false) {
+                // Draw a rectangle as a highlight behind the code section
+                $pdf->Rect(200, 22, 45, 67, 'F');
             }
-        bout:
-        //Freight Table Totals
-        $pdf->SetXY(10,165);
-        $pdf->Cell(30,7,'',0,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(13,7,$titm,0,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(64,7,'',0,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(17,7,$twgt,0,0,'C',false,'',0,false,'T','C');
-        $pdf->Cell(42,7,round($tcub,3),0,0,'R',false,'',0,false,'T','C');
+            if (strpos($MKR,"S") !== false) {
+                // Draw a rectangle as a highlight behind the code section
+                $pdf->Rect(8, 188, 116, 14, 'F');
+                //draw the rectangle for the boders overlapped
+            }
+            if (strpos($MKR,"R") !== false) {
+                // Draw a rectangle as a highlight behind the code section
+                $pdf->Rect(120, 177, 124, 25, 'F');
+            }
+            $pdf->Rect(10, 177, 112, 13.25, 'D');
+            $pdf->Rect(10,190.28, 112, 9.73, 'D');
+
+            
+
+            $pdf->SetLineStyle(array('width' => 0.1, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(125,125,125)));
+            $pdf->Image(__DIR__.'/img/MT-PTY-Logo x 8.jpg',10,1.5,68,20);
+            $pdf->SetFont('Helvetica','',14);
+            $pdf->Cell(75,20,'',0,0,'C'); //You need to have logo inserted
+            $pdf->SetFont('Helvetica','',8);
+            $pdf->Cell(30,20,'ABN 54 157 699 815',0,0,'C',false,'',0,false,'','B');
+            $pdf->SetFont('Helvetica','B',12);
+            //$pdf->Cell(35,20,'  (08) 9455 5002',0,0,'L',false,'',0,false,'','B');
+            $pdf->Cell(35,20,'  (08) 6285 5558',0,0,'L',false,'',0,false,'','B');
+            $pdf->SetFont('Helvetica','B',10);
+            $pdf->Cell(41,9,'',0,0,'L',false,'',0,false,'','B');
+            $pdf->Cell(22,9,'Contract No.',0,0,'L');
+            $pdf->SetFont('Helvetica','',14);
+            $pdf->SetTextColor(255,0,0);
+            $pdf->Cell(28,9,$cnote,0,1,'C');
+            $pdf->SetFont('Helvetica','B',10);
+            $pdf->SetTextColor(0,0,0);
+            $pdf->Cell(142,5,'',0,0);
+            $pdf->Cell(91,5,'accounts@moorishtransport.com.au',0,1,'L',false,'',0,false,'','B');
+            $pdf->Cell(142,6,'',0,0);
+            $pdf->Cell(91,6,'enquiries@moorishtransport.com.au',0,1,'L',false,'',0,false,'','B');
+            //spacer line
+            $pdf->Cell(233,2,'',0,1,'',false,'',0,true);
+            //Header Row Addresses
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->Cell(92,6,'SENDER',1,0,'L',true,'',0,false,'','C');
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(92,6,'RECEIVER',1,1,'L',true,'',0,false,'','C');
+            //CN Type
+            if ($i == 0) {
+                $pdf->SetXY(245,24);
+                $pdf->SetFillColor(255,165,165);
+                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
+
+                $pdf->SetFont('Helvetica','B',32);
+                $pdf->SetTextColor(255,255,255);
+                $pdf->SetXY(245,165);
+                $pdf->StartTransform();
+                $pdf->Rotate(90);
+
+                $pdf->Cell(105,40,'RECEIVERS COPY',0,0,'C',false,'',0,false,'T','C');
+                $pdf->StopTransform();
+            } else {
+                $pdf->SetXY(245,24);
+                $pdf->SetFillColor(225,225,225);
+                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
+    
+                $pdf->SetFont('Helvetica','B',32);
+                $pdf->SetTextColor(255,100,100);
+                $pdf->SetXY(245,165);
+                $pdf->StartTransform();
+                $pdf->Rotate(90);
+    
+                $pdf->Cell(105,40,'OFFICE COPY',0,0,'C',false,'',0,false,'T','C');
+                $pdf->StopTransform();                
+            }
+            $pdf->SetXY(10,30);
+            $pdf->SetTextColor(0,0,0);
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(92,6,"Company\nName",1,'L',false,0);
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->MultiCell(92,6,"Company\nName",1,'L',false,1);
+            $pdf->Cell(92,6,'Address',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(92,6,'Address',1,1,'L',false,'',0,false,'','T');
+            $pdf->Cell(92,6,'',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(92,6,'',1,1,'L',false,'',0,false,'','T');
+            $pdf->Cell(69,6,'',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
+            $pdf->Cell(13,6,'Postcode',1,0,'C',false,'',0,false,'','T');
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(69,6,'',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
+            $pdf->Cell(13,6,'Postcode',1,1,'C',false,'',0,false,'','T');
+            $pdf->MultiCell(60,6,"Contact\nName",1,'L',false,0);
+            $pdf->Cell(32,6,'Ph',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(4,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->MultiCell(60,6,"Contact\nName",1,'L',false,0);
+            $pdf->Cell(32,6,'Ph',1,1,'L',false,'',0,false,'','T');
+            $pdf->Cell(188,3,'',0,1,'',false,'',0,true); //Spacer line
+
+            //row 3
+            $pdf->SetFont('Helvetica','',7);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->MultiCell(79,6,"ALL drivers MUST answer these questions and sign below\nbefore entering the road network.",1,'L',true,0);
+            $pdf->SetFont('Helvetica','B',7.5);
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(30,6,'Who Pays For Freight',1,0,'L',true,'',0,false,'','C');
+
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->Cell(75,6,'OTHER PARTY',1,1,'L',true,'',0,false,'','C');
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(69,6,"You have checked to ensure all relevant permits,\napprovals etc are current and available (where applicable).",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',7);
+            //$pdf->Cell(30,6,'',1,0,'L',false,'',0,false,'','C');
+            $pdf->SetTextColor(125,125,125);
+            $pdf->Cell(10,6,'SEND',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(10,6,'REC',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(10,6,'OTH',1,0,'C',false,'',0,false,'','C');
+            $pdf->SetTextColor(0,0,0);
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->MultiCell(75,6,"Company\nName",1,'L',false,1);
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(69,6,"You have checked the load to ensure the Dimension of the load\nis compliant prior to travelling on the road.",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6.75);
+            $pdf->MultiCell(30,6,"Account\nNo.",1,'L',false,0);
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->Cell(75,6,"Address",1,1,'L',false,'',0,false,'','T');
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(69,6,"You have checked to ensure the load is restrained securely prior\nto the vehicle travelling on the road.",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6.75);
+            $pdf->MultiCell(30,6,"Quote\nNo.",1,'L',false,0);
+
+            $pdf->Cell(2,6,'',0,0,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(30,6,"Contact\nName",1,'L',false,0);
+            $pdf->Cell(24,6,'Ph',1,0,'L',false,'',0,false,'','T');
+            $pdf->Cell(10,6,'State',1,0,'C',false,'',0,false,'','T');
+            $pdf->Cell(11,6,'Postcode',1,1,'C',false,'',0,false,'','T');
+            $pdf->MultiCell(69,9,"You have checked to ensure the loading does not affect the centre of gravity for the vehicle. (The Main Roads Static Rollover Threshold (SRT) Calculator may be utilised).",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,9,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,9,'',0,1,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->Cell(69,6,'You are verifying you are suitably trained in load restraint methods.',1,0,'L',false,'',0,false,'','C');
+            //$pdf->MultiCell(69,6,"You are verifying you are suitably trained in load restraint methods.",1,'L',false,0,'','',true,0,false,true,0,'C');
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->MultiCell(69,6,"You have checked the proposal route is approved for the particular vehicle combination to travelling on the road.",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line
+            $pdf->SetFont('Helvetica','',6);
+            /*$pdf->MultiCell(69,6,"Do you have a route planned this is safe and legal for your\nCombination",1,'L',false,0);
+            $pdf->SetFont('Helvetica','B',7);
+            $pdf->Cell(10,6,'Y/N',1,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(2,6,'',0,1,'L',false,'',0,true);//spacer line*/
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->Cell(79,13,'Drivers Signature:',1,1,'L',false,'',0,false,'','T');
+            $pdf->Cell(233,2,"",0,1,'',false,'',0,true);
+
+            //table - header
+            $pdf->SetFont('Helvetica','B',5.5);
+            $pdf->MultiCell(30,7,"SENDER'S REF No.\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(13,7,"No. OF\nITEMS",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(64,7,"PROPER SHIPPING NAME\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(17,7,"WEIGHT\n(KG)",1,'C',true,0,'','',true,0,false,true,0,'M',true);
+            $pdf->MultiCell(48,7,"CUBIC SIZE\n ",1,'C',true,0,'','',true,0,false,true,0,'M',true);
+            $pdf->SetFillColor(200,5,0);
+            $pdf->MultiCell(12,7,"UN No.\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(12,7,"CLASS\n ",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(12,7,"SUB\nRISK",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(12,7,"PACKING\nGROUP",1,'C',true,0,'','',true,3,false,true,7,'M',true);
+            $pdf->MultiCell(13,7,"PACKAGER\nDESC.",1,'C',true,1,'','',true,3,false,true,7,'M',true);
+            //table rows - default
+            $pdf->Cell(30,7,'',1,0);
+            $pdf->Cell(13,7,'',1,0);
+            $pdf->Cell(64,7,'',1,0);
+            $pdf->Cell(17,7,'',1,0);
+            $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(13,7,'',1,1);
+            //row-2
+            $pdf->Cell(30,7,'',1,0);
+            $pdf->Cell(13,7,'',1,0);
+            $pdf->Cell(64,7,'',1,0);
+            $pdf->Cell(17,7,'',1,0);
+            $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(13,7,'',1,1);
+            //row-3
+            $pdf->Cell(30,7,'',1,0);
+            $pdf->Cell(13,7,'',1,0);
+            $pdf->Cell(64,7,'',1,0);
+            $pdf->Cell(17,7,'',1,0);
+            $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(13,7,'',1,1);
+            //row-4
+            $pdf->Cell(30,7,'',1,0);
+            $pdf->Cell(13,7,'',1,0);
+            $pdf->Cell(64,7,'',1,0);
+            $pdf->Cell(17,7,'',1,0);
+            $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(13,7,'',1,1);
+            //row-5
+            $pdf->Cell(30,7,'',1,0);
+            $pdf->Cell(13,7,'',1,0);
+            $pdf->Cell(64,7,'',1,0);
+            $pdf->Cell(17,7,'',1,0);
+            $pdf->Cell(48,7,'X                   X                   X',1,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(12,7,'',1,0);
+            $pdf->Cell(13,7,'',1,1);
+            //Totals Row
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->Cell(30,7,'TOTALS',1,0,'R',true);
+            $pdf->SetFillColor(255,200,150);
+            $pdf->Cell(13,7,'',1,0,'C',true);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->Cell(64,7,'',1,0,'',true);
+            $pdf->SetFillColor(255,200,150);
+            $pdf->Cell(17,7,'',1,0,'',true);
+            $pdf->Cell(48,7,'m3',1,0,'R',true,'',0,false,'T','C');
+            $pdf->SetFillColor(200,5,0);
+            $pdf->Cell(12,7,'',1,0,'',true);
+            $pdf->Cell(12,7,'',1,0,'',true);
+            $pdf->Cell(12,7,'',1,0,'',true);
+            $pdf->Cell(12,7,'',1,0,'',true);
+            $pdf->Cell(13,7,'',1,1,'',true);
+            $pdf->Cell(233,1,"",0,1,'',false,'',0,true);
+            //Signatures
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->Cell(112,4,"SENDER'S SIGNATURE AND DECLARATION",1,0,'',true,'',0,true);
+            $pdf->Cell(121,4,"RECEIVER'S SIGNATURE",1,1,'',true,'',0,true);
+            $pdf->SetFont('Helvetica','B',6);
+            $pdf->MultiCell(112,13,"I AGREE TO THE CONDITIONS ON THE TERMS AND CONDITIONS PAGE OF THIS CONTRACT,\nREQUEST MOORISH TO DELIVER THE GOODS AND DECLARE:\nTHESE GOODS DO NOT CONTAINER ANY UNAUTHORISED EXPLOSIVES OR INCENDIARY DEVICES; ANY\nDANGEROUS GOODS ARE PROPERLY CLASSIFIED, DESCRIBED, PACKAGED, MARKED AND LABELLED CORRECTLY;\nAND I AM AWARE THESE GOODS WILL BE SUBJECT TO SECURITY SCREENING AND CLEARING.",1,'L',false,0,'','',true,3,false,true,7,'M',true);
+            $pdf->Cell(51,8,"RECEIVED IN GOOD CONDITION",1,0,'',false,'',0,true,'T','T');
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->Cell(70,14.75,"    Print Name",1,2,'',false,'',0,true,'T','T');
+            $pdf->Cell(70,4,"    Date          /            /",1,2,'',false,'',0,true,'T','C');
+            $pdf->Cell(70,4,"    Time",1,1,'',false,'',0,true,'T','C');
+            $pdf->Cell(233,3,"Please print minimum 2 copies, one for reciever, one for POD.",0,1,'',false,'',0,true,'T','B');
+            //floating Sig sections
+            $pdf->SetXY(10,190.25);
+            $pdf->Cell(39,9.75,"   Signature",1,0,'',false,'',0,true,'T','T');
+            $pdf->MultiCell(73,5.75,"Print\nName",1,'L',false,1);
+            //$pdf->Cell(73,6," Print Name",1,2,'',false,'',0,true,'T','T');
+            $pdf->Cell(39,1,"",0,0,'',false,'',0,true,'T','T');
+            $pdf->Cell(73,4," Date          /            /",1,2,'',false,'',0,true,'T','C');
+            $pdf->SetXY(122,185.25);
+            $pdf->Cell(51,14.75," Signature",1,0,'',false,'',0,true,'T','T');
+            //$pdf->SetFont('zapfdingbats','',10);// 3 for tick || 39
+            //$pdf->Cell(188,6,"",1,1,'',false,'',0,true);
+            //$pdf->Cell(188,0.2,"",1,1,'',false,'',0,true);//double thick border
+
+            //delivery title
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->SetXY(202,87);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->StartTransform();
+            $pdf->Rotate(90);
+            $pdf->Cell(63,6,'DELIVERY POINT  PICK UP POINT',1,1,'C',true,'',0,false,'T','C');
+            $pdf->StopTransform();
+            //Delivery fields
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->SetXY(208,24);
+            $pdf->Cell(35,10.5,'Depart Depot',1,2,'L',False,'',0,false,'T','T');
+            $pdf->Cell(35,10.5,'Arrival Time',1,2,'L',False,'',0,false,'T','T');
+            $pdf->Cell(35,10.5,'Departure Time',1,2,'L',False,'',0,false,'T','T');
+            $pdf->Cell(35,10.5,'Arrival Time',1,2,'L',False,'',0,false,'T','T');
+            $pdf->Cell(35,10.5,'Departure Time',1,2,'L',False,'',0,false,'T','T');
+            $pdf->Cell(35,10.5,'Return Depot',1,1,'L',False,'',0,false,'T','T');
+            
+            //OSC
+            $pdf->SetXY(91,89);
+            $pdf->SetFont('Helvetica','B',8);
+            $pdf->SetFillColor(255,80,0);
+            $pdf->Cell(152,6.4,'ONFORWARDING / SPECIAL INSTRUCTIONS / COMMENTS (DELAY)',1,2,'L',true,'',0,false,'','C');
+            $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
+            $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
+            $pdf->Cell(152,6.4,'',1,2,'L',false,'',0,false,'','C');
+            $pdf->Cell(92,6.4,'',1,0,'L',false,'',0,false,'','C');
+            $pdf->SetFont('Helvetica','B',10);
+            $pdf->Cell(32,9,'Contract No.',0,0,'L',false,'',0,false,'','C');
+            $pdf->SetFont('Helvetica','',14);
+            $pdf->SetTextColor(255,0,0);
+            $pdf->Cell(28,9,$cnote,0,1,'C');
+            $pdf->SetTextColor(0,0,0);
+    /*
+            //billing tick and boxes
+            $pdf->SetFont('zapfdingbats','',12);
+            $pdf->SetXY(81.5,69);
+            $pdf->SetFont('Helvetica','',6);
+            $pdf->Rect(93,70.5,3,3);
+            $pdf->Rect(103.5,70.5,3,3);
+            $pdf->Rect(114,70.5,3,3);
+            $pdf->Cell(9.5,6,"",0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(7,6,"S",0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(1,6,"R",0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(6.75,6,"",0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(6,6,"O",0,0,'C',false,'',0,false,'','C');
+    */
+
+            //table header subtext
+            $pdf->SetFont('Helvetica','B',5);
+            $pdf->SetXY(53,127);
+            $pdf->Cell(64,7,"FREIGHT DESCRIPTION",0,0,'C',false,'',0,false,'','T');
+            $pdf->MultiCell(17,7,"",0,'C',false,0);
+            $pdf->Cell(48,7,"LENGTH CM X WIDTH CM X HEIGHT CM X QUANTITY",0,0,'C',false,'',0,false,'','T');
+
+            //bolded lines
+            $pdf->SetLineStyle(array('width' => 0.5, 'cap' => 'butt', 'join' => 'miter', 'dash' => 0, 'color' => array(0,0,0)));
+            $pdf->SetXY(208.25,55);
+            $pdf->Cell(34.5,0.2,"",1,1,'',false,'',0,true);
+            $pdf->SetXY(182,123.25);
+            $pdf->Cell(0.2,48.5,"",1,1,'',false,'',0,true);
+
+            //Data into Cells
+            //Sender
+            $pdf->SetXY(20,30);
+            $pdf->SetFont('Helvetica','',12);
+            $pdf->Cell(82,6,str_replace("&nbsp"," ",$row['snam']),0,2,''); //Company Name
+            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['sadd1']),0,2,''); //Add1
+            $pdf->SetXY(10,42);
+            $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['sadd2']),0,2,''); //Add2
+            $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['sadd3']),0,0,''); //Add3
+            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['sst']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['spc']),0,1,'C',false,'',0,false,'','B');
+            $pdf->Cell(9,6,'',0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['sCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['sPh']),0,0,'C',false,'',0,false,'','C');
+            //Receiver
+            $pdf->SetXY(116,30);
+            $pdf->SetFont('Helvetica','',12);
+            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['rnam']),0,2,''); //Company Name
+            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['radd1']),0,2,''); //Add1
+            $pdf->SetXY(106,42);
+            $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['radd2']),0,2,''); //Add2
+            $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['radd3']),0,0,''); //Add3
+            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['rst']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['rpc']),0,1,'C',false,'',0,false,'','B');
+            $pdf->Cell(105,6,'',0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['rCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['rPh']),0,0,'C',false,'',0,false,'','C');
+            //Other Party
+            $pdf->SetXY(101,69);
+            $pdf->SetFont('Helvetica','',12);
+            $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['onam']),0,2,''); //Company Name
+            $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['oadd1']),0,2,''); //Add1
+            $pdf->Cell(36,6,str_replace("&nbsp;"," ",$row['oCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(35,6,str_replace("&nbsp;"," ",$row['oPh']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['ost']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['opc']),0,1,'C',false,'',0,false,'','B');
+            //biller tick
+            $pdf->SetFont('zapfdingbats','',12);
+            if ($row['pAcc']=='s') {
+            $pdf->SetXY(35,68);
+            $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
+            } else if ($row['pAcc']=='r') {
+            $pdf->SetXY(50,68);
+            $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
+            } else if ($row['pAcc']=='o') {
+            $pdf->SetXY(65,68);
+            $pdf->Cell(5,7,"3",0,0,'C',false,'',0,false,'','C');
+            }
+            $pdf->SetFont('Helvetica','',14);
+            $pdf->SetXY(25,75);
+            $pdf->Cell(24,6,str_replace("&nbsp;"," ",$row['pAcc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(13,6,'',0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(26,6,str_replace("&nbsp;"," ",$row['pQuo']),0,0,'L',false,'',0,false,'','C');
+
+            //OSC
+            $pdf->SetFont('Helvetica','',14);
+            $pdf->MultiCell(152,19.2,str_replace("<br>",'\n',str_replace("&nbsp;"," ",$row['osc'])),0,'L',false,0,91,95.4,true,0,false,true,0,'C');
+
+            $ccnid = $row['cnID'];
+            $sql = "SELECT * FROM `conDets` WHERE cnID = $ccnid and frtDie is Null order by class desc LIMIT 5;";
+
+            $rsltDt = mysqli_query($conn,$sql);
+            if (mysqli_num_rows($rsltDt) > 0){
+                //set up vars
+                $lnnum = 0;//row number
+                $titm = 0;//item total
+                $twgt = 0;//weight total
+                $tcub = 0;//cubic total
+                $hei = 130;
+                while ($frln = mysqli_fetch_assoc($rsltDt)) {
+                    $lnnum ++;//row number
+                    if ($lnnum > 5) {goto bout;}
+            //Freight Table
+                    $pdf->SetFont('Helvetica','',11);
+                    $pdf->SetXY(10,$hei);
+                    $pdf->Cell(30,7,str_replace("&nbsp;"," ",$frln['senRef']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['noItem']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(64,7,str_replace("&nbsp;"," ",$frln['psn']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(17,7,str_replace("&nbsp;"," ",$frln['itWgt']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itLen']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itWid']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itHei']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itQty']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['unNum']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['class']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['sRisk']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['pkGr']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['pkDes']),0,1,'C',false,'',0,false,'T','C');
+                    //update vars
+                    $titm = $titm + $frln['noItem'];//item total
+                    $twgt = $twgt + $frln['itWgt'];//weight total
+                    $tcub = $tcub + (($frln['itLen']*$frln['itWid']*$frln['itHei'])/1000000)*$frln['itQty'];//cubic total
+                    $hei = $hei + 7;        
+
+                }
+            bout:
+            //Freight Table Totals
+            $pdf->SetXY(10,165);
+            $pdf->Cell(30,7,'',0,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(13,7,$titm,0,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(64,7,'',0,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(17,7,$twgt,0,0,'C',false,'',0,false,'T','C');
+            $pdf->Cell(42,7,round($tcub,3),0,0,'R',false,'',0,false,'T','C');
+            }
+        //CN type indicator
+
         }
-
-
 }
     //add terms page
     $pdf->AddPage();

@@ -1,11 +1,11 @@
 <?php
 // Set vars and checks
 if (isset($_POST["cnum"])) {
-    $cnum = intval($_POST["cnum"]); // Convert to integer
+    $cnum = urldecode(intval($_POST["cnum"])); // Convert to integer
 }
 require_once 'dbh.inc.php';
 if (isset($_POST['kv'])) {
-    $kv = trim($_POST['kv']);
+    $kv = trim(urldecode($_POST['kv']));
     $data = json_decode($kv, true);
     $dtoc = json_decode($kv, true);
     // Remove key-value pairs with null values

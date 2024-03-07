@@ -2,21 +2,25 @@
 //set vars and checks    
 if (isset($_POST['updstr'])) {
     $updstr = trim($_POST['updstr']);
-};
+}
 if (isset($_POST['ref'])) {
     $col = trim($_POST['ref']);
-};
+}
 if (isset($_POST['cno'])) {
     $cno = trim($_POST['cno']);
-};
-    
+}
     require_once 'dbh.inc.php';
+
     $sql = "UPDATE jobSup set ".$col."=? where jsID=?;";
 
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt,$sql)) {
         die("ERROR: " . mysqli_error($conn));
     }
+
+    $updstr = str_replace('<br>', "\n", urldecode($updstr));
+    $updstr = mysqli_real_escape_string($conn, $updstr);
+
     mysqli_stmt_bind_param($stmt, "si", $updstr, $cno);
     mysqli_stmt_execute($stmt);
 
@@ -44,7 +48,7 @@ if (isset($_POST['cno'])) {
         }
         mysqli_stmt_close($stmt);
     } else {
-        die("ERROR: Update failed");
+        die("Update failed - $sql - $updstr");
     }
 
     // Close the database connection

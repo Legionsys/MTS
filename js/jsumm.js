@@ -268,23 +268,29 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   document.getElementById("clilst").addEventListener("click", function (event) {
-    if (event.target.classList.contains("vtog")) {
+    console.log(event.target);
+    if (event.target.classList.contains("vtog") || event.target.parentNode.classList.contains("vtog")) {
+      if (!event.target.classList.contains("vtog")) {
+        target = event.target.parentNode;
+      } else {
+        target = event.target;
+      }
       event.stopPropagation();
-      console.log('vtogclick - ' + event.target.closest(".selCli").getAttribute("data-id"));
-      console.log('vtogclick - ' + event.target.closest(".selCli").parentNode.getAttribute("id"));
-      console.log(event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3));
+      console.log('vtogclick - ' + target.closest(".selCli").getAttribute("data-id"));
+      console.log('vtogclick - ' + target.closest(".selCli").parentNode.getAttribute("id"));
+      console.log(target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3));
       var obj = {};
       var ind = 0;
-      var clId = event.target.closest(".selCli").getAttribute("data-id");
+      var clId = target.closest(".selCli").getAttribute("data-id");
 
       //check if Active of Deactive list
-      if (event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'act') {
+      if (target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'act') {
         //if Active
         inact.unshift(actcli[actcli.findIndex(x => x.clientId === clId)]);
         actcli = actcli.filter(function (e) {
           return e.clientId != clId;
         });
-      } else if (event.target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'dea') {
+      } else if (target.closest(".selCli").parentNode.getAttribute("id").substring(0, 3) == 'dea') {
         //If Deactivated
         ind = 1;
         actcli.unshift(inact[inact.findIndex(x => x.clientId === clId)]);

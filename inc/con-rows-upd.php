@@ -1,11 +1,11 @@
 <?php
 // Set vars and checks    
 if (isset($_POST['updstr'])) {
-    $updstr = trim($_POST['updstr']);
+    $updstr = trim(urldecode($_POST['updstr']));
 }
 
 if (isset($_POST['cno'])) {
-    $cno = trim($_POST['cno']);
+    $cno = trim(urldecode($_POST['cno']));
 }
 
 define("FS_ROOT", realpath(dirname(__FILE__)));
