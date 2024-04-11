@@ -3,7 +3,7 @@
 if (isset($_POST['stxt'])) {
     $stxt = trim($_POST['stxt']);
 };
-
+$emparray = array();
 require_once 'dbh.inc.php';
 
 $stxt = str_replace(" and ","%",$stxt);
@@ -25,12 +25,13 @@ $resultData = mysqli_query($conn,$sql);
 if (mysqli_num_rows($resultData) > 0){
     $c = 0;
     while ($row = mysqli_fetch_assoc($resultData)) {
-        echo '<div class="addcard"><div class="nam">'.$row['nam'].'</div><div class="add1">'.$row['add1'].'</div><div class="add2">'.$row['add2'].'</div><div class="add3">'.$row['add3'].'</div><div class="st">'.$row['st'].'</div><div class="pc">'.$row['pc'].'</div><div class="Ctc">'.$row['ct'].'</div><div class="Ph">'.$row['ph'].'</div><div class="add_trash"><img class="img_trash" alt="Delete Address" src="/img/trash.svg"></div></div>';
+        //echo '<div class="addcard"><div class="nam">'.$row['nam'].'</div><div class="add1">'.$row['add1'].'</div><div class="add2">'.$row['add2'].'</div><div class="add3">'.$row['add3'].'</div><div class="st">'.$row['st'].'</div><div class="pc">'.$row['pc'].'</div><div class="Ctc">'.$row['ct'].'</div><div class="Ph">'.$row['ph'].'</div><div class="add_trash"><img class="img_trash" alt="Delete Address" src="/img/trash.svg"></div></div>';
+        $emparray[] = $row;
         $c++;
         if ($c > 9) {
             break;
         }
-
+        echo json_encode($emparray);
     } 
     
 }

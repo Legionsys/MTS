@@ -17,6 +17,9 @@ var upd;
 var actcn;
 var pauseReq = false;
 let draggedItem = null;
+var tag = null;
+var card = new Map();
+var sncrd = new Map()
 
 function urldecoder(str){
   return str.replace(/&amp;/g, '&')
@@ -455,6 +458,7 @@ function clrDd() {
   document.getElementById("slist").innerHTML = "";
 }
 function ddPop() {
+  console.log("ddPop");
   clrDd();
   var stxt;
 
@@ -482,7 +486,8 @@ function ddPop() {
     })
     .then(response => response.text())
     .then(data => {
-      document.getElementById("slist").innerHTML = data;
+      console.log(data);
+      //document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
       console.log("Error:", error);
@@ -492,6 +497,9 @@ function ddPop() {
     document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
     document.querySelector(".load-3").classList.add("hideme");
   }
+}
+function ddinter(Centre) {
+
 }
 function ddConPop(val) {
   clrDd();
@@ -508,7 +516,8 @@ function ddConPop(val) {
       endpoint = "/inc/contbklst.php";
       document.querySelector(".ddbrtxt").innerHTML = "Getting Contacts";
     } else if (marker == 'client') {
-      endpoint = "/inc/clientbklst.php";
+      //endpoint = "/inc/clientbklst.php";
+      endpoint = "/inc/ddpop.php";
       document.querySelector(".ddbrtxt").innerHTML = "Getting Clients";
     } else {
       document.querySelector(".ddbrtxt").innerHTML = "Contacting Server";
@@ -522,12 +531,105 @@ function ddConPop(val) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: 'stxt=' + encodeURIComponent(stxt),
+      body: 'stxt=' + encodeURIComponent(stxt) + '&mrkr=' + marker,
     })
     .then(response => response.text())
     .then(data => {
-      document.getElementById("slist").innerHTML = data;
-    })
+      const rtrn = JSON.parse(data);
+
+    // Check if the first row starts with 'Error'
+    if (rtrn.length > 0 && !rtrn[0].clientName.startsWith('Error')) {
+        // Get the container div
+        const slistDiv = document.getElementById('slist');
+
+        // Iterate through each row in the data
+        rtrn.forEach(row => {
+            // Create the container div element
+            const contcardDiv = document.createElement('div');
+            contcardDiv.className = 'contcard';
+            // Add event listeners to contcard div
+            contcardDiv.addEventListener('mousedown', function(event) {
+              event.preventDefault(); // Prevents input from losing focus
+              var target = event.target;
+              if (target.parentNode.classList.contains('contcard')) {
+                var target = event.target.parentNode;
+              }
+              document.getElementById("client").value = urldecoder(target.querySelector(".lstcli").innerHTML);
+              document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
+              document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
+              document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
+              document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
+        
+              document.getElementById("client").classList.add("pending");
+              document.getElementById("cliContact").classList.add("pending");
+              document.getElementById("cliContPh").classList.add("pending");
+              document.getElementById("cliContEm").classList.add("pending");
+              document.getElementById("cliContEm2").classList.add("pending");
+              updchkr();
+              //Set marker to cancel client update
+              climkr = 1;
+              //Call job client update
+              clich(urldecoder(target.querySelector(".lstcli").innerHTML), "Card").then(() => {
+                // call job-dets-upd function with built cards
+                card.clear();
+                card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
+                card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+                card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+                card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+        
+                sncrd.clear();
+                sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
+                sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+                sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+                sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+        
+                jobupd(sncrd, card);
+        
+                document.getElementById("jobRef").focus();
+
+          
+            }).catch(error => {
+                // Handle error if clich() fails
+                console.error('clich() failed:', error);
+            });
+            document.getElementById("dd").removeAttribute('marker');
+            document.getElementById("dd").classList.add("hideme");
+            clrDd();
+        });
+            contcardDiv.addEventListener('mouseup', function(event) {
+                event.preventDefault(); // Prevents input from losing focus
+            });
+
+            // Create and append child div elements for each row property
+            const lstcliDiv = document.createElement('div');
+            lstcliDiv.className = 'lstcli';
+            lstcliDiv.textContent = row.clientName;
+            contcardDiv.appendChild(lstcliDiv);
+
+            const lstcontDiv = document.createElement('div');
+            lstcontDiv.className = 'lstcont';
+            lstcontDiv.textContent = row.contd;
+            contcardDiv.appendChild(lstcontDiv);
+
+            const lstcphDiv = document.createElement('div');
+            lstcphDiv.className = 'lstcph';
+            lstcphDiv.textContent = row.contPh;
+            contcardDiv.appendChild(lstcphDiv);
+
+            const lstctcDiv = document.createElement('div');
+            lstctcDiv.className = 'lstctc';
+            lstctcDiv.textContent = row.contEm;
+            contcardDiv.appendChild(lstctcDiv);
+
+            const lstctc2Div = document.createElement('div');
+            lstctc2Div.className = 'lstctc2';
+            lstctc2Div.textContent = row.contEm2;
+            contcardDiv.appendChild(lstctc2Div);
+
+            // Append the container div to the slist div
+            slistDiv.appendChild(contcardDiv);
+        });
+    }})
     .catch(error => {
       console.log("Error:", error);
     })
@@ -716,6 +818,7 @@ function cnDetUpd_old(cno, upd) {
   });
 }
 function ddFrtPop(val) {
+  console.log('ddFrtPop');
   clrDd();
   var stxt = val;
 
@@ -879,32 +982,33 @@ function ccntLoad(cno) {
   frtload(cno);
   document.getElementById('boscr').classList.remove('hideme');
 }
-function clich(client){
-  var updclient = encodeURIComponent(client);
-  fetch("/inc/job-cli-ch.php", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: "client=" + updclient + "&jobno=" + jbn,
-  }).then(response => response.text()).then(data => {
+function clich(client, msg) {
+    return new Promise((resolve, reject) => {
+        var updclient = encodeURIComponent(client);
 
-    document.getElementById("jbnum").innerHTML = data;
-    jbn = Number(data) || 0;
-    insertJob = ("000000" + data).slice(-5);
-    var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?job_no=' + jbn;
+        console.log(msg + " " + tag);
 
-    // Update the URL without reloading the page
-    window.history.pushState({ path: newurl }, '', newurl);
-
-    document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
-    document.getElementById('client').classList.remove("pending");
-    document.getElementById('client').value = client;
-    document.getElementById('client').classList.add("updated");
-    updchkr();
-  }).catch(error => {
-    console.error('Error:', error);
-  });
+        fetch("/inc/job-cli-ch.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: "client=" + updclient + "&jobno=" + jbn,
+        }).then(response => response.text()).then(data => {
+            document.getElementById("jbnum").innerHTML = data;
+            jbn = Number(data) || 0;
+            insertJob = ("000000" + data).slice(-5);
+            document.getElementById("jobnum").innerHTML = "Job Specific Information - " + insertJob;
+            document.getElementById('client').classList.remove("pending");
+            document.getElementById('client').value = client;
+            document.getElementById('client').classList.add("updated");
+            updchkr();
+            resolve(); // Resolve the Promise once the task is complete
+        }).catch(error => {
+            console.error('Error:', error);
+            reject(error); // Reject the Promise if there's an error
+        });
+    });
 }
 //Dragging Note items
 function dragStart(event) {
@@ -1005,12 +1109,35 @@ function hlChange(){
   //update server
   sendUpdate(cno,'conNote', crd);
 }
-
-
+function jobupd(scrd,crd) {
+  fetch("/inc/job-dets-upd.php", {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+      body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(scrd))) + "&cno=" + jbn,
+    }).then(response => response.text()).then(data => {
+      if (data == "success") {
+        for (let [key, value] of crd) {
+          document.getElementById(key).classList.remove("pending");
+          document.getElementById(key).value = value;
+          document.getElementById(key).classList.add("updated");
+        }
+        updchkr();
+        card.clear();
+      } else {
+        alert(data);
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+    });
+    sncrd.clear();
+}
+//----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
   window.addEventListener('popstate', function(event) {
-    alert('pop');
+    console.log('pop');
   });
   const notebody = document.getElementById('notebody');
   actcn = null;
@@ -1021,7 +1148,7 @@ document.addEventListener('DOMContentLoaded', function () {
   namtTot();
   cnotUpd();
   updchkr();
-  document.getElementById("slist").addEventListener('mouseenter', function (event) {
+  /*document.getElementById("slist").addEventListener('mouseenter', function (event) {
     if (event.target.classList.contains('contcard')) {
       climkr = 1;
     }
@@ -1030,69 +1157,63 @@ document.addEventListener('DOMContentLoaded', function () {
     if (event.target.classList.contains('contcard')) {
       climkr = 0;
     }
-  });
+  });*/
   document.getElementById("slist").addEventListener('click', function (event) {
+    console.log("clicked");
     var target = event.target;
+
     if (event.target.classList.contains('contcard') || target.parentElement.classList.contains("contcard")) {
       if (!target.classList.contains("contcard")) {
         target = event.target.parentElement;
       }
-      climkr = 0;
+      //climkr = 0;
       var updstr = "";
       var cno = document.getElementById("cnID").value;
       var mrkr = document.getElementById("dd").getAttribute('data-marker');
-      var card = new Map();
-      var sncrd = new Map()
-      
+
+      //set document fields and sncrd for sending and card for updating status
       if (mrkr == 'Jcont') {
-        document.getElementById("cliContact").value = event.target.querySelector(".lstNam").innerHTML;
-        document.getElementById("cliContPh").value = event.target.querySelector(".lstPh").innerHTML;
-        document.getElementById("cliContEm").value = event.target.querySelector(".lstEm").innerHTML;
-  
-        updstr += 'contd="' + event.target.querySelector(".lstNam").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contPh="' + event.target.querySelector(".lstPh").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contEm="' + event.target.querySelector(".lstEm").innerHTML.replace(/'/g, "''") + '"';
-        updstr = updstr.replace('=""', '=NULL');
-        
-        fetch("/inc/job-dets-upd.php", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: "updstr=" + updstr + "&cno=" + jbn,
-        }).then(response => response.text()).then(data => {
-          // Handle the response
-        }).catch(error => {
-          console.error('Error:', error);
-        });
-      } else if (mrkr == 'client') {
-        document.getElementById("client").value = urldecoder(target.querySelector(".lstcli").innerHTML);
-        document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
-        document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
-        document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
-        document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
-  
-        document.getElementById("client").classList.add("pending");
+        document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstNam").innerHTML);
+        document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstPh").innerHTML);
+        document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstEm").innerHTML);
+
         document.getElementById("cliContact").classList.add("pending");
         document.getElementById("cliContPh").classList.add("pending");
         document.getElementById("cliContEm").classList.add("pending");
-        document.getElementById("cliContEm2").classList.add("pending");
-  
+
         updchkr();
   
-        card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
-        card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-        card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-        card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+        card.set("cliContact", urldecoder(target.querySelector(".lstNam").innerHTML));
+        card.set("cliContPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+        card.set("cliContEm", urldecoder(target.querySelector(".lstEm").innerHTML));
 
-        sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
-        sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-        sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-        sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+        sncrd.set("contd", urldecoder(target.querySelector(".lstNam").innerHTML));
+        sncrd.set("contPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+        sncrd.set("contEm", urldecoder(target.querySelector(".lstEm").innerHTML));
+      } else if (mrkr == 'client') {  
+        return;
+      } else {
+        document.getElementById(mrkr + "Ctc").value = target.querySelector(".lstNam").innerHTML;
+        document.getElementById(mrkr + "Ph").value = target.querySelector(".lstPh").innerHTML;
         
-        var client = urldecoder(target.querySelector(".lstcli").innerHTML);
-        clich(client);
-        fetch("/inc/job-dets-upd.php", {
+        document.getElementById(mrkr + "Ctc").classList.add("pending");
+        document.getElementById(mrkr + "Ph").classList.add("pending");
+
+        card.set(mrkr + "Ctc", target.querySelector(".lstNam").innerHTML);
+        card.set(mrkr + "Ph", target.querySelector(".lstPh").innerHTML);
+  
+        sncrd.set(mrkr + "Ctc", urldecoder(target.querySelector(".lstNam").innerHTML));
+        sncrd.set(mrkr + "Ph", urldecoder(target.querySelector(".lstPh").innerHTML));
+
+        if (mrkr == 'r' || mrkr == 'c') {
+
+        } else {
+          sendUpdate(cno,'conNote', card);
+          updstr = "";
+        }
+      }
+  
+      fetch("/inc/job-dets-upd.php", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -1112,44 +1233,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(error => {
           console.error('Error:', error);
         });
-        
-        updstr += 'contd="' + target.querySelector(".lstcont").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contPh="' + target.querySelector(".lstcph").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contEm="' + target.querySelector(".lstctc").innerHTML.replace(/'/g, "''") + '",';
-        updstr += 'contEm2="' + target.querySelector(".lstctc2").innerHTML.replace(/'/g, "''") + '"';
-        updstr = updstr.replace('=""', '=NULL');
-      } else {
-        document.getElementById(mrkr + "Ctc").value = event.target.querySelector(".lstNam").innerHTML;
-        document.getElementById(mrkr + "Ph").value = event.target.querySelector(".lstPh").innerHTML;
-  
-        updstr += "#" + mrkr + "Ctc='" + event.target.querySelector(".lstNam").innerHTML.replace(/'/g, "''") + "',";
-        updstr += "#" + mrkr + "Ph='" + event.target.querySelector(".lstPh").innerHTML.replace(/'/g, "''") + "'";
-        updstr = updstr.replace('=""', '=NULL');
-  
-        card.set(mrkr + "Ctc", event.target.querySelector(".lstNam").innerHTML);
-        card.set(mrkr + "Ph", event.target.querySelector(".lstPh").innerHTML);
-  
-        if (mrkr == 'r' || mrkr == 'c') {
-          fetch("/inc/job-dets-upd.php", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: "updstr=" + updstr + "&cno=" + jbn,
-          }).then(response => response.text()).then(data => {
-            // Handle the response
-          }).catch(error => {
-            console.error('Error:', error);
-          });
-        } else {
-          sendUpdate(cno,'conNote', card);
-          //cnDetUpd(cno, card);
-        }
-      }
-  
+
+
       document.getElementById("dd").removeAttribute('marker');
       document.getElementById("dd").classList.add("hideme");
       clrDd();
+
+
     } else if (!target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
       event.stopPropagation();
       if (!target.classList.contains("addcard")) {
@@ -1261,8 +1351,12 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
+      console.log("update from change event");
       var client = document.querySelector("input[name=clientName]").value;
-      clich(client);
+      console.log('client=' + client);
+      clich(client,"UPD");
+    } else {
+      climkr = 0;
     }
   });
   
