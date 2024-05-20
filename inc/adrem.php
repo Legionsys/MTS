@@ -4,8 +4,13 @@ $builtJSON = file_get_contents('php://input');
 if ($builtJSON === FALSE) {
     echo 'Error JSON Build Fail';
 }
+$url_Decode = urldecode($builtJSON);
+$add_arr = json_decode($url_Decode, true);
 
-$add_arr = json_decode($builtJSON, true);
+if ($add_arr === null && json_last_error() !== JSON_ERROR_NONE) {
+    echo 'Error decoding JSON';
+    exit();
+}
 
 //Database connection
 require_once 'dbh.inc.php';
@@ -44,17 +49,15 @@ $now = date('Y-m-d H:i:s');
         }
         $where = ' where ';
         foreach ($add_arr as $key => $val) {
-            
-            if ($add_arr[$key] === '') {
-                $where = $where.$mkr.$key.' is Null and ';
-                //$add_arr[$key] = NULL;
-                
+            if ($val == '') {
+                $where .= $mkr . $key . ' IS NULL AND ';
             } else {
-                $where = $where.$mkr.$key.'="'.str_replace('"','""',$val).'" and ';
+                $where .= $mkr . $key . '="' . str_replace('"', '""', $val) . '" AND ';
             }
         }
         $where = substr($where, 0, strlen($where)-5);
         $sql = $sql.$where;
+        echo '--------'.$sql.'--------';
         //echo '--------'.$sql.'--------';
         $stmt = mysqli_stmt_init($conn);
 
@@ -72,6 +75,8 @@ $now = date('Y-m-d H:i:s');
             // There was an error
             echo 'Error : '.$stmt->error;
         }
+        $affectedRows = mysqli_stmt_affected_rows($stmt);
+        echo "Table $tbl: $affectedRows rows updated.\n";
         //$resultData = mysqli_insert_id($conn);
         //echo $resultData;
         mysqli_stmt_close($stmt);

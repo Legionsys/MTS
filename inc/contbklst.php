@@ -23,8 +23,8 @@ $resultData = mysqli_query($conn,$sql);
 if (mysqli_num_rows($resultData) > 0){
     $c = 0;
     while ($row = mysqli_fetch_assoc($resultData)) {
-        //echo '<div class="contcard"><div class="lstNam">'.$row['nam'].'</div><div class="lstPh">'.$row['Ph'].'</div><div class="lstEm">'.$row['Em'].'</div></div>';
-        $emparray[] = $row;
+        echo '<div class="contcard"><div class="lstNam">'.$row['nam'].'</div><div class="lstPh">'.$row['Ph'].'</div><div class="lstEm">'.$row['Em'].'</div></div>';
+        //$emparray[] = $row;
         $c++;
         if ($c > 9) {
             break;

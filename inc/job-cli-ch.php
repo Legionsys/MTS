@@ -1,5 +1,7 @@
 <?php
 //set vars and checks    
+    session_start();
+    
     if (isset($_POST['client'])) {
         $client = rawurldecode(trim($_POST['client']));
     };

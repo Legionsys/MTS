@@ -1,4 +1,4 @@
-var mcnf;
+;var mcnf;
 var mcnl = [];
 var climkr;
 var timeout = null;
@@ -20,6 +20,7 @@ let draggedItem = null;
 var tag = null;
 var card = new Map();
 var sncrd = new Map()
+var fr = '';
 
 function urldecoder(str){
   return str.replace(/&amp;/g, '&')
@@ -220,6 +221,7 @@ function jbsu() {
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4) {
       if (xhr.status == 200) {
+        
         var data = xhr.responseText;
         if (data.substring(0, 1) == '<') {
           document.getElementById('coll').insertAdjacentHTML('beforeend', data);
@@ -458,7 +460,7 @@ function clrDd() {
   document.getElementById("slist").innerHTML = "";
 }
 function ddPop() {
-  console.log("ddPop");
+  //console.log("ddPop");
   clrDd();
   var stxt;
 
@@ -486,8 +488,8 @@ function ddPop() {
     })
     .then(response => response.text())
     .then(data => {
-      console.log(data);
-      //document.getElementById("slist").innerHTML = data;
+      //console.log(data);
+      document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
       console.log("Error:", error);
@@ -495,6 +497,7 @@ function ddPop() {
     });
 
     document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
+    
     document.querySelector(".load-3").classList.add("hideme");
   }
 }
@@ -504,6 +507,50 @@ function ddinter(Centre) {
 function ddConPop(val) {
   clrDd();
   var stxt = val;
+  console.log(stxt);
+  if (stxt.length < 2) {
+    document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
+    document.querySelector(".load-3").classList.remove("hideme");
+  } else {
+    var endpoint = '';
+    var marker = document.getElementById("dd").dataset.marker;
+
+    if (marker == 'Jcont') {
+      endpoint = "/inc/contbklst.php";
+      document.querySelector(".ddbrtxt").innerHTML = "Getting Contacts";
+    } else if (marker == 'client') {
+      endpoint = "/inc/clientbklst.php";
+      document.querySelector(".ddbrtxt").innerHTML = "Getting Clients";
+    } else {
+      document.querySelector(".ddbrtxt").innerHTML = "Contacting Server";
+    }
+
+    document.querySelector(".load-3").classList.remove("hideme");
+    // Get data from Server
+    fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'stxt=' + encodeURIComponent(stxt),
+    })
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("slist").innerHTML = data;
+    })
+    .catch(error => {
+      console.log("Error:", error);
+    })
+    .finally(() => {
+      document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
+      document.querySelector(".load-3").classList.add("hideme");
+      
+    });
+  }
+}
+function ddCoPop(val) {
+  clrDd();
+  var stxt = val;
 
   if (stxt.length < 2) {
     document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
@@ -511,6 +558,7 @@ function ddConPop(val) {
   } else {
     var endpoint = '';
     var marker = document.getElementById("dd").dataset.marker;
+    
 
     if (marker == 'Jcont') {
       endpoint = "/inc/contbklst.php";
@@ -544,6 +592,10 @@ function ddConPop(val) {
 
         // Iterate through each row in the data
         rtrn.forEach(row => {
+
+            if (marker == 'Jcont') {
+              
+            } else if (marker == 'client') {
             // Create the container div element
             const contcardDiv = document.createElement('div');
             contcardDiv.className = 'contcard';
@@ -559,7 +611,6 @@ function ddConPop(val) {
               document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
               document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
               document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
-        
               document.getElementById("client").classList.add("pending");
               document.getElementById("cliContact").classList.add("pending");
               document.getElementById("cliContPh").classList.add("pending");
@@ -588,14 +639,15 @@ function ddConPop(val) {
                 document.getElementById("jobRef").focus();
 
           
-            }).catch(error => {
-                // Handle error if clich() fails
-                console.error('clich() failed:', error);
+              }).catch(error => {
+                  // Handle error if clich() fails
+                  console.error('clich() failed:', error);
+              });
+              document.getElementById("dd").removeAttribute('marker');
+              
+              document.getElementById("dd").classList.add("hideme");
+              clrDd();
             });
-            document.getElementById("dd").removeAttribute('marker');
-            document.getElementById("dd").classList.add("hideme");
-            clrDd();
-        });
             contcardDiv.addEventListener('mouseup', function(event) {
                 event.preventDefault(); // Prevents input from losing focus
             });
@@ -628,7 +680,7 @@ function ddConPop(val) {
 
             // Append the container div to the slist div
             slistDiv.appendChild(contcardDiv);
-        });
+      }});
     }})
     .catch(error => {
       console.log("Error:", error);
@@ -636,6 +688,7 @@ function ddConPop(val) {
     .finally(() => {
       document.querySelector(".ddbrtxt").innerHTML = "Addresses Book Suggestions";
       document.querySelector(".load-3").classList.add("hideme");
+      
     });
   }
 }
@@ -676,9 +729,9 @@ function sendUpdate(id,ori,upd) {
   sndata.set('id', id);
   sndata.set('ori', ori);
   sndata.set('Data', convertToObject(upd));
-  console.log(sndata);
-  console.log(JSON.stringify(Object.fromEntries(sndata)));
-  console.log(encodeURIComponent(JSON.stringify(Object.fromEntries(sndata))));
+  //console.log(sndata);
+  //console.log(JSON.stringify(Object.fromEntries(sndata)));
+  //console.log(encodeURIComponent(JSON.stringify(Object.fromEntries(sndata))));
   fetch("/inc/blkupd.php", {
     method: 'POST',
     headers: {
@@ -693,7 +746,7 @@ function sendUpdate(id,ori,upd) {
     return response.text();
   })
   .then((data, status) => {
-    console.log(data);
+    //console.log(data);
     if (data === 'success') {
       let actref = [];
       let oactref = [];
@@ -818,7 +871,7 @@ function cnDetUpd_old(cno, upd) {
   });
 }
 function ddFrtPop(val) {
-  console.log('ddFrtPop');
+  //console.log('ddFrtPop');
   clrDd();
   var stxt = val;
 
@@ -847,6 +900,7 @@ function ddFrtPop(val) {
     .finally(() => {
       document.querySelector(".ddbrtxt").innerHTML = "Freight Suggestions";
       document.querySelector(".load-3").classList.add("hideme");
+      
     });
   }
 }
@@ -986,7 +1040,7 @@ function clich(client, msg) {
     return new Promise((resolve, reject) => {
         var updclient = encodeURIComponent(client);
 
-        console.log(msg + " " + tag);
+        
 
         fetch("/inc/job-cli-ch.php", {
             method: 'POST',
@@ -1133,6 +1187,18 @@ function jobupd(scrd,crd) {
     });
     sncrd.clear();
 }
+function updDvH(id) {
+  var div = document.getElementById(id); // Replace 'dd' with your div's ID
+  var divTop = div.getBoundingClientRect().top; // Get the top position relative to the viewport
+  var windowHeight = window.innerHeight; // Get the viewport height
+  var newHeight = windowHeight - divTop - 10; // Calculate the new height
+  div.style.maxHeight = newHeight + 'px'; // Set the new height
+}
+
+
+
+
+
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
@@ -1159,7 +1225,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });*/
   document.getElementById("slist").addEventListener('click', function (event) {
-    console.log("clicked");
+    //console.log("clicked");
     var target = event.target;
 
     if (event.target.classList.contains('contcard') || target.parentElement.classList.contains("contcard")) {
@@ -1182,7 +1248,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("cliContEm").classList.add("pending");
 
         updchkr();
-  
         card.set("cliContact", urldecoder(target.querySelector(".lstNam").innerHTML));
         card.set("cliContPh", urldecoder(target.querySelector(".lstPh").innerHTML));
         card.set("cliContEm", urldecoder(target.querySelector(".lstEm").innerHTML));
@@ -1236,6 +1301,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
       document.getElementById("dd").removeAttribute('marker');
+      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
 
@@ -1296,11 +1362,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       document.getElementById("dd").removeAttribute('marker');
+      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
     } else if (target.classList.contains("img_trash")) {
     event.stopPropagation();
-
     var addCard = target.parentElement.parentElement;
     var adBuild = {
         nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
@@ -1314,6 +1380,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     var senBuild = JSON.stringify(adBuild);
+    console.log(senBuild);
+    console.log(encodeURIComponent(senBuild));
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function () {
@@ -1321,6 +1389,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (xhr.responseText.indexOf('Error') > -1) {
                 alert('Address Card Removal Error');
             } else {
+                console.log(xhr.responseText);
                 addCard.remove();
             }
         }
@@ -1344,6 +1413,7 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById("add" + fld).innerHTML = chg;
       });
       document.getElementById("dd").removeAttribute('marker');
+      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
     }
@@ -1467,12 +1537,13 @@ document.addEventListener('DOMContentLoaded', function () {
   
       } else {
         document.getElementById("dd").removeAttribute('marker');
+        
         document.getElementById("dd").classList.add("hideme");
         clrDd();
       }
     });
   
-    input.addEventListener('keyup', function () {
+    /*input.addEventListener('keyup', function () {
       var lmnt = document.getElementById(input.id);
       if (input.value === input.getAttribute("value")) {
         if (lmnt.classList.contains("pending")){
@@ -1486,7 +1557,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
   
       updchkr();
-    });
+    });*/
   });
   //adding a note
   document.getElementById('newn').addEventListener('click', function () {
@@ -1751,6 +1822,7 @@ document.getElementById('scnprt').addEventListener('click', function () {
 document.getElementById('cncopy').addEventListener('click', function () {
   var cno = document.getElementById('cnID').value;
   var xhr = new XMLHttpRequest();
+
   xhr.open('POST', '/inc/job-con-copy.php', true);
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.onreadystatechange = function () {
@@ -1767,21 +1839,32 @@ document.getElementById('cncopy').addEventListener('click', function () {
           actcn = cnot.length - 1;
           cnot[actcn]["cnID"] = njn;
           cnot[actcn]["cnNum"] = ncnum;
+          
           // Update the connote id and number
           document.getElementById('cnID').value = njn;
           document.getElementById('cnNum').value = ncnum;
           // Update the frt array to include new rows
+          
           pauseReq = true;
           confrt(njn);
+          clrcnt()
+          ccntLoad(njn);
+          
 
           function waiting() {
-            console.log(pauseReq);
+            //console.log(pauseReq);
             if (pauseReq == true) {
               setTimeout(function () {
                 waiting()
               }, 100);
             } else {
-              alert("Connote " + ncnum + " is ready for use");
+              var oricnt = frt.filter(item => item.cnID == cno);
+              var cpycnt = frt.filter(item => item.cnID == njn);
+              if (oricnt.length === cpycnt.length) {                
+                alert("Connote " + ncnum + " is ready for use");
+              } else {
+                alert("Connote " + ncnum + " is ready for use, \nnote that an error has been detected in the freight line count.\nPlease reload the con-note and advise the developer.\n Original has " + oricnt.length + " rows\nCopied has " + cpycnt.length + " rows");
+              }
             }
           }
 
@@ -1822,6 +1905,7 @@ document.getElementById('cnmove').addEventListener('click', function () {
               window.location.href = "/jdet.php?job_no=" + dj;
             } else {
               document.getElementById('boscr').classList.add('hideme');
+              
               actcn = null;
               clrcnt();
               cnotUpd();
@@ -1851,6 +1935,7 @@ document.getElementById('cndel').addEventListener('click', function () {
           if (!isNaN(Number(data))) {
             cnot.splice(actcn, 1);
             document.getElementById('boscr').classList.add('hideme');
+            
             clrcnt();
             cnotUpd();
           } else {
@@ -1897,6 +1982,7 @@ document.getElementById('contlst').addEventListener('click', function (event) {
 //connote functions
 document.getElementById('boscr').addEventListener('click', function () {
   document.getElementById('boscr').classList.add('hideme');
+  
   actcn = null;
   clrcnt();
   cnotUpd();
@@ -1912,6 +1998,7 @@ document.querySelector('.wrapper').addEventListener('click', function (event) {
     const dd = document.getElementById('dd');
     dd.removeAttribute('marker');
     dd.classList.add('hideme');
+    
     clrDd();
   }
 });
@@ -1920,14 +2007,22 @@ document.getElementById('cn-frame').addEventListener('click', function (event) {
   const activeElementClass = document.activeElement.getAttribute('class');
   const activeElementParentId = document.activeElement.parentElement.getAttribute('id');
 
-  const cnameInputFocused = document.querySelector('.cn_cname input').matches(":focus");
+  var cnameInputFocused = false;
+  var inputs = document.querySelectorAll('.cn_cname input');
+  
+  inputs.forEach(function(input) {
+      if (input === document.activeElement) {
+          cnameInputFocused = true;
+          return;
+      }
+  });
   const isExcludedClass = activeElementClass && !["psn", "senRef"].includes(activeElementClass);
   const isExcludedParent = activeElementParentId !== 'ncn';
-
   if (!cnameInputFocused && isExcludedClass && isExcludedParent) {
     const dd = document.getElementById('dd');
     dd.removeAttribute('marker');
     dd.classList.add('hideme');
+    
     clrDd();
   }
 });
@@ -1992,70 +2087,6 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
     }
   }
 
-
-
-  /*
-  var sref, nitm, psn, itWgt, itLen, itWid, itHei, itQty, unNum, dcls, sRisk, pkGr, pkDes;
-
-  document.querySelectorAll("#ncn td").forEach(function (cell) {
-      var dta = cell.innerHTML.trim() || null;
-
-      switch (cell.getAttribute("data-col")) {
-          case "senRef":
-              sref = dta;
-              cell.textContent = '';
-              break;
-          case "noItem":
-              nitm = dta;
-              cell.textContent = '';
-              break;
-          case "psn":
-              psn = dta;
-              cell.textContent = '';
-              break;
-          case "itWgt":
-              itWgt = dta;
-              cell.textContent = '';
-              break;
-          case "itLen":
-              itLen = dta;
-              cell.textContent = '';
-              break;
-          case "itWid":
-              itWid = dta;
-              cell.textContent = '';
-              break;
-          case "itHei":
-              itHei = dta;
-              cell.textContent = '';
-              break;
-          case "itQty":
-              itQty = dta;
-              cell.textContent = '';
-              break;
-          case "unNum":
-              unNum = dta;
-              cell.textContent = '';
-              break;
-          case "class":
-              dcls = dta;
-              cell.textContent = '';
-              break;
-          case "sRisk":
-              sRisk = dta;
-              cell.textContent = '';
-              break;
-          case "pkGr":
-              pkGr = dta;
-              cell.textContent = '';
-              break;
-          case "pkDes":
-              pkDes = dta;
-              cell.textContent = '';
-              break;
-      }
-  });*/
-
   // Post data
   var xhr = new XMLHttpRequest();
   xhr.open("POST", "/inc/job-confrt-add.php", true);
@@ -2072,6 +2103,7 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
 
           var rtrn = JSON.parse(xhr.responseText);
           frt.push(rtrn);
+          console.log(rtrn);
           var frtItem = frt[frt.length - 1];
 
           var txt = `
@@ -2275,6 +2307,7 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
       td.addEventListener("focusin", function () {
           this.parentNode.parentNode.appendChild(document.querySelector('#dd'));
           document.getElementById("dd").classList.remove("hideme");
+          
           document.getElementById("dd").dataset.marker = "NCN";
           ddFrtPop(td.innerHTML);
           event.stopPropagation();
@@ -2288,6 +2321,7 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
 document.getElementById("snam").addEventListener("focusin", function (event) {
     this.parentNode.appendChild(document.querySelector('#dd'));
     document.getElementById("dd").classList.remove("hideme");
+    
     document.getElementById("dd").dataset.marker = "s";
     ddPop();
     event.stopPropagation();
@@ -2301,14 +2335,19 @@ document.getElementById("snam").addEventListener("keyup", function () {
 });
 
 document.getElementById("rnam").addEventListener("focusin", function (event) {
-  event.stopPropagation();
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
+  
   document.getElementById("dd").dataset.marker = "r";
   ddPop();
+  event.stopPropagation();
 });
 
 document.getElementById("rnam").addEventListener("keyup", function () {
+  //console.log("rnam KU");
+  this.classList.add("pending");
+  document.getElementById("rnam").classList.remove("updated");
+  updchkr();
   ddPop();
 });
 
@@ -2327,6 +2366,7 @@ document.getElementById("onam").addEventListener("keyup", function () {
 document.querySelectorAll(".cndd").forEach(function (element) {
   element.addEventListener("focus", function () {
       document.getElementById("dd").removeAttribute('marker');
+      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
   });
@@ -2334,11 +2374,19 @@ document.querySelectorAll(".cndd").forEach(function (element) {
 
 document.querySelectorAll("input").forEach(function(input) {
   input.addEventListener('keyup', function() {
-      if (this.value !== this.getAttribute("value")) {
-          document.getElementById(this.id).classList.remove("updated");
+      // Normalize null and '' to be the same
+      let originalValue = this.getAttribute("value") || '';
+      let currentValue = this.value || '';
+      
+      console.log('-' + originalValue + '-');
+      console.log('-' + currentValue + '-');
+      
+      if (currentValue !== originalValue) {
           this.classList.add("pending");
+          this.classList.remove("updated");
       } else {
-          document.getElementById(this.id).classList.remove("pending");
+          this.classList.remove("pending");
+          this.classList.add("updated");
       }
       updchkr();
   });
@@ -2347,6 +2395,7 @@ document.querySelectorAll("input").forEach(function(input) {
 document.getElementById("cliContact").addEventListener('focusin', function() {
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
+  updDvH('dd');
   document.getElementById("dd").dataset.marker = "Jcont";
   ddConPop(this.value);
   event.stopPropagation();
@@ -2359,13 +2408,14 @@ document.getElementById("cliContact").addEventListener('keyup', function() {
 document.getElementById("client").addEventListener('focusin', function() {
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
+  updDvH('dd');
   document.getElementById("dd").dataset.marker = "client";
-  ddConPop(this.value);
+  ddCoPop(this.value);
   event.stopPropagation();
 });
 
 document.getElementById("client").addEventListener('keyup', function() {
-  ddConPop(this.value);
+  ddCoPop(this.value);
 });
   //adding a supplier
 document.getElementById("addsup").addEventListener('click', function () {
@@ -2548,6 +2598,7 @@ jDetInfo.forEach(function (element) {
 
         } else {
             document.getElementById("dd").removeAttribute('marker');
+            
             document.getElementById("dd").classList.add("hideme");
             clrDd();
         }
@@ -2557,6 +2608,7 @@ jDetInfo.forEach(function (element) {
 document.getElementById("cnam").addEventListener("focusin", function() {
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
+  updDvH('dd');
   document.getElementById("dd").setAttribute('data-marker', 'c');
   ddPop();
 });
@@ -2568,6 +2620,7 @@ document.getElementById("cnam").addEventListener("keyup", function() {
 document.getElementById("dnam").addEventListener("focusin", function() {
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
+  updDvH('dd');
   document.getElementById("dd").setAttribute('data-marker', 'd');
   ddPop();
 });
