@@ -3,7 +3,7 @@
 if (isset($_POST['stxt'])) {
     $stxt = trim($_POST['stxt']);
 };
-
+$emparray = array();
 require_once 'dbh.inc.php';
 
 $stxt = str_replace(" and ","%",$stxt);
@@ -17,7 +17,7 @@ $sql = "SELECT snam as nam,sadd1 as add1,sadd2 as add2,sadd3 as add3,sst as st,s
 UNION SELECT rnam as nam,radd1 as add1,radd2 as rdd2,radd3 as add3,rst as st,rpc as pc,rCtc as ct,rPh as ph FROM `conNotes` WHERE rmrk is null and CONCAT(ifnull(rnam,''),ifnull(radd1,''),ifnull(radd2,''),ifnull(radd3,''),ifnull(rst,''),ifnull(rpc,''),ifnull(rCtc,''),ifnull(rPh,'')) like '%$stxt%'  
 UNION SELECT onam as nam,oadd1 as add1,oadd2 as add2,oadd3 as add3,ost as st,opc as pc,oCtc as ct,oPh as ph FROM `conNotes` WHERE omrk is null and CONCAT(ifnull(onam,''),ifnull(oadd1,''),ifnull(oadd2,''),ifnull(oadd3,''),ifnull(ost,''),ifnull(opc,''),ifnull(oCtc,''),ifnull(oPh,'')) like '%$stxt%' 
 UNION SELECT cnam as nam,cadd1 as add1,cadd2 as add2,cadd3 as add3,cst as st,cpc as pc,cCtc as ct,cPh as ph FROM `jobList` WHERE cmrk is null and CONCAT(ifnull(cnam,''),ifnull(cadd1,''),ifnull(cadd2,''),ifnull(cadd3,''),ifnull(cst,''),ifnull(cpc,''),ifnull(cCtc,''),ifnull(cPh,'')) like '%$stxt%' 
-UNION SELECT dnam as nam,dadd1 as add1,dadd2 as add2,dadd3 as add3,dst as st,dpc as pc,dCtc as ct,dPh as ph FROM `jobList` WHERE dmrk is null and CONCAT(ifnull(dnam,''),ifnull(dadd1,''),ifnull(dadd2,''),ifnull(dadd3,''),ifnull(dst,''),ifnull(dpc,''),ifnull(dCtc,''),ifnull(dPh,'')) like '%$stxt%' limit 10;";
+UNION SELECT dnam as nam,dadd1 as add1,dadd2 as add2,dadd3 as add3,dst as st,dpc as pc,dCtc as ct,dPh as ph FROM `jobList` WHERE dmrk is null and CONCAT(ifnull(dnam,''),ifnull(dadd1,''),ifnull(dadd2,''),ifnull(dadd3,''),ifnull(dst,''),ifnull(dpc,''),ifnull(dCtc,''),ifnull(dPh,'')) like '%$stxt%' limit 40;";
 
 //$sql = "SELECT * FROM conNotes WHERE jobID = $jbno;";
 //echo "<script>console.log('".$sql."')</script>";
@@ -26,11 +26,12 @@ if (mysqli_num_rows($resultData) > 0){
     $c = 0;
     while ($row = mysqli_fetch_assoc($resultData)) {
         echo '<div class="addcard"><div class="nam">'.$row['nam'].'</div><div class="add1">'.$row['add1'].'</div><div class="add2">'.$row['add2'].'</div><div class="add3">'.$row['add3'].'</div><div class="st">'.$row['st'].'</div><div class="pc">'.$row['pc'].'</div><div class="Ctc">'.$row['ct'].'</div><div class="Ph">'.$row['ph'].'</div><div class="add_trash"><img class="img_trash" alt="Delete Address" src="/img/trash.svg"></div></div>';
+        //$emparray[] = $row;
         $c++;
-        if ($c > 9) {
+        if ($c > 29) {
             break;
         }
-
+        //echo json_encode($emparray);
     } 
     
 }

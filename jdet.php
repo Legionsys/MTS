@@ -165,7 +165,7 @@
                 </div>
             </div>
 
-        </div>
+        </div><!--
         <div id="cnhl" class="cnblock">
             <div class="cntitle">
                 <p>Con Note Highlights</p>
@@ -193,7 +193,7 @@
                     </label>
                 </div>
             </div>
-        </div>
+        </div>-->
         <div id="frtdet" class="cnblock">
             <div id="frt_ctnr">
                 <table id="cnTbl" class="cnt_frt_tbl">
@@ -561,7 +561,7 @@
     </div>
 </div>-->
 <!--</section>-->
-<script src="/js/jdet.js?ver=0224b"></script>
+<script src="/js/jdet.js?ver=0705b"></script>
 <?php 
 
 include_once 'footer.php'

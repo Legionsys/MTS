@@ -3,7 +3,7 @@
 if (isset($_POST['stxt'])) {
     $stxt = trim($_POST['stxt']);
 };
-
+$emparray = array();
 require_once 'dbh.inc.php';
 
 $stxt = str_replace(" and ","%",$stxt);
@@ -20,13 +20,14 @@ $resultData = mysqli_query($conn,$sql);
 if (mysqli_num_rows($resultData) > 0){
     $c = 0;
     while ($row = mysqli_fetch_assoc($resultData)) {
-        echo '<div class="contcard"><div class="lstcli">'.$row['clientName'].'</div><div class="lstcont">'.$row['contd'].'</div><div class="lstcph">'.$row['contPh'].'</div><div class="lstctc">'.$row['contEm'].'</div><div class="lstctc2">'.$row['contEm2'].'</div></div>';
+        //echo '<div class="contcard"><div class="lstcli">'.$row['clientName'].'</div><div class="lstcont">'.$row['contd'].'</div><div class="lstcph">'.$row['contPh'].'</div><div class="lstctc">'.$row['contEm'].'</div><div class="lstctc2">'.$row['contEm2'].'</div></div>';
+        $emparray[] = $row;
         $c++;
         if ($c > 9) {
             break;
         }
 
     } 
-    
+    echo json_encode($emparray);
 }
 ?>

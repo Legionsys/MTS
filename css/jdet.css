@@ -1,6 +1,7 @@
 /*Formatting for the full page*/
 .hideme {
   display: none;
+  visibility: hidden;
 }
 :root{
   --title-height:3rem;
@@ -21,7 +22,30 @@
 
   grid-gap: 0.5rem;
 }
+/*Adjust slist scroll bar*/
+#slist::-webkit-scrollbar {
+  width: 2px; /* Controls the width of the vertical scrollbar */
+  height: 2px; /* Controls the height of the horizontal scrollbar (if applicable) */
+}
 
+#slist::-webkit-scrollbar-track {
+  background: #5c5b5b; /* Light grey track */
+}
+
+#slist::-webkit-scrollbar-thumb {
+  background: #000000; /* Dark grey handle */
+}
+
+#slist::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darken the handle slightly on hover */
+}
+#slist::-webkit-scrollbar-button {
+  display: none; /* This tries to hide the buttons */
+}
+#slist {
+  scrollbar-width: thin; /* Can be 'auto', 'thin', or 'none' */
+  scrollbar-color: #888 #f1f1f1; /* thumb and track colors */
+}
 
 /*drop down*/
 .dropd{
@@ -34,6 +58,8 @@
   border-radius: 5px;
   min-height: 30px;
   min-width: 32.5rem;
+  display:flex;
+  flex-direction: column;
 }
 #ddbarh{
   border-radius: 5px 5px 0px 0px;
@@ -43,6 +69,7 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
+  flex-grow:0;
 }
 .ddbrtxt{
   color: #fff;
@@ -101,10 +128,12 @@
   100%{background-color: #9c9c9c;}
 }
 /*address dd cards*/
-.slist{
+#slist{
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .addcard,
