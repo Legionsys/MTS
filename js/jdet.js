@@ -76,7 +76,7 @@ function getSearchParams(k) {
   return k ? p[k] : p;
 }
 function firstpop() {
-  if (typeof jbn === 'number' && jbn !== 0) {   //jbn !== null && jbn !== "0") {
+  if (typeof jbn === 'number' && jbn !== 0) {   
     var jobn = "000000" + jbn;
     document.getElementById("jbnum").innerHTML = jbn;
     document.getElementById("jobnum").innerHTML = "Job - " + jobn.substring(jobn.length - 5);
@@ -86,7 +86,7 @@ function firstpop() {
     jbsu();
     jbnot();
     jbcon();
-    confrt('');
+    confrt();
     fr = '';
   } else {
     document.getElementById("jbnum").innerHTML = "New Job";
@@ -320,41 +320,46 @@ function jbcon() {
 
   xhr.send("jbn=" + jbn + "&indi=" + ind);
 }
-function confrt(cnn) {
-  var frfr = fr;
-  var ind = "frt";
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/inc/job-init.php", true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+function confrt(callback) {
+  return new Promise((resolve, reject) => {
+    var frfr = fr;
+    var ind = "frt";
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/inc/job-init.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) {
-        var data = xhr.responseText;
-        if (data.substring(0, 1) == '<') {
-          document.getElementById('coll').insertAdjacentHTML('beforeend', data);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4) {
+        if (xhr.status == 200) {
+          var data = xhr.responseText;
+          if (data.substring(0, 1) == '<') {
+            document.getElementById('coll').insertAdjacentHTML('beforeend', data);
+          } else {
+            frt = JSON.parse(data);
+            if (frfr == 'Y') {
+              ofrt = JSON.parse(JSON.stringify(frt));
+            }
+          }
+          if (callback) callback(null, xhr);
+          resolve(xhr);
         } else {
-          frt = JSON.parse(data);
-          if (frfr == 'Y') {
-            ofrt = JSON.parse(JSON.stringify(frt));
-          }
-          if (cnn != '') {
-            frtload(cnn);
-          }
+          console.log("Failure Freight - " + jbn);
+          console.log("Error: " + xhr.responseText);
+          console.log(xhr);
+          if (callback) callback(new Error("Failed to complete confrt."));
+          reject(new Error("Failed to complete confrt."));
         }
-      } else {
-        console.log("Failure Freight - " + jbn);
-        console.log("Error: " + xhr.responseText);
-        console.log(xhr);
       }
-    }
-  };
+    };
 
-  xhr.onerror = function () {
-    console.log("Error in making the request.");
-  };
+    xhr.onerror = function () {
+      console.log("Error in making the request.");
+      if (callback) callback(new Error("Error in making the request."));
+      reject(new Error("Error in making the request."));
+    };
 
-  xhr.send("jbn=" + jbn + "&indi=" + ind);
+    xhr.send("jbn=" + jbn + "&indi=" + ind);
+  });
 }
 function conDetUpd() {
     var tQty = 0;
@@ -460,7 +465,6 @@ function clrDd() {
   document.getElementById("slist").innerHTML = "";
 }
 function ddPop() {
-  //console.log("ddPop");
   clrDd();
   var stxt;
 
@@ -488,7 +492,6 @@ function ddPop() {
     })
     .then(response => response.text())
     .then(data => {
-      //console.log(data);
       document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
@@ -507,7 +510,7 @@ function ddinter(Centre) {
 function ddConPop(val) {
   clrDd();
   var stxt = val;
-  console.log(stxt);
+  /*console.log(stxt);*/
   if (stxt.length < 2) {
     document.querySelector(".ddbrtxt").innerHTML = "Please enter more letters";
     document.querySelector(".load-3").classList.remove("hideme");
@@ -564,7 +567,6 @@ function ddCoPop(val) {
       endpoint = "/inc/contbklst.php";
       document.querySelector(".ddbrtxt").innerHTML = "Getting Contacts";
     } else if (marker == 'client') {
-      //endpoint = "/inc/clientbklst.php";
       endpoint = "/inc/ddpop.php";
       document.querySelector(".ddbrtxt").innerHTML = "Getting Clients";
     } else {
@@ -729,9 +731,7 @@ function sendUpdate(id,ori,upd) {
   sndata.set('id', id);
   sndata.set('ori', ori);
   sndata.set('Data', convertToObject(upd));
-  //console.log(sndata);
-  //console.log(JSON.stringify(Object.fromEntries(sndata)));
-  //console.log(encodeURIComponent(JSON.stringify(Object.fromEntries(sndata))));
+
   fetch("/inc/blkupd.php", {
     method: 'POST',
     headers: {
@@ -746,7 +746,6 @@ function sendUpdate(id,ori,upd) {
     return response.text();
   })
   .then((data, status) => {
-    //console.log(data);
     if (data === 'success') {
       let actref = [];
       let oactref = [];
@@ -871,7 +870,7 @@ function cnDetUpd_old(cno, upd) {
   });
 }
 function ddFrtPop(val) {
-  //console.log('ddFrtPop');
+  
   clrDd();
   var stxt = val;
 
@@ -947,7 +946,6 @@ function frtload(cno) {
                       '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + (val.pkGr !== null ? val.pkGr : '') + '</td>' +
                       '<td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + (val.pkDes !== null ? val.pkDes : '') + '</td>' +
                       '<td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
-                      //'<div class="ntra td"><div class="cmd_img" data-id="' + val.jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';
       cntBody.appendChild(row);
 
       var rows = cntBody.querySelectorAll('tr[data-id="' + val.itID + '"]');
@@ -956,7 +954,7 @@ function frtload(cno) {
         cells.forEach(function (cell) {
           if (oind == -1) {
             cell.classList.add('updated');
-          } else { //     (val.noItem !== null ? val.noItem : '')
+          } else { 
             if (cell.innerHTML != (ofrt[oind][cell.getAttribute('data-col')] !== null ? ofrt[oind][cell.getAttribute('data-col')] : '')) {
               cell.classList.add('updated');
             }
@@ -1025,7 +1023,7 @@ function ccntLoad(cno) {
               }
             }
         } else {
-          //console.log('Element with ID ' + k + ' not found!');
+          
         }
         }
       }
@@ -1195,6 +1193,48 @@ function updDvH(id) {
   div.style.maxHeight = newHeight + 'px'; // Set the new height
 }
 
+async function processConnote(njn, cno, ncnum) {
+  try {
+    await confrt(); // Call confrt without parameters
+    clrcnt();
+    ccntLoad(njn);
+
+    const oricnt = frt.filter(item => item.cnID == cno);
+    const cpycnt = frt.filter(item => item.cnID == njn);
+
+    /*console.log(`${cno} - ${njn}`);
+    console.log(oricnt, cpycnt);
+    console.log(frt);
+    console.log(`Connote ${ncnum} is ready for use, \nnote that an error has been detected in the freight line count.\nPlease reload the con-note and advise the developer.\n Original has ${oricnt.length} rows\nCopied has ${cpycnt.length} rows`);*/
+    if (oricnt.length === cpycnt.length) {
+      alert(`Connote ${ncnum} is ready for use`);
+    } else {
+      alert(`Connote ${ncnum} is ready for use, \nnote that an error has been detected in the freight line count.\nPlease reload the con-note and advise the developer.\n Original has ${oricnt.length} rows\nCopied has ${cpycnt.length} rows`);
+    }
+  } catch (error) {
+    alert(`Connote copy has generated an error please advise to developer: `,error);
+    console.error("An error occurred during the process:", error);
+  }
+}
+
+function clrcnt() {
+  document.querySelectorAll('.radios').forEach(function (radio) {
+    radio.checked = false;
+  });
+  var checkboxes = document.querySelectorAll('.hli');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
+  document.querySelectorAll('#cn-frame input').forEach(function (input) {
+    if (input.type === 'radio') {
+      // Handling radio buttons if needed
+    } else {
+      input.value = '';
+      input.classList.remove('updated');
+      input.classList.remove('pending');
+    }
+  });
+}
 
 
 
@@ -1214,25 +1254,13 @@ document.addEventListener('DOMContentLoaded', function () {
   namtTot();
   cnotUpd();
   updchkr();
-  /*document.getElementById("slist").addEventListener('mouseenter', function (event) {
-    if (event.target.classList.contains('contcard')) {
-      climkr = 1;
-    }
-  });
-  document.getElementById("slist").addEventListener('mouseleave', function (event) {
-    if (event.target.classList.contains('contcard')) {
-      climkr = 0;
-    }
-  });*/
   document.getElementById("slist").addEventListener('click', function (event) {
-    //console.log("clicked");
     var target = event.target;
 
     if (event.target.classList.contains('contcard') || target.parentElement.classList.contains("contcard")) {
       if (!target.classList.contains("contcard")) {
         target = event.target.parentElement;
       }
-      //climkr = 0;
       var updstr = "";
       var cno = document.getElementById("cnID").value;
       var mrkr = document.getElementById("dd").getAttribute('data-marker');
@@ -1327,12 +1355,7 @@ document.addEventListener('DOMContentLoaded', function () {
               document.getElementById(fld).classList.remove("updated");
               updchkr();
               crd.set(fld, chg);
-
-              //if (chg === "") {
-                  //updstr += fld + "=Null,";
-              //} else {
-                  updstr += fld + "='" + chg.replace(/\'/g, "''") + "',";
-              //}
+              updstr += fld + "='" + chg.replace(/\'/g, "''") + "',";
           }
       });
 
@@ -1344,7 +1367,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
           xhr.onreadystatechange = function () {
               if (xhr.readyState === 4 && xhr.status === 200) {
-                  console.log(xhr.responseText);
+                  /*console.log(xhr.responseText);*/
                   if (xhr.responseText === "success") {
                       crd.forEach(function (value, key) {
                           document.getElementById(key).value = value;
@@ -1358,7 +1381,6 @@ document.addEventListener('DOMContentLoaded', function () {
           xhr.send("updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(crd))) + "&cno=" + encodeURIComponent(jbn));
       } else {
         sendUpdate(cno,'conNote', crd);
-        //cnDetUpd(cno, crd);
       }
 
       document.getElementById("dd").removeAttribute('marker');
@@ -1389,7 +1411,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (xhr.responseText.indexOf('Error') > -1) {
                 alert('Address Card Removal Error');
             } else {
-                console.log(xhr.responseText);
+                /*console.log(xhr.responseText);*/
                 addCard.remove();
             }
         }
@@ -1407,7 +1429,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var fld = "";
       var chg = "";
       Array.from(target.childNodes).forEach(function (frtLne) {
-          //console.log("FRTLNE");
           fld = frtLne.dataset.marker;
           chg = frtLne.innerHTML;
           document.getElementById("add" + fld).innerHTML = chg;
@@ -1542,22 +1563,7 @@ document.addEventListener('DOMContentLoaded', function () {
         clrDd();
       }
     });
-  
-    /*input.addEventListener('keyup', function () {
-      var lmnt = document.getElementById(input.id);
-      if (input.value === input.getAttribute("value")) {
-        if (lmnt.classList.contains("pending")){
-          document.getElementById(input.id).classList.remove("pending");
-        }
-      } else {
-        if (lmnt.classList.contains("updated")){
-          document.getElementById(input.id).classList.remove("updated");
-        }
-        input.classList.add("pending");
-      }
-  
-      updchkr();
-    });*/
+
   });
   //adding a note
   document.getElementById('newn').addEventListener('click', function () {
@@ -1845,30 +1851,8 @@ document.getElementById('cncopy').addEventListener('click', function () {
           document.getElementById('cnNum').value = ncnum;
           // Update the frt array to include new rows
           
-          pauseReq = true;
-          confrt(njn);
-          clrcnt()
-          ccntLoad(njn);
-          
+          processConnote(njn, cno, ncnum);
 
-          function waiting() {
-            //console.log(pauseReq);
-            if (pauseReq == true) {
-              setTimeout(function () {
-                waiting()
-              }, 100);
-            } else {
-              var oricnt = frt.filter(item => item.cnID == cno);
-              var cpycnt = frt.filter(item => item.cnID == njn);
-              if (oricnt.length === cpycnt.length) {                
-                alert("Connote " + ncnum + " is ready for use");
-              } else {
-                alert("Connote " + ncnum + " is ready for use, \nnote that an error has been detected in the freight line count.\nPlease reload the con-note and advise the developer.\n Original has " + oricnt.length + " rows\nCopied has " + cpycnt.length + " rows");
-              }
-            }
-          }
-
-          waiting();
         } else {
           alert("There was an error copying this connote,\n" + data);
         }
@@ -2042,35 +2026,11 @@ document.querySelectorAll('.cndd').forEach(function (element) {
 
     upd.set(fld, chg);
 
-    /*if (chg === '') {
-      updstr = fld + '=Null,';
-    } else {
-      updstr = fld + "='" + chg + "',";
-    }
 
-    updstr = updstr.substring(0, (updstr.length - 1));*/
     sendUpdate(cno,'conNote', upd);
-    //cnDetUpd(cno, upd);
   });
 });
-function clrcnt() {
-  document.querySelectorAll('.radios').forEach(function (radio) {
-    radio.checked = false;
-  });
-  var checkboxes = document.querySelectorAll('.hli');
-  checkboxes.forEach(function(checkbox) {
-    checkbox.checked = false;
-  });
-  document.querySelectorAll('#cn-frame input').forEach(function (input) {
-    if (input.type === 'radio') {
-      // Handling radio buttons if needed
-    } else {
-      input.value = '';
-      input.classList.remove('updated');
-      input.classList.remove('pending');
-    }
-  });
-}
+
   //add con note line
 document.querySelector("img[id=ncl]").addEventListener('click', function () {
   var cnum = document.querySelector("#cnID").value;
@@ -2103,7 +2063,7 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
 
           var rtrn = JSON.parse(xhr.responseText);
           frt.push(rtrn);
-          console.log(rtrn);
+          /*console.log(rtrn);*/
           var frtItem = frt[frt.length - 1];
 
           var txt = `
@@ -2129,11 +2089,6 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
             </tr>
           `;
 
-          /*
-          var txt = '<tr data-id="' + frt[frt.length - 1].itID + '"><td contenteditable="true" id="senRef" data-col="senRef" class="senRef updated">' + frt[frt.length - 1].senRef + '</td><td contenteditable="true" id="noItem" data-col="noItem" class="noItem updated">' + frt[frt.length - 1].noItem + '</td><td contenteditable="true" id="psn" data-col="psn" class="psn updated">' + frt[frt.length - 1].psn + '</td><td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt updated">' + frt[frt.length - 1].itWgt + '</td><td contenteditable="true" id="itLen" data-col="itLen" class="itLen updated">' + frt[frt.length - 1].itLen + '</td>';
-          txt += '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid updated">' + frt[frt.length - 1].itWid + '</td><td contenteditable="true" id="itHei" data-col="itHei" class="itHei updated">' + frt[frt.length - 1].itHei + '</td><td contenteditable="true" id="itQty" data-col="itQty" class="itQty updated">' + frt[frt.length - 1].itQty + '</td><td contenteditable="true" id="unNum" data-col="unNum" class="unNum updated">' + frt[frt.length - 1].unNum + '</td><td contenteditable="true" id="class" data-col="class" class="class updated">' + frt[frt.length - 1].class + '</td><td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk updated">' + frt[frt.length - 1].sRisk + '</td>';
-          txt += '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr updated">' + frt[frt.length - 1].pkGr + '</td><td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes updated">' + frt[frt.length - 1].pkDes + '</td><td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';*/
-          /*'<div class="ntra td"><div class="cmd_img" data-id="' + frt[frt.length - 1].jnID + '"><img class="ntrash" class="nbut" alt="Delete Note" src="/img/trash.svg"></div></div></div>';*/
           document.getElementById("cnt_body").insertAdjacentHTML("beforeend", txt);
           conDetUpd();
       } else if (xhr.readyState == 4) {
@@ -2143,7 +2098,6 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
       }
   };
   var data = "cnum=" + encodeURIComponent(cnum) + "&kv=" + encodeURIComponent(JSON.stringify(kv));
-  //var data = "cnum=" + encodeURIComponent(cnum) + "&sref=" + encodeURIComponent(sref) + "&nitm=" + encodeURIComponent(nitm) + "&psn=" + encodeURIComponent(psn) + "&itWgt=" + encodeURIComponent(itWgt) + "&itLen=" + encodeURIComponent(itLen) + "&itWid=" + encodeURIComponent(itWid) + "&itHei=" + encodeURIComponent(itHei) + "&itQty=" + encodeURIComponent(itQty) + "&unNum=" + encodeURIComponent(unNum) + "&dcls=" + encodeURIComponent(dcls) + "&sRisk=" + encodeURIComponent(sRisk) + "&pkGr=" + encodeURIComponent(pkGr) + "&pkDes=" + encodeURIComponent(pkDes);
   xhr.send(data);
 });
 function findParentRow(element) {
@@ -2344,7 +2298,6 @@ document.getElementById("rnam").addEventListener("focusin", function (event) {
 });
 
 document.getElementById("rnam").addEventListener("keyup", function () {
-  //console.log("rnam KU");
   this.classList.add("pending");
   document.getElementById("rnam").classList.remove("updated");
   updchkr();
@@ -2378,8 +2331,8 @@ document.querySelectorAll("input").forEach(function(input) {
       let originalValue = this.getAttribute("value") || '';
       let currentValue = this.value || '';
       
-      console.log('-' + originalValue + '-');
-      console.log('-' + currentValue + '-');
+      /*console.log('-' + originalValue + '-');
+      console.log('-' + currentValue + '-');*/
       
       if (currentValue !== originalValue) {
           this.classList.add("pending");
@@ -2442,7 +2395,7 @@ document.getElementById("addsup").addEventListener('click', function () {
           var xhr = new XMLHttpRequest();
           xhr.onreadystatechange = function () {
               if (xhr.readyState == 4) {
-                console.log(xhr.responseText);
+                /*console.log(xhr.responseText);*/
                   if (xhr.responseText[0] !== '{') {
                       alert("Error when trying to add supplier supplier!\n" + xhr.responseText);
                   } else {
