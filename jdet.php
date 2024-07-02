@@ -327,6 +327,9 @@
 <div id="jdet-prim">
     <div class="title">
     <span id="jobnum">New Job</span>
+    <div id="cl-job" class="cl-job">
+        <img id="clj" src="img/clean.png" alt="Clean Job of Data"> 
+    </div>
     </div>
 
     <div id="pri_dets" class="cont">
@@ -561,7 +564,9 @@
     </div>
 </div>-->
 <!--</section>-->
-<script src="/js/jdet.js?ver=3105"></script>
+
+<script src="/js/jdet.js?ver=0724"></script>
+
 <?php 
 
 include_once 'footer.php'

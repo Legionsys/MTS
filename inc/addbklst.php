@@ -28,7 +28,7 @@ if (mysqli_num_rows($resultData) > 0){
         echo '<div class="addcard"><div class="nam">'.$row['nam'].'</div><div class="add1">'.$row['add1'].'</div><div class="add2">'.$row['add2'].'</div><div class="add3">'.$row['add3'].'</div><div class="st">'.$row['st'].'</div><div class="pc">'.$row['pc'].'</div><div class="Ctc">'.$row['ct'].'</div><div class="Ph">'.$row['ph'].'</div><div class="add_trash"><img class="img_trash" alt="Delete Address" src="/img/trash.svg"></div></div>';
         //$emparray[] = $row;
         $c++;
-        if ($c > 29) {
+        if ($c > 39) {
             break;
         }
         //echo json_encode($emparray);

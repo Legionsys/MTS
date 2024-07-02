@@ -539,6 +539,7 @@ function ddConPop(val) {
     })
     .then(response => response.text())
     .then(data => {
+      console.log(data);
       document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
@@ -605,6 +606,9 @@ function ddCoPop(val) {
             contcardDiv.addEventListener('mousedown', function(event) {
               event.preventDefault(); // Prevents input from losing focus
               var target = event.target;
+              if (target.classList.contains('img_trash')) {
+                return;
+              }
               if (target.parentNode.classList.contains('contcard')) {
                 var target = event.target.parentNode;
               }
@@ -679,6 +683,17 @@ function ddCoPop(val) {
             lstctc2Div.className = 'lstctc2';
             lstctc2Div.textContent = row.contEm2;
             contcardDiv.appendChild(lstctc2Div);
+
+            const trashbutt = document.createElement('div');
+            trashbutt.className = 'add_trash';
+
+            const imgTrash = document.createElement('img');
+            imgTrash.className = 'img_trash';
+            imgTrash.alt = 'Delete Address';
+            imgTrash.src = '/img/trash.svg';
+            trashbutt.appendChild(imgTrash);
+
+            contcardDiv.appendChild(trashbutt);
 
             // Append the container div to the slist div
             slistDiv.appendChild(contcardDiv);
@@ -1092,7 +1107,6 @@ function dragStart(event) {
     }, 0);
   }
 }
-
 function allowDrop(event) {
   event.preventDefault();
 }
@@ -1136,8 +1150,6 @@ function logOrderChange() {
 
   console.log('Order Changed:', newOrder);
 }
-
-
 function handleClick(event) {
   // Handle click on the drag handle
   event.stopPropagation();
@@ -1192,7 +1204,6 @@ function updDvH(id) {
   var newHeight = windowHeight - divTop - 10; // Calculate the new height
   div.style.maxHeight = newHeight + 'px'; // Set the new height
 }
-
 async function processConnote(njn, cno, ncnum) {
   try {
     await confrt(); // Call confrt without parameters
@@ -1216,7 +1227,6 @@ async function processConnote(njn, cno, ncnum) {
     console.error("An error occurred during the process:", error);
   }
 }
-
 function clrcnt() {
   document.querySelectorAll('.radios').forEach(function (radio) {
     radio.checked = false;
@@ -1235,10 +1245,6 @@ function clrcnt() {
     }
   });
 }
-
-
-
-
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
@@ -1254,10 +1260,37 @@ document.addEventListener('DOMContentLoaded', function () {
   namtTot();
   cnotUpd();
   updchkr();
+  document.getElementById("cl-job").addEventListener('click', function (event) {
+    var userResponse = confirm("This will clean all data from the job. All data will be removed and a clean job sheet will remain.\n \n Would you like to continue?");
+    if (userResponse) {
+      // update job to clear all data.
+      if (typeof jbn !== 'undefined' && jbn != 0) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                console.log(xhr.responseText);
+                if (xhr.responseText.indexOf('Error') > -1) {
+                    alert('Job Clear Error');
+                } else {
+                    console.log('Success');
+                    location.reload();
+                }
+            }
+        };
+        xhr.open("POST", "/inc/clrjob.php", true);
+        xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+        xhr.send("jobno=" + encodeURIComponent(jbn));
+    } else {
+        alert("You cannot clear a job without a job number");
+    }
+} else {
+    alert("No Changes made");
+}
+  });
+
   document.getElementById("slist").addEventListener('click', function (event) {
     var target = event.target;
-
-    if (event.target.classList.contains('contcard') || target.parentElement.classList.contains("contcard")) {
+    if (!target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard"))) {
       if (!target.classList.contains("contcard")) {
         target = event.target.parentElement;
       }
@@ -1334,6 +1367,47 @@ document.addEventListener('DOMContentLoaded', function () {
       clrDd();
 
 
+    } else if (target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard") || target.parentElement.parentElement.classList.contains("contcard"))) {
+      if (target.parentElement.parentElement.classList.contains("contcard")){
+        ccard = target.parentElement.parentElement;
+      } else if (target.parentElement.classList.contains("contcard")) {
+        ccard = target.parentElement;
+      } else if (target.classList.contains("contcard")) {
+        ccard = target;
+      } else {
+        alert("Error removing Contact information from List. Please advise an administrator");
+        return;
+      }
+      console.log(ccard);
+
+      var adBuild = {
+        lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
+        lstcont: ccard.querySelector(".lstcont").innerHTML != '' ? ccard.querySelector(".lstcont").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+        lstcph: ccard.querySelector(".lstcph").innerHTML != '' ? ccard.querySelector(".lstcph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+        lstctc: ccard.querySelector(".lstctc").innerHTML != '' ? ccard.querySelector(".lstctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+        lstctc2: ccard.querySelector(".lstctc2").innerHTML != '' ? ccard.querySelector(".lstctc2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+    };
+    var senBuild = JSON.stringify(adBuild);
+    console.log(senBuild);
+    console.log(encodeURIComponent(senBuild));
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log(xhr.responseText);
+            if (xhr.responseText.indexOf('Error') > -1) {
+                alert('Address Card Removal Error');
+            } else {
+                /*console.log(xhr.responseText);*/
+                ccard.remove();
+            }
+        }
+    };
+
+    xhr.open("POST", "/inc/conrem.php", true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(encodeURIComponent(senBuild));
+    
     } else if (!target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
       event.stopPropagation();
       if (!target.classList.contains("addcard")) {
@@ -1387,7 +1461,7 @@ document.addEventListener('DOMContentLoaded', function () {
       
       document.getElementById("dd").classList.add("hideme");
       clrDd();
-    } else if (target.classList.contains("img_trash")) {
+    } else if (target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
     event.stopPropagation();
     var addCard = target.parentElement.parentElement;
     var adBuild = {
