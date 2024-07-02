@@ -27,3 +27,21 @@ $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName);
 if (!$conn) {
     die("Connection Failed: " . mysqli_connect_error());
 }
+/*/**
+ * Log SQL error to errtable
+ *
+ * @param mysqli $conn The database connection
+ * @param string $sql The SQL string that caused the error
+ * @return void
+ *//*
+function logSQLError($conn, $sql, $usr) {
+    // Escape the SQL string to prevent SQL injection in the logging query
+    $escaped_sql = mysqli_real_escape_string($conn, $sql);
+    
+    // Insert the error SQL string into errtable
+    $errorSql = "INSERT INTO Errors (usersId,sqlstr,error,errtime) VALUES ('$escaped_sql')";
+    
+    if (!mysqli_query($conn, $errorSql)) {
+        echo "Error logging SQL error: " . mysqli_error($conn);
+    }
+}*/

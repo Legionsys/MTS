@@ -57,11 +57,10 @@ $now = date('Y-m-d H:i:s');
         }
         $where = substr($where, 0, strlen($where)-5);
         $sql = $sql.$where;
-        echo '--------'.$sql.'--------';
-        //echo '--------'.$sql.'--------';
         $stmt = mysqli_stmt_init($conn);
 
         if (!mysqli_stmt_prepare($stmt,$sql)) {
+            
             return "Error prepare failure";
             exit();
         }
