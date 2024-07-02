@@ -1,2 +1,2 @@
-#ignore site specific file
+#site specific Files
 inc/dbh.inc.php

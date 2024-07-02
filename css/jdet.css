@@ -149,22 +149,16 @@
   flex-flow: row wrap;
   justify-content: space-between;
   margin: 2px;
+  min-height: 45px;
+  flex-shrink: 0;
 }
-.addcard:hover,
-.contcard:hover,
-.clicard:hover,
-.frtLne:hover{
-    /*box-shadow: 0px 0px 150px #000000;*/
-    z-index: 2;
-    -webkit-transition: all 200ms ease-in;
-    -webkit-transform: scale(1.05);
-    -ms-transition: all 200ms ease-in;
-    -ms-transform: scale(1.05);   
-    -moz-transition: all 200ms ease-in;
-    -moz-transform: scale(1.05);
-    transition: all 200ms ease-in;
-    transform: scale(1.05);
+.addcard:hover div:not(.add_trash),
+.contcard:hover div:not(.add_trash),
+.clicard:hover div:not(.add_trash),
+.frtLne:hover div:not(.add_trash){
+    background-color: #d8fce7;
 }
+
 .addcard div,
 .contcard div,
 .clicard div,
@@ -326,14 +320,9 @@
 #jdet-prim {
   grid-area: prim;
   position: relative;
-  /*width: 26.95%;
-  /*min-width: 185px;
-  height: 100%;
-  margin-right: 3px;*/
 }
 .inputMaterial {
   font-size: 1.5rem;
-  /*padding: 0.5rem 1rem 0.5rem 1rem;*/
   margin: 0rem 5%;
   margin-top: 15px;
   display: block;
@@ -380,16 +369,11 @@
 
 .group {
   position: relative;
-  /*margin-bottom: 0.5rem;*/
-
 }
 /*Formatting for the Con Note information*/
 #jdet-cns {
   grid-area: cns;
   position: relative;
-  /*width: 35rem;
-  height: 100%;
-  flex-grow: 2;*/
 }
 #acn {
   height: 2.8rem;
@@ -404,6 +388,24 @@
   margin-right: 2.5rem;
 
 }
+.cl-job{
+  width: 4rem;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  margin-right: 2.5rem;
+  cursor: pointer;
+}
+#clj {
+  height: 2.5rem;
+  width: 2.5rem;
+  vertical-align: middle;
+  text-align: center;
+  cursor: pointer;
+  margin: 0.1rem;
+  margin-left: 1.5rem;
+  margin-top: 0.25rem;
+}
 #mcn {
   height: 2.5rem;
   width: 2.5rem;
@@ -414,6 +416,7 @@
   margin-left: 1.5rem;
   margin-top: 0.25rem;
 }
+
 .mcnprnt {
   height: 2rem;
   width: 2rem;

@@ -327,6 +327,9 @@
 <div id="jdet-prim">
     <div class="title">
     <span id="jobnum">New Job</span>
+    <div id="cl-job" class="cl-job">
+        <img id="clj" src="img/clean.png" alt="Clean Job of Data"> 
+    </div>
     </div>
 
     <div id="pri_dets" class="cont">
