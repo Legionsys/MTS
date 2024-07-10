@@ -564,9 +564,7 @@
     </div>
 </div>-->
 <!--</section>-->
-
-<script src="/js/jdet.js?ver=0724"></script>
-
+<script src="/js/jdet.js?ver=0724-b"></script>
 <?php 
 
 include_once 'footer.php'

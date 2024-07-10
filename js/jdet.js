@@ -146,6 +146,7 @@ function jnotupd() {
   notebody.innerHTML = '';
 
   notes.forEach(function (val) {
+    /*
     const item = document.createElement('div');
     item.classList.add('draggable-item');
     item.classList.add('tr');
@@ -154,6 +155,58 @@ function jnotupd() {
     item.setAttribute('data-id', chknull(val.jnID));
     item.setAttribute('data-ord', chknull(val.jnOrd));
     item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
+    notebody.appendChild(item);
+    */
+    const item = document.createElement('div');
+    item.classList.add('draggable-item');
+    item.classList.add('tr');
+    item.setAttribute('data-id', chknull(val.jnID));
+    item.setAttribute('data-ord', chknull(val.jnOrd));
+    
+    const dragHandle = document.createElement('div');
+    dragHandle.classList.add('drag-handle');
+    dragHandle.setAttribute('ondragstart', 'dragStart(event)');
+    dragHandle.draggable = true;
+    
+    const dragImage = document.createElement('img');
+    dragImage.classList.add('scroll_img');
+    dragImage.alt = 'Move Note';
+    dragImage.src = '/img/scroll.png';
+    
+    dragHandle.appendChild(dragImage);
+    
+    const noteContent = document.createElement('div');
+    noteContent.classList.add('ncol', 'td');
+    noteContent.contentEditable = 'true';
+    noteContent.setAttribute('data-col', 'jnNote');
+    noteContent.innerHTML = chknull(val.jnNote);
+    
+    const amtContent = document.createElement('div');
+    amtContent.classList.add('namt', 'td');
+    amtContent.contentEditable = 'true';
+    amtContent.setAttribute('data-col', 'jnAmt');
+    amtContent.innerHTML = numberFormat(chknull(val.jnAmt), 2, '.', ',');
+    
+    const trashDiv = document.createElement('div');
+    trashDiv.classList.add('ntra', 'td');
+    
+    const cmdImgDiv = document.createElement('div');
+    cmdImgDiv.classList.add('cmd_img');
+    cmdImgDiv.setAttribute('data-id', chknull(val.jnID));
+    
+    const trashImg = document.createElement('img');
+    trashImg.classList.add('ntrash', 'nbut');
+    trashImg.alt = 'Delete Note';
+    trashImg.src = '/img/trash.svg';
+    
+    cmdImgDiv.appendChild(trashImg);
+    trashDiv.appendChild(cmdImgDiv);
+    
+    item.appendChild(dragHandle);
+    item.appendChild(noteContent);
+    item.appendChild(amtContent);
+    item.appendChild(trashDiv);
+    
     notebody.appendChild(item);
   });
   namtTot();
@@ -1660,6 +1713,7 @@ document.addEventListener('DOMContentLoaded', function () {
           }).then(response => response.text()).then(function (data) {
             nnote = JSON.parse(data);
             notes.push(nnote);
+            /*
             const item = document.createElement('div');
             item.classList.add('draggable-item');
             item.classList.add('tr');
@@ -1669,6 +1723,59 @@ document.addEventListener('DOMContentLoaded', function () {
             item.setAttribute('data-ord', chknull(nnote.jnOrd));
             item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(nnote.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(nnote.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(nnote.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
             notebody.appendChild(item);
+            */
+            const item = document.createElement('div');
+            item.classList.add('draggable-item');
+            item.classList.add('tr');
+            item.setAttribute('data-id', chknull(nnote.jnID));
+            item.setAttribute('data-ord', chknull(nnote.jnOrd));
+            
+            const dragHandle = document.createElement('div');
+            dragHandle.classList.add('drag-handle');
+            dragHandle.setAttribute('ondragstart', 'dragStart(event)');
+            dragHandle.draggable = true;
+            
+            const dragImage = document.createElement('img');
+            dragImage.classList.add('scroll_img');
+            dragImage.alt = 'Move Note';
+            dragImage.src = '/img/scroll.png';
+            
+            dragHandle.appendChild(dragImage);
+            
+            const noteContent = document.createElement('div');
+            noteContent.classList.add('ncol', 'td');
+            noteContent.contentEditable = 'true';
+            noteContent.setAttribute('data-col', 'jnNote');
+            noteContent.innerHTML = chknull(nnote.jnNote);
+            
+            const amtContent = document.createElement('div');
+            amtContent.classList.add('namt', 'td');
+            amtContent.contentEditable = 'true';
+            amtContent.setAttribute('data-col', 'jnAmt');
+            amtContent.innerHTML = numberFormat(chknull(nnote.jnAmt), 2, '.', ',');
+            
+            const trashDiv = document.createElement('div');
+            trashDiv.classList.add('ntra', 'td');
+            
+            const cmdImgDiv = document.createElement('div');
+            cmdImgDiv.classList.add('cmd_img');
+            cmdImgDiv.setAttribute('data-id', chknull(nnote.jnID));
+            
+            const trashImg = document.createElement('img');
+            trashImg.classList.add('ntrash', 'nbut');
+            trashImg.alt = 'Delete Note';
+            trashImg.src = '/img/trash.svg';
+            
+            cmdImgDiv.appendChild(trashImg);
+            trashDiv.appendChild(cmdImgDiv);
+            
+            item.appendChild(dragHandle);
+            item.appendChild(noteContent);
+            item.appendChild(amtContent);
+            item.appendChild(trashDiv);
+            
+            notebody.appendChild(item);
+
             document.getElementById('nnt').textContent = "";
             document.getElementById('nna').textContent = "";
             namtTot();
