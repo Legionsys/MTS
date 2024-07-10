@@ -16,13 +16,13 @@ $dBPassword = "Webusr_password";
 $dBName = "aden_test_MOORTSP";
 */
 //local Dev
-
 /*
 $serverName = "localhost";
 $dBUsername = "root";
 $dBPassword = "";
 $dBName = "aden_MOORTSP";
 */
+
 
 
 
