@@ -73,8 +73,8 @@ if (mysqli_num_rows($resultData) > 0){
             $pdf->SetFont('Helvetica','',8);
             $pdf->Cell(30,20,'ABN 54 157 699 815',0,0,'C',false,'',0,false,'','B');
             $pdf->SetFont('Helvetica','B',12);
-            //$pdf->Cell(35,20,'  (08) 9455 5002',0,0,'L',false,'',0,false,'','B');
-            $pdf->Cell(35,20,'  (08) 6285 5558',0,0,'L',false,'',0,false,'','B');
+            //$pdf->Cell(35,20,'  (08) 6185 3007',0,0,'L',false,'',0,false,'','B');
+            $pdf->Cell(35,20,'  (08) 6185 3007',0,0,'L',false,'',0,false,'','B');
             $pdf->SetFont('Helvetica','B',10);
             $pdf->Cell(41,9,'',0,0,'L',false,'',0,false,'','B');
             $pdf->Cell(22,9,'Contract No.',0,0,'L');
