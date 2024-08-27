@@ -26,6 +26,7 @@ function joblstUpd() {
     if (xhr.readyState == 4 && xhr.status == 200) {
       // Update the content of the element with the response data
       document.getElementById("job_board").innerHTML = xhr.responseText;
+      document.getElementById("nav-head").innerHTML = xhr.responseText;
     }
   };
 
