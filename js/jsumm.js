@@ -26,7 +26,7 @@ function joblstUpd() {
     if (xhr.readyState == 4 && xhr.status == 200) {
       // Update the content of the element with the response data
       document.getElementById("job_board").innerHTML = xhr.responseText;
-      document.getElementById("nav-head").innerHTML = xhr.responseText;
+      //document.getElementById("nav-title").innerHTML = "Job Management Sheets - " + new Date().getTime().toString();
     }
   };
 
@@ -156,8 +156,6 @@ function getUrlParameter(sParam) {
   return false;
 }
 window.onload = function () {
-  //console.log(window.location.href);
-  //console.log(window.location.protocol + "//" + window.location.host + window.location.pathname + '?foo=bar');
   srchAll = getUrlParameter('wild');
   srchInv = getUrlParameter('inv');
   srchJob = getUrlParameter('job');
@@ -192,6 +190,11 @@ window.onload = function () {
   joblstUpd();
   cliupd();
 };
+// Add a popstate event listener to handle the back button navigation
+window.addEventListener('popstate', function(event) {
+  joblstUpd(); // Refresh the job list when the user navigates back
+  cliupd(); // Refresh the client list when the user navigates back
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   //search update

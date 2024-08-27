@@ -50,7 +50,7 @@
     <nav>
         <input type="checkbox" id="nav-check">
         <div id="nav-head" class="nav-header">
-            <div class="nav-title">
+            <div id="nav-title" class="nav-title">
                 Job Management Sheets
             </div>
         </div>
