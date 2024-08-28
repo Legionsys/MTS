@@ -49,8 +49,8 @@
 <body>
     <nav>
         <input type="checkbox" id="nav-check">
-        <div class="nav-header">
-            <div class="nav-title">
+        <div id="nav-head" class="nav-header">
+            <div id="nav-title" class="nav-title">
                 Job Management Sheets
             </div>
         </div>
