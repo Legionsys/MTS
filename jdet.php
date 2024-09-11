@@ -27,6 +27,7 @@
 </div>
 <div id="boscr" class="hideme">
     <div id="cn-frame">
+        <div id="cn-close" class="close"></div>
         <div id="cn_ind" class="cnblock">
             <div class="cntitle">
                 <p>Con Notes details</p>
