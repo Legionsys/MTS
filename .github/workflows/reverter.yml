@@ -35,6 +35,13 @@ jobs:
           echo "update_required=false" >> $GITHUB_ENV
         fi  # Close the if block
 
+    # Configure Git User for Commit
+    - name: Configure Git User
+      if: env.update_required == 'true'
+      run: |
+        git config user.name "Automated Action"
+        git config user.email "Autoaction@github.com"
+
     # If changes were detected in the specific files, revert them
     - name: Revert specific files
       if: env.update_required == 'true'
