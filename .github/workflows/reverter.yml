@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the repository
+    # Checkout the repository and ensure we fetch enough history to access the previous commit
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 5  # Fetch at least two commits (HEAD and HEAD^)
+        fetch-depth: 2  # Fetch at least two commits (HEAD and HEAD^)
 
     # Get the files changed in this pull or push request
     - name: Check for file changes
