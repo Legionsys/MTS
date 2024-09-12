@@ -1,0 +1,42 @@
+name: Revert Specific Files on Merge or Push
+
+on:
+  push:
+    branches:
+      - main
+      - Test-Area
+  pull_request:
+    branches:
+      - main
+      - Test-Area
+
+jobs:
+  revert_files:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Get the files changed in this pull or push request
+    - name: Check for file changes
+      id: file_changes
+      run: |
+        FILES=$(git diff --name-only HEAD^ HEAD)
+        echo "Changed files: $FILES"
+        if echo "$FILES" | grep -q 'inc/dbh.inc.php\|.cpanel.yml'; then
+          echo "Changes detected in inc/dbh.inc.php or .cpanel.yml"
+          echo "update_required=true" >> $GITHUB_ENV
+        else
+          echo "No changes detected in the specific files."
+          echo "update_required=false" >> $GITHUB_ENV
+
+    # If changes were detected in the specific files, revert them
+    - name: Revert specific files
+      if: env.update_required == 'true'
+      run: |
+        git checkout HEAD^ -- inc/dbh.inc.php
+        git checkout HEAD^ -- .cpanel.yml
+        git commit -m "Revert changes to inc/dbh.inc.php and .cpanel.yml"
+        git push origin ${{ github.ref }}
