@@ -19,7 +19,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 2  # Fetch at least two commits (HEAD and HEAD^)
+        fetch-depth: 3  # Fetch at least two commits (HEAD and HEAD^)
 
     # Get the files changed in this pull or push request
     - name: Check for file changes
@@ -33,6 +33,7 @@ jobs:
         else
           echo "No changes detected in the specific files."
           echo "update_required=false" >> $GITHUB_ENV
+        fi  # Close the if block
 
     # If changes were detected in the specific files, revert them
     - name: Revert specific files
