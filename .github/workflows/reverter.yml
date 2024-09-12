@@ -18,6 +18,8 @@ jobs:
     # Checkout the repository
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 5  # Fetch at least two commits (HEAD and HEAD^)
 
     # Get the files changed in this pull or push request
     - name: Check for file changes
