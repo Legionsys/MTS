@@ -1,7 +1,9 @@
 name: Revert Specific Files After Merge
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed  # This event is triggered when a pull request is closed (including when it is merged)
     branches:
       - main
       - Test-Area
@@ -11,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Ensure the pull request was merged, not just closed
+    - name: Check if the pull request was merged
+      if: ${{ github.event.pull_request.merged == true }}
+      run: echo "Pull request was merged, proceeding with the workflow."
+
     # Checkout the repository and ensure we fetch enough history to access the previous commit
     - name: Checkout code
       uses: actions/checkout@v3
       with:
         fetch-depth: 5  # Fetch at least two commits (HEAD and HEAD^)
-
-    # Check if the event is a pull request merge
-    - name: Ensure it’s a pull request merge
-      if: ${{ github.event.head_commit.message == 'Merge pull request' }}
-      run: echo "Pull request merge detected, proceeding with the workflow."
 
     # Get the files changed in the merge
     - name: Check for file changes
@@ -34,7 +36,6 @@ jobs:
         else
           echo "No changes detected in the specific files."
           echo "update_required=false" >> $GITHUB_ENV
-        fi
 
     # Configure Git User for Commit
     - name: Configure Git User
