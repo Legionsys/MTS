@@ -1,9 +1,10 @@
 name: Revert Specific Files After Merge
 
+# Trigger the action when a pull request is closed (either merged or not)
 on:
   pull_request:
     types:
-      - closed  # This event is triggered when a pull request is closed (including when it is merged)
+      - closed
     branches:
       - main
       - Test-Area
@@ -13,19 +14,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Ensure the pull request was merged, not just closed
+    # Ensure the pull request was merged (and not just closed)
     - name: Check if the pull request was merged
       if: ${{ github.event.pull_request.merged == true }}
       run: echo "Pull request was merged, proceeding with the workflow."
 
     # Checkout the repository and ensure we fetch enough history to access the previous commit
     - name: Checkout code
+      if: ${{ github.event.pull_request.merged == true }}
       uses: actions/checkout@v3
       with:
-        fetch-depth: 5  # Fetch at least two commits (HEAD and HEAD^)
+        fetch-depth: 4  # Fetch at least two commits (HEAD and HEAD^)
 
     # Get the files changed in the merge
     - name: Check for file changes
+      if: ${{ github.event.pull_request.merged == true }}
       id: file_changes
       run: |
         FILES=$(git diff --name-only HEAD^ HEAD)
@@ -36,17 +39,18 @@ jobs:
         else
           echo "No changes detected in the specific files."
           echo "update_required=false" >> $GITHUB_ENV
+        fi
 
     # Configure Git User for Commit
     - name: Configure Git User
-      if: env.update_required == 'true'
+      if: env.update_required == 'true' && github.event.pull_request.merged == true
       run: |
         git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
     # If changes were detected in the specific files, revert them
     - name: Revert specific files
-      if: env.update_required == 'true'
+      if: env.update_required == 'true' && github.event.pull_request.merged == true
       run: |
         git checkout HEAD^ -- inc/dbh.inc.php
         git checkout HEAD^ -- .cpanel.yml
@@ -54,6 +58,6 @@ jobs:
 
     # Push the changes back to the branch
     - name: Push changes
-      if: env.update_required == 'true'
+      if: env.update_required == 'true' && github.event.pull_request.merged == true
       run: |
         git push origin HEAD:${{ github.ref_name }}
