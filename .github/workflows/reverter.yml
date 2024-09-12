@@ -15,7 +15,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        fetch-depth: 3  # Fetch at least two commits (HEAD and HEAD^)
+        fetch-depth: 5  # Fetch at least two commits (HEAD and HEAD^)
+
+    # Check if the event is a pull request merge
+    - name: Ensure it’s a pull request merge
+      if: ${{ github.event.head_commit.message == 'Merge pull request' }}
+      run: echo "Pull request merge detected, proceeding with the workflow."
 
     # Get the files changed in the merge
     - name: Check for file changes
@@ -35,7 +40,7 @@ jobs:
     - name: Configure Git User
       if: env.update_required == 'true'
       run: |
-        git config user.name "Automated Action"
+        git config user.name "GitHub Action"
         git config user.email "action@github.com"
 
     # If changes were detected in the specific files, revert them
