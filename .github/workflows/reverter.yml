@@ -1,11 +1,7 @@
-name: Revert Specific Files on Merge or Push
+name: Revert Specific Files After Merge
 
 on:
   push:
-    branches:
-      - main
-      - Test-Area
-  pull_request:
     branches:
       - main
       - Test-Area
@@ -21,7 +17,7 @@ jobs:
       with:
         fetch-depth: 3  # Fetch at least two commits (HEAD and HEAD^)
 
-    # Get the files changed in this pull or push request
+    # Get the files changed in the merge
     - name: Check for file changes
       id: file_changes
       run: |
@@ -33,14 +29,14 @@ jobs:
         else
           echo "No changes detected in the specific files."
           echo "update_required=false" >> $GITHUB_ENV
-        fi  # Close the if block
+        fi
 
     # Configure Git User for Commit
     - name: Configure Git User
       if: env.update_required == 'true'
       run: |
         git config user.name "Automated Action"
-        git config user.email "Autoaction@github.com"
+        git config user.email "action@github.com"
 
     # If changes were detected in the specific files, revert them
     - name: Revert specific files
@@ -49,4 +45,9 @@ jobs:
         git checkout HEAD^ -- inc/dbh.inc.php
         git checkout HEAD^ -- .cpanel.yml
         git commit -m "Revert changes to inc/dbh.inc.php and .cpanel.yml"
-        git push origin ${{ github.ref }}
+
+    # Push the changes back to the branch
+    - name: Push changes
+      if: env.update_required == 'true'
+      run: |
+        git push origin HEAD:${{ github.ref_name }}
