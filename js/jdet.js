@@ -2739,6 +2739,10 @@ jDetInfo.forEach(function (element) {
     });
 });
 
+document.getElementById('cn-close').addEventListener('click', function () {
+  document.getElementById('boscr').classList.add('hideme');
+});
+
 document.getElementById("cnam").addEventListener("focusin", function() {
   this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
