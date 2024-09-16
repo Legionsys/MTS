@@ -1298,6 +1298,18 @@ function clrcnt() {
     }
   });
 }
+function cn_close() {
+  var upd2 = upd;
+
+  upd = 'Y';
+  document.getElementById("contlst").innerHTML = "";
+  jbcon();
+  confrt();
+  document.getElementById('boscr').classList.add('hideme');
+
+  upd = upd2;
+  
+}
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
@@ -2069,7 +2081,7 @@ document.getElementById('cnmove').addEventListener('click', function () {
             if (confirm("Move was successful, would you like to go to job " + ej + "?")) {
               window.location.href = "/jdet.php?job_no=" + dj;
             } else {
-              document.getElementById('boscr').classList.add('hideme');
+              cn_close();
               
               actcn = null;
               clrcnt();
@@ -2099,7 +2111,7 @@ document.getElementById('cndel').addEventListener('click', function () {
           var data = xhr.responseText;
           if (!isNaN(Number(data))) {
             cnot.splice(actcn, 1);
-            document.getElementById('boscr').classList.add('hideme');
+            cn_close();
             
             clrcnt();
             cnotUpd();
@@ -2146,7 +2158,7 @@ document.getElementById('contlst').addEventListener('click', function (event) {
 });
 //connote functions
 document.getElementById('boscr').addEventListener('click', function () {
-  document.getElementById('boscr').classList.add('hideme');
+  cn_close();
   
   actcn = null;
   clrcnt();
@@ -2740,7 +2752,7 @@ jDetInfo.forEach(function (element) {
 });
 
 document.getElementById('cn-close').addEventListener('click', function () {
-  document.getElementById('boscr').classList.add('hideme');
+  cn_close();
 });
 
 document.getElementById("cnam").addEventListener("focusin", function() {
