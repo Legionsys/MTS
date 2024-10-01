@@ -293,7 +293,7 @@
 </div>
 <div id="jd-notes">
     <div class="title">
-        <p> Job Description </p>
+        <p> Job Notes </p>
     </div>
     <div class="cont cnotes">
         <div id="noteTbl">
@@ -509,7 +509,37 @@
         </div>
     </div>
 </div>
-
+<div id="jd-tags">
+    <div class="title">
+        <div class="tgt">
+            <span>Tags</span>
+        </div>
+        <!-- When clicked, the input form will be displayed -->
+        <div class="tgadd">
+            <img id="tga" src="img/add-lines.png" alt="Add a Tag"> <!-- onclick="showTagInput()"> -->
+        </div>
+    </div>
+    <div class="cont">
+    <!--    <div class="tag">
+            Tag
+            <span class="remove" onclick="removeTag(this)"></span>
+        </div>
+        <div class="tag">
+            Tag2
+            <span class="remove" onclick="removeTag(this)"></span>
+        </div>
+        <div class="tag">
+            Longer Tag
+            <span class="remove" onclick="removeTag(this)"></span>
+        </div> -->
+    </div>
+    <!-- The hidden input form for adding tags -->
+    <div id="tag-input-form" style="display: none;">
+        <input type="text" id="new-tag-input" placeholder="Enter tag text">
+        <button onclick="addNewTag()">Add</button>
+        <button onclick="clearTagInput()">Clear</button>
+    </div>
+</div>
 <div id="jdet-cns">
     <div class="title">
         <div class="cnmulti"><img id="mcn" src="img/book-2.svg" alt="Con Note Book"></div>
@@ -564,9 +594,10 @@
 
     </div>
 </div>-->
-<!--</section>-->
-<script src="/js/jdet.js?ver=0924-a"></script>
-<?php 
+<!--</section>
 
+<script src="/js/jdet.js?ver=1024a"></script>-->
+<?php 
+echo '<script src="'.fileDetails("/js/jdet.js").'"></script>';
 include_once 'footer.php'
 ?>
