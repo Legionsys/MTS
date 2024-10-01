@@ -124,7 +124,8 @@
         </div>
     </div>
 </section>
-<script src="/js/jsumm.js?ver=2"></script>
+<!--<script src="/js/jsumm.js?ver=0924"></script>-->
 <?php 
+echo '<script src="'.fileDetails("/js/jsumm.js").'"></script>';
     include_once 'footer.php'
 ?>
