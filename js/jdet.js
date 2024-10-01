@@ -1301,7 +1301,7 @@ function clrcnt() {
 function cn_close() {
   var upd2 = upd;
 
-  upd = 'Y';
+  upd = "y";
   document.getElementById("contlst").innerHTML = "";
   jbcon();
   confrt();
@@ -1310,6 +1310,204 @@ function cn_close() {
   upd = upd2;
   
 }
+// Function to display the input form
+function showTagInput() {
+  document.getElementById('tag-input-form').style.display = 'block';
+}
+
+// Function to clear the input field
+function clearTagInput() {
+  document.getElementById('new-tag-input').value = '';
+}
+function showTagInput() {
+  const titleDiv = document.querySelector('#jd-tags .title');
+  const tagInputForm = document.getElementById('tag-input-form');
+
+  // Set width and height of the input form to match the title div
+  tagInputForm.style.width = titleDiv.offsetWidth + 'px';
+  tagInputForm.style.height = titleDiv.offsetHeight + 'px';
+  console.log(titleDiv.offsetWidth);
+  console.log(titleDiv.offsetHeight);
+  // Display the form
+  tagInputForm.style.display = 'block';
+}
+// Function to handle the "Add" button click
+async function addNewTag() {
+  const input = document.getElementById('new-tag-input');
+  const tagValue = input.value.trim();
+
+  if (tagValue) {
+      try {
+          // Send the tag value to the PHP function using async fetch
+          const response = await fetch('add_Tag.php', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ tag: tagValue }),
+          });
+
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          
+          const data = await response.json();
+
+          // Handle the response
+          if (data.success) {
+              console.log('Tag added successfully:', data);
+              // Here, you could append the new tag to the tags container
+              appendTagToContainer(tagValue);
+          } else {
+              console.error('Error adding tag:', data.error);
+          }
+
+      } catch (error) {
+          console.error('Failed to add tag:', error);
+      }
+
+      // Clear the input after adding the tag
+      clearTagInput();
+  } else {
+      alert('Please enter a tag before adding.');
+  }
+}
+
+// Function to remove a tag from the DOM
+function removeTag(element) {
+  element.parentElement.remove();
+}
+
+// Function to append the new tag to the tags container
+function appendTagToContainer(tagValue) {
+  const tagContainer = document.querySelector('.cont');
+  const newTag = document.createElement('div');
+  newTag.className = 'tag';
+  newTag.innerHTML = `${tagValue} <span class="remove" onclick="removeTag(this)"></span>`;
+  tagContainer.appendChild(newTag);
+}
+
+function displayAllVersions() {
+  // Create a Set to avoid duplicates
+  const versionInfoSet = new Set();
+
+  // Function to process an element (script, link, etc.)
+  function processElement(element, attribute) {
+    const urlValue = element.getAttribute(attribute);
+
+    if (urlValue && urlValue.includes('?ver=')) {
+      // Create a URL object to parse the URL
+      const url = new URL(urlValue, window.location.origin);
+
+      // Extract the 'ver' parameter
+      const version = url.searchParams.get('ver');
+
+      // Extract the file name and extension
+      const pathname = url.pathname;
+      const fileName = pathname.substring(pathname.lastIndexOf('/') + 1);
+      const extensionMatch = fileName.match(/\.(\w+)$/);
+
+      if (extensionMatch && version) {
+        const extension = extensionMatch[1];
+        const label = extension.substring(0, 2).toLowerCase();
+
+        // Prepare the version info object
+        const versionInfo = { label, version };
+
+        // Add to the Set to avoid duplicates
+        versionInfoSet.add(JSON.stringify(versionInfo)); // Use JSON stringification for Set storage
+      }
+    }
+  }
+
+  // Get all script elements
+  const scripts = document.getElementsByTagName('script');
+  for (let i = 0; i < scripts.length; i++) {
+    processElement(scripts[i], 'src');
+  }
+
+  // Get all link elements
+  const links = document.getElementsByTagName('link');
+  for (let i = 0; i < links.length; i++) {
+    processElement(links[i], 'href');
+  }
+
+  // If there are any version infos, display them
+  if (versionInfoSet.size > 0) {
+    // Create a div element
+    const versionDiv = document.createElement('div');
+    versionDiv.id = 'version-display';
+
+    // Style the div
+    versionDiv.style.position = 'fixed';
+    versionDiv.style.bottom = '2px';
+    versionDiv.style.right = '2px';
+    versionDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    versionDiv.style.color = '#fff';
+    versionDiv.style.padding = '2px 2px';
+    versionDiv.style.borderRadius = '5px';
+    versionDiv.style.fontSize = '12px';
+    versionDiv.style.zIndex = '1000';
+    versionDiv.style.lineHeight = '1.5';
+    //versionDiv.style.cursor = 'pointer'; // Indicate that it's interactive
+
+    // Create a fragment to hold the lines
+    const fragment = document.createDocumentFragment();
+
+    // Variables to store the js line and other lines
+    let jsLine = null;
+    const otherLines = [];
+
+    // Add each version info on a new line using <span> elements
+    versionInfoSet.forEach((infoStr) => {
+      const info = JSON.parse(infoStr);
+      const { label, version } = info;
+
+      const line = document.createElement('span');
+      line.textContent = `${label}: ${version}`;
+      line.style.display = 'block'; // Make each <span> start on a new line
+      line.style.fontSize = 'inherit'; // Ensure font size is inherited
+
+      if (label === 'js') {
+        jsLine = line;
+      } else {
+        line.style.display = 'none'; // Hide other lines initially
+        otherLines.push(line);
+      }
+
+      fragment.appendChild(line);
+    });
+
+    // If jsLine is not found, but there are other lines, pick the first one to display
+    if (!jsLine && otherLines.length > 0) {
+      jsLine = otherLines.shift();
+      jsLine.style.display = 'block'; // Ensure it's visible
+    }
+
+    // Append the fragment to the versionDiv
+    versionDiv.appendChild(fragment);
+
+    // Add mouseover and mouseout event listeners
+    versionDiv.addEventListener('mouseover', () => {
+      otherLines.forEach((line) => {
+        line.style.display = 'block';
+      });
+    });
+
+    versionDiv.addEventListener('mouseout', () => {
+      otherLines.forEach((line) => {
+        line.style.display = 'none';
+      });
+    });
+
+    // Append the div to the body
+    document.body.appendChild(versionDiv);
+  } else {
+    console.log('No files with ?ver parameter found.');
+  }
+}
+
+
+
+
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
   //console.log(window.location.href);
@@ -1325,6 +1523,8 @@ document.addEventListener('DOMContentLoaded', function () {
   namtTot();
   cnotUpd();
   updchkr();
+  displayAllVersions();
+
   document.getElementById("cl-job").addEventListener('click', function (event) {
     var userResponse = confirm("This will clean all data from the job. All data will be removed and a clean job sheet will remain.\n \n Would you like to continue?");
     if (userResponse) {
@@ -1443,7 +1643,6 @@ document.addEventListener('DOMContentLoaded', function () {
         alert("Error removing Contact information from List. Please advise an administrator");
         return;
       }
-      console.log(ccard);
 
       var adBuild = {
         lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
@@ -1473,7 +1672,7 @@ document.addEventListener('DOMContentLoaded', function () {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(encodeURIComponent(senBuild));
     
-    } else if (!target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
+    } else if ((!target.classList.contains("add_trash") && !target.parentElement.classList.contains("add_trash")) && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard") || target.parentElement.parentElement.classList.contains("addcard"))) {
       event.stopPropagation();
       if (!target.classList.contains("addcard")) {
         target = event.target.parentElement;
@@ -1526,7 +1725,7 @@ document.addEventListener('DOMContentLoaded', function () {
       
       document.getElementById("dd").classList.add("hideme");
       clrDd();
-    } else if (target.classList.contains("img_trash") && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard"))) {
+    } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard") || target.parentElement.parentElement.classList.contains("addcard"))) {
     event.stopPropagation();
     var addCard = target.parentElement.parentElement;
     var adBuild = {
@@ -1576,7 +1775,7 @@ document.addEventListener('DOMContentLoaded', function () {
       
       document.getElementById("dd").classList.add("hideme");
       clrDd();
-    }
+    } 
 
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
@@ -2205,7 +2404,7 @@ document.getElementById('cn-frame').addEventListener('click', function (event) {
 });
 document.querySelectorAll('.cndd').forEach(function (element) {
   element.addEventListener('change', function () {
-    var upd = new Map();
+    var cnupd = new Map();
     var updstr;
     var fld;
     var chg = this.value.replace(/\'/g, "''");
@@ -2217,10 +2416,10 @@ document.querySelectorAll('.cndd').forEach(function (element) {
       fld = this.id;
     }
 
-    upd.set(fld, chg);
+    cnupd.set(fld, chg);
 
 
-    sendUpdate(cno,'conNote', upd);
+    sendUpdate(cno,'conNote', cnupd);
   });
 });
 
@@ -2344,7 +2543,7 @@ document.getElementById("cnt_body").addEventListener("focusout", function (event
 
           if (target.innerHTML !== cndta) {
               // Collect vars
-              var upd = { [col]: nval };
+              var cnupd = { [col]: nval };
               // Send data and update
               var xhr = new XMLHttpRequest();
               xhr.open("POST", "/inc/con-rows-upd.php", true);
@@ -2372,17 +2571,17 @@ document.getElementById("cnt_body").addEventListener("focusout", function (event
                           }
                       } else {
                           alert("Error in updating");
-                          console.log("Variables - " + upd + " : " + nid);
+                          console.log("Variables - " + cnupd + " : " + nid);
                           console.log("Error: " + xhr.responseText);
                       }
                   } else if (xhr.readyState == 4) {
                       alert("Error in updating");
                       console.log("Error: " + xhr.responseText);
-                      console.log("Variables - " + upd + " : " + nid);
+                      console.log("Variables - " + cnupd + " : " + nid);
                       console.log(xhr);
                   }
               };
-              var data = "updstr=" + encodeURIComponent(JSON.stringify(upd)) + "&cno=" + encodeURIComponent(nid);
+              var data = "updstr=" + encodeURIComponent(JSON.stringify(cnupd)) + "&cno=" + encodeURIComponent(nid);
               xhr.send(data);
 
               // Check for sums

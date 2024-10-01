@@ -11,6 +11,26 @@
     }
     include FS_ROOT.'/inc/dbh.inc.php';
     //include '/inc/dbh.inc.php';
+
+    function fileDetails($fnam){
+        $cssFilePath = $_SERVER['DOCUMENT_ROOT'] . $fnam;
+
+        // Check if the file exists
+        if (file_exists($cssFilePath)) {
+            // Get the file's last modification timestamp
+            $lastModifiedTimestamp = filemtime($cssFilePath);
+
+            // Format the timestamp into 'mm-yy' or any format you prefer
+            $formattedDate = date("my", $lastModifiedTimestamp);
+            $formattedTime = date("His", $lastModifiedTimestamp);
+            $fullDateTime = date("YmdHis", $lastModifiedTimestamp);
+            $dayHour = date("dH", $lastModifiedTimestamp);
+            $filetogo = $fnam.'?ver='.$formattedDate.'-'.$dayHour;
+        } else {
+            $filetogo = $fnam;
+        }
+        return $filetogo;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,14 +53,16 @@
     <?php
     if ($pName == "jdet") {
         //echo '<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>';
-        echo '<link rel="stylesheet" href="/css/jdet.css?ver=0724-b">';
-        echo '<link rel="stylesheet" href="/css/cnote.css?ver=1">';
+
+        
+        echo '<link rel="stylesheet" href="'.fileDetails("/css/jdet.css").'">';
+        echo '<link rel="stylesheet" href="'.fileDetails("/css/cnote.css").'">';
     } elseif ($pName == "jsumm") {
-        echo '<link rel="stylesheet" href="/css/jsumm.css?ver=0224">';    
+        echo '<link rel="stylesheet" href="'.fileDetails("/css/jsumm.css").'">';    
     } elseif ($pName == "uman") {
-        echo '<link rel="stylesheet" href="/css/uman.css?ver=0224">';
+        echo '<link rel="stylesheet" href="'.fileDetails("/css/uman.css").'">';
     } else {
-        echo '<link rel="stylesheet" href="/css/style.css">';
+        echo '<link rel="stylesheet" href="'.fileDetails("/css/style.css").'">';
     }
     
 ?>
