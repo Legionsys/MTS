@@ -516,7 +516,7 @@
         </div>
         <!-- When clicked, the input form will be displayed -->
         <div class="tgadd">
-            <img id="tga" src="img/add-lines.png" alt="Add a Tag"> <!-- onclick="showTagInput()"> -->
+            <img id="tga" src="img/add-lines.png" alt="Add a Tag"> <!--onclick="showTagInput()">-->
         </div>
     </div>
     <div class="cont">
@@ -546,7 +546,7 @@
         <div class="cnt">
             <span>Con Notes</span>
         </div>
-
+        <div class="cnrl"><img id="rcn" src="img/reload-arrow-svgrepo-com.svg" alt="reload Con Notes"></div>
         <div class="cnadd"><img id="acn" src="img/add-lines.png" alt="Add a Con Note"></div>
     </div>
     <div id="contlst" class="cont">
