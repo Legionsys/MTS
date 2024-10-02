@@ -376,12 +376,14 @@
   position: relative;
 }
 #acn,
+#rcn,
 #tga {
   height: 2.8rem;
   width: 2.8rem;
   margin: 0.1rem;
 }
-.cnadd {
+.cnadd,
+.cnrl {
   width: 4rem;
   vertical-align: middle;
   text-align: center;

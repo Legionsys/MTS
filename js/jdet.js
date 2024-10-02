@@ -2174,7 +2174,11 @@ document.addEventListener('DOMContentLoaded', function () {
       nodta = target.innerHTML;
     }
   });
-  
+  // reloading Connotes
+  document.querySelector('img[id=rcn]').addEventListener('click', function () {
+    cn_close();
+  });
+
   //adding a Connote
   document.querySelector('img[id=acn]').addEventListener('click', function () {
     if (jbn !== "" && jbn !== 0) {
