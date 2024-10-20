@@ -3235,6 +3235,7 @@ document.getElementById('tag-input').addEventListener('focus', function() {
   showTagInput();
 });
 document.getElementById('add-tag-button').addEventListener('click', function() {
+  event.stopPropagation();
   let tagInput = document.getElementById('tag-input').value;
   
   if (tagInput == '') {
