@@ -9,6 +9,7 @@ $jobNumber = isset($_GET['job']) ? intval($_GET['job']) : null;
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 $detail = isset($_GET['detail']) ? $_GET['detail'] : null;
 $user = $_SESSION["useruid"]; 
+header('Content-Type: application/json');
 if ($detail === 'null' || $detail === '') {
     $detail = null; // You can set this to an empty string instead if needed
 }
@@ -30,6 +31,7 @@ switch ($action) {
         while ($row = $result->fetch_assoc()) {
             $tags[] = $row['tag'];
         }
+        header('Content-Type: application/json');
         echo json_encode(['tags' => $tags]);
         break;
 
@@ -41,6 +43,7 @@ switch ($action) {
         $sql = "INSERT INTO jobTags (job, tag, added, addby) VALUES (?, ?, CURDATE(), ?)";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("iss", $jobNumber, $detail, $user);
+        header('Content-Type: application/json');
         if ($stmt->execute()) {
             echo json_encode(['success' => 'Tag added']);
         } else {
@@ -56,6 +59,7 @@ switch ($action) {
         $sql = "UPDATE jobTags SET removed = CURDATE(), remby = ? WHERE job = ? AND tag = ? AND removed IS NULL";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("sis", $user, $jobNumber, $detail);
+        header('Content-Type: application/json');
         if ($stmt->execute()) {
             echo json_encode(['success' => 'Tag removed']);
         } else {
@@ -91,7 +95,7 @@ switch ($action) {
         while ($row = $result->fetch_assoc()) {
             $tags[] = $row['tag'];
         }
-    
+        header('Content-Type: application/json');
         echo json_encode(['tags' => $tags]);
         break;
     default:
