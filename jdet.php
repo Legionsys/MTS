@@ -68,7 +68,7 @@
             <div class="cntitle">
                 <p>SENDER</p>
             </div>
-            <div class="cn_cname"><input class="cndd" id="snam" type="text" placeholder="Company Name"
+            <div class="cn_cname"><input class="cndd ddv" id="snam" type="text" placeholder="Company Name"
                     autocomplete="false"></div>
             <div class="cn_add1"><input class="cndd" id="sadd1" type="text" placeholder="Address Line 1"></div>
             <div class="cn_add2"><input class="cndd" id="sadd2" type="text" placeholder="Address Line 2"></div>
@@ -86,7 +86,7 @@
             <div class="cntitle">
                 <p>RECEIVER</p>
             </div>
-            <div class="cn_cname"><input class="cndd" id="rnam" type="text" placeholder="Company Name"
+            <div class="cn_cname"><input class="cndd ddv" id="rnam" type="text" placeholder="Company Name"
                     autocomplete="false"></div>
             <div class="cn_add1"><input class="cndd" id="radd1" type="text" placeholder="Address Line 1"></div>
             <div class="cn_add2"><input class="cndd" id="radd2" type="text" placeholder="Address Line 2"></div>
@@ -104,7 +104,7 @@
             <div class="cntitle">
                 <p>OTHER PARTY</p>
             </div>
-            <div class="cn_cname"><input class="cndd" id="onam" type="text" placeholder="Company Name"
+            <div class="cn_cname"><input class="cndd ddv" id="onam" type="text" placeholder="Company Name"
                     autocomplete="false"></div>
             <div class="cn_add1"><input class="cndd" id="oadd1" type="text" placeholder="Address Line 1"></div>
             <div class="cn_add2"><input class="cndd" id="oadd2" type="text" placeholder="Address Line 2"></div>
@@ -260,19 +260,19 @@
                 <table id="cnt_add" class="cnt_frt_tblout">
                     <tbody id="cn_add">
                         <tr data-id="new" id="ncn">
-                            <td contenteditable="true" id="addsenRef" data-col="senRef" class="senRef"></td>
-                            <td contenteditable="true" id="addnoItem" data-col="noItem" class="noItem"></td>
-                            <td contenteditable="true" id="addpsn" data-col="psn" class="psn"></td>
-                            <td contenteditable="true" id="additWgt" data-col="itWgt" class="itWgt"></td>
-                            <td contenteditable="true" id="additLen" data-col="itLen" class="itLen"></td>
-                            <td contenteditable="true" id="additWid" data-col="itWid" class="itWid"></td>
-                            <td contenteditable="true" id="additHei" data-col="itHei" class="itHei"></td>
-                            <td contenteditable="true" id="additQty" data-col="itQty" class="itQty"></td>
-                            <td contenteditable="true" id="addunNum" data-col="unNum" class="unNum"></td>
-                            <td contenteditable="true" id="addclass" data-col="class" class="class"></td>
-                            <td contenteditable="true" id="addsRisk" data-col="sRisk" class="sRisk"></td>
-                            <td contenteditable="true" id="addpkGr" data-col="pkGr" class="pkGr"></td>
-                            <td contenteditable="true" id="addpkDes" data-col="pkDes" class="pkDes"></td>
+                            <td contenteditable="true" id="addsenRef" data-col="senRef" class="senRef ddv"></td>
+                            <td contenteditable="true" id="addnoItem" data-col="noItem" class="noItem ddv"></td>
+                            <td contenteditable="true" id="addpsn" data-col="psn" class="psn ddv"></td>
+                            <td contenteditable="true" id="additWgt" data-col="itWgt" class="itWgt ddv"></td>
+                            <td contenteditable="true" id="additLen" data-col="itLen" class="itLen ddv"></td>
+                            <td contenteditable="true" id="additWid" data-col="itWid" class="itWid ddv"></td>
+                            <td contenteditable="true" id="additHei" data-col="itHei" class="itHei ddv"></td>
+                            <td contenteditable="true" id="additQty" data-col="itQty" class="itQty ddv"></td>
+                            <td contenteditable="true" id="addunNum" data-col="unNum" class="unNum ddv"></td>
+                            <td contenteditable="true" id="addclass" data-col="class" class="class ddv"></td>
+                            <td contenteditable="true" id="addsRisk" data-col="sRisk" class="sRisk ddv"></td>
+                            <td contenteditable="true" id="addpkGr" data-col="pkGr" class="pkGr ddv"></td>
+                            <td contenteditable="true" id="addpkDes" data-col="pkDes" class="pkDes ddv"></td>
                             <td class="cn_ctrls" data-col="cmd">
                                 <div class="cmd_img"><img id="ncl" class="nbut" alt="New CN Detail"
                                         src="/img/addnew.png">
@@ -336,7 +336,7 @@
     <div id="pri_dets" class="cont">
         <div class="div_client pdd">
             <div class="group">
-                <input id="client" class="inputMaterial" name="clientName" type="text" required autocomplete="off"/>
+                <input id="client" class="inputMaterial ddv" name="clientName" type="text" required autocomplete="off"/>
                 <span id="client_span" class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Client </label>
@@ -352,7 +352,7 @@
         </div>
         <div class="div_cliContact pdd">
             <div class="group">
-                <input id="cliContact" class="inputMaterial  j_det_info" name="contd" type="text" required autocomplete="off"/>
+                <input id="cliContact" class="inputMaterial  j_det_info ddv" name="contd" type="text" required autocomplete="off"/>
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab"> Contact </label>
@@ -429,7 +429,7 @@
             <div id="j_signor_head" class="job_add_title">Consignor</div>
             <div id="j_signor_body" class="j_add_body">
                 <div class="jac ja_name">
-                    <input id="cnam" class="jadd" name="cnam" type="text" placeholder=" Location Name" required autocomplete="off" />
+                    <input id="cnam" class="jadd ddv" name="cnam" type="text" placeholder=" Location Name" required autocomplete="off" />
                 </div>
                 <div class="jac ja_add1">
                     <input id="cadd1" class="jadd" name="cadd1" type="text" placeholder=" Address" required />
@@ -470,7 +470,7 @@
             <div id="j_signee_head" class="job_add_title">Consignee</div>
             <div id="j_signee_body" class="j_add_body">
                 <div class="jac ja_name">
-                    <input id="dnam" class="jadd" name="dnam" type="text" placeholder=" Location Name" required autocomplete="off" />
+                    <input id="dnam" class="jadd ddv" name="dnam" type="text" placeholder=" Location Name" required autocomplete="off" />
                 </div>
                 <div class="jac ja_add1">
                     <input id="dadd1" class="jadd" name="dadd1" type="text" placeholder=" Address" required autocomplete="off"/>
@@ -516,8 +516,12 @@
         </div>
         <!-- When clicked, the input form will be displayed -->
         <div class="tgadd">
-            <img id="tga" src="img/add-lines.png" alt="Add a Tag"> <!--onclick="showTagInput()">-->
+            <img id="tga" src="img/add-lines.png" alt="Add a Tag"><!-- onclick="showTagInput()">-->
         </div>
+        <div id="tag-input-form" style="display: none;">
+        <input type="text" id="tag-input" class= "ddv" placeholder="Add a tag" />
+        <button id="add-tag-button">Add</button>
+    </div>
     </div>
     <div class="cont">
     <!--    <div class="tag">
@@ -525,7 +529,7 @@
             <span class="remove" onclick="removeTag(this)"></span>
         </div>
         <div class="tag">
-            Tag2
+            Tag
             <span class="remove" onclick="removeTag(this)"></span>
         </div>
         <div class="tag">
@@ -534,11 +538,7 @@
         </div> -->
     </div>
     <!-- The hidden input form for adding tags -->
-    <div id="tag-input-form" style="display: none;">
-        <input type="text" id="new-tag-input" placeholder="Enter tag text">
-        <button onclick="addNewTag()">Add</button>
-        <button onclick="clearTagInput()">Clear</button>
-    </div>
+
 </div>
 <div id="jdet-cns">
     <div class="title">

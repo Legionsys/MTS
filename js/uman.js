@@ -533,23 +533,29 @@ document.getElementById("upd_scrn").addEventListener("blur", function() {
       if (xhr.readyState == 4 && xhr.status == 200) {
         console.log(xhr.responseText);
         console.log(xhr.responseText.search('Error'));
+        var us_lab = document.querySelector("label[for=upd_scrn]");
+        var upds = document.getElementById("upd_scrn");
+        var usupd = document.getElementById("usrupd");
+
         if (xhr.responseText.search('Error') > -1) {
           console.log("rejected upd");
           // Password did not match; make box red
-          document.getElementById("upd_scrn").classList.remove("approved", "inp_std");
-          document.querySelector("label[for=upd_scrn]").classList.remove("lab_approved").add("lab_rejected");
-          document.querySelector("label[for=upd_scrn]").innerHTML = "DUPLICATE LOGIN NAME FOUND";
-          document.getElementById("usrupd").classList.add("no-change");
+          upds.classList.remove("approved", "inp_std");
+          us_lab.classList.remove("lab_approved");
+          us_lab.classList.add("lab_rejected");
+          us_lab.innerHTML = "DUPLICATE LOGIN NAME FOUND";
+          usupd.classList.add("no-change");
         } else {
           console.log("Approved upd");
           // Password matched; make box green
-          document.getElementById("upd_scrn").classList.remove("rejected", "inp_std");
-          document.querySelector("label[for=upd_scrn]").classList.remove("lab_rejected").add("lab_approved");
-          document.querySelector("label[for=upd_scrn]").innerHTML = "LOGIN NAME UNIQUE";
+          upds.classList.remove("rejected", "inp_std");
+          us_lab.classList.remove("lab_rejected");
+          us_lab.classList.add("lab_approved");
+          us_lab.innerHTML = "LOGIN NAME UNIQUE";
           if (nam != document.getElementById("upd_name").value || ema != document.getElementById("upd_email").value || scr != document.getElementById("upd_scrn").value) {
-            document.getElementById("usrupd").classList.remove("no-change");
+            usupd.classList.remove("no-change");
           } else {
-            document.getElementById("usrupd").classList.add("no-change");
+            usupd.classList.add("no-change");
           }
         }
       }

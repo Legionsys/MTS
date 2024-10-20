@@ -88,6 +88,7 @@ function firstpop() {
     jbcon();
     confrt();
     fr = '';
+    populateTags();
   } else {
     document.getElementById("jbnum").innerHTML = "New Job";
   }
@@ -224,7 +225,6 @@ function jconupd() {
     txt += '<div class="cnwgt">' + chknull(val.twgt) + ' kg</div>';
     txt += '<div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(chknull(val.tcub)) + ' m3</div>';
     txt += '</div>';
-    
     contlst.insertAdjacentHTML('beforeend', txt);
   });
 }
@@ -557,9 +557,6 @@ function ddPop() {
     document.querySelector(".load-3").classList.add("hideme");
   }
 }
-function ddinter(Centre) {
-
-}
 function ddConPop(val) {
   clrDd();
   var stxt = val;
@@ -702,10 +699,12 @@ function ddCoPop(val) {
                   // Handle error if clich() fails
                   console.error('clich() failed:', error);
               });
+              ddclr();
+              /*
               document.getElementById("dd").removeAttribute('marker');
-              
               document.getElementById("dd").classList.add("hideme");
               clrDd();
+              */
             });
             contcardDiv.addEventListener('mouseup', function(event) {
                 event.preventDefault(); // Prevents input from losing focus
@@ -761,6 +760,75 @@ function ddCoPop(val) {
       
     });
   }
+}
+function ddTagPop(val) {
+  const inputField = document.getElementById('tag-input'); // Assuming your input field has this ID
+  let query = val.trim(); // Get the value of the input field
+
+  // Ensure the query is not empty
+  if (query === '') {
+    query = null;
+  }
+  
+  const fetchUrl = `/inc/jtags.php?action=list&detail=${encodeURIComponent(query)}&job=${jbn}`;
+  
+  console.log(`Fetching from URL: ${fetchUrl}`); // Log the URL being fetched
+
+  // AJAX request to jtags.php
+  fetch(fetchUrl)
+    .then(response => {
+      console.log('Raw Response: ', response); // Log the raw response object
+      return response.json();
+    })
+    .then(data => {
+      console.log('Parsed JSON Response: ', data); // Log the parsed JSON response
+
+      const dropdown = document.getElementById('slist'); // Get the slist element inside dd
+      dropdown.innerHTML = ''; // Clear any existing content
+
+      if (data.tags && data.tags.length > 0) {
+        // Loop through the array and create the necessary divs
+        data.tags.forEach(tag => {
+          // Create the tagcard div (formatted like contcard)
+          const tagCard = document.createElement('div');
+          tagCard.className = 'tagcard'; // Apply the tagcard class for styling
+
+          // Create the tagdets div (formatted like lstNam)
+          const tagDets = document.createElement('div');
+          tagDets.className = 'tagdets lstNam'; // Apply both tagdets and lstNam classes for styling
+          tagDets.textContent = tag; // Set the tag name
+
+          // Create the trash icon div (formatted with tag_trash)
+          const trashDiv = document.createElement('div');
+          trashDiv.className = 'add_trash'; // Similar to the original
+          const trashImg = document.createElement('img');
+          trashImg.className = 'img_trash tag_trash'; // Set the class to tag_trash for hiding functionality
+          trashImg.src = '/img/trash.svg'; // Path to the trash icon
+          trashImg.alt = 'Delete Tag';
+          trashImg.onclick = function() {
+            hideTag(tagCard); // Function to hide the tag
+          };
+
+          // Append the trash image to the trash div
+          trashDiv.appendChild(trashImg);
+
+          // Append the tagdets and trash div inside tagcard
+          tagCard.appendChild(tagDets);
+          tagCard.appendChild(trashDiv);
+
+          // Append tagcard into the slist div
+          dropdown.appendChild(tagCard);
+        });
+
+        // dropdown.style.display = 'block'; // Make sure the dropdown is visible
+      } else {
+        console.log('No tags found.'); // Log when no tags are returned
+        // dropdown.style.display = 'none'; // Optionally hide the dropdown
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching tags:', error);
+    });
 }
 function convertToObject(data) {
   let result;
@@ -1312,50 +1380,81 @@ function cn_close() {
 }
 // Function to display the input form
 function showTagInput() {
-  document.getElementById('tag-input-form').style.display = 'block';
+  positionDropdown()
+  const dd = document.getElementById('dd');
+  if (dd) {
+      dd.classList.add('ddTag');
+      dd.dataset.marker = "TAG";
+      document.querySelector(".ddbrtxt").innerHTML = "Tag Suggestions";
+      ddTagPop("");
+  } 
 }
 
+// Function to position the dd element below the focused input field
+function positionDropdown() {
+  const ddElement = document.getElementById('dd');
+  const inputField = document.activeElement.parentElement; // The input field triggering the dropdown
+  if (inputField && ddElement) {
+      // Get the position of the input field relative to the viewport
+      const rect = inputField.getBoundingClientRect();
+      const wrap = ddElement.parentElement.getBoundingClientRect();
+
+      // Calculate the top and left positions relative to the browser window
+      const top = rect.top + window.scrollY + rect.height - wrap.top; // Align just below the input
+      const left = rect.left + window.scrollX - wrap.left;
+      // Update the position of the dd element
+      ddElement.style.position = 'absolute';
+      ddElement.style.top = `${top}px`;
+      ddElement.style.left = `${left}px`;
+      ddElement.style.width = `${rect.width}px`; // Optionally match the width of the input field
+      ddElement.style.display = 'block'; // Make sure it's visible
+      const divTop = ddElement.getBoundingClientRect().top; // Get the top position relative to the viewport
+      const windowHeight = window.innerHeight; // Get the viewport height
+      const newHeight = windowHeight - divTop - 5; // Calculate the new height with 10px padding from the bottom
+      //ddElement.style.maxHeight = newHeight + 'px'; // Set the new max height to prevent overflow
+      ddElement.style.maxHeight = newHeight + 'px'; // Set the new max height to prevent overflow
+      ddElement.style.overflowY = 'auto'; // Enable scrolling if content exceeds max height
+      ddElement.classList.remove('hideme');
+      
+  }
+}
+// Function to realign the dropdown when the window is resized or scrolled
+function realignDropdown() {
+  const ddElement = document.getElementById('dd');
+  if (ddElement.style.display === 'block') {
+      positionDropdown(); // Recalculate position if dropdown is visible
+  }
+}
 // Function to clear the input field
 function clearTagInput() {
-  document.getElementById('new-tag-input').value = '';
-}
-function showTagInput() {
-  const titleDiv = document.querySelector('#jd-tags .title');
-  const tagInputForm = document.getElementById('tag-input-form');
-
-  // Set width and height of the input form to match the title div
-  tagInputForm.style.width = titleDiv.offsetWidth + 'px';
-  tagInputForm.style.height = titleDiv.offsetHeight + 'px';
-  console.log(titleDiv.offsetWidth);
-  console.log(titleDiv.offsetHeight);
-  // Display the form
-  tagInputForm.style.display = 'block';
+  document.getElementById('tag-input').value = '';
 }
 // Function to handle the "Add" button click
-async function addNewTag() {
-  const input = document.getElementById('new-tag-input');
-  const tagValue = input.value.trim();
+async function addNewTag(ntv) {
+  const tagValue = ntv.trim();
 
   if (tagValue) {
       try {
-          // Send the tag value to the PHP function using async fetch
-          const response = await fetch('add_Tag.php', {
-              method: 'POST',
+          // Construct the URL with query parameters
+          const url = `/inc/jtags.php?job=${encodeURIComponent(jbn)}&action=add&detail=${encodeURIComponent(tagValue)}`;
+
+          // Send the request as a GET request with query parameters
+          const response = await fetch(url, {
+              method: 'GET',
               headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ tag: tagValue }),
+                  'Content-Type': 'application/x-www-form-urlencoded',
+              }
           });
 
+          // Check for response status
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          
+
           const data = await response.json();
 
-          // Handle the response
+          // Handle the response from the server
           if (data.success) {
-              console.log('Tag added successfully:', data);
-              // Here, you could append the new tag to the tags container
-              appendTagToContainer(tagValue);
+              // Append the new tag to the tags container (if needed)
+              addTagToList(tagValue);
           } else {
               console.error('Error adding tag:', data.error);
           }
@@ -1370,21 +1469,89 @@ async function addNewTag() {
       alert('Please enter a tag before adding.');
   }
 }
+function addTagToList(tagValue) {
+  // Create the tag HTML
+  const tagHtml = `
+      <div class="tag" onclick="removeTag(this)">
+          ${tagValue}
 
+      </div>
+  `;
+  
+  // Find the container to append the tag to
+  const tagContainer = document.querySelector('#jd-tags .cont');
+
+  // Append the new tag
+  if (tagContainer) {
+      tagContainer.insertAdjacentHTML('beforeend', tagHtml);
+  }
+}
+// Function to retrieve tags and add them to the list
+function populateTags() {
+  // URL to the jtags.php with the retrieve action
+  const url = `/inc/jtags.php?job=${jbn}&action=retrieve`;
+  //console.log(url);
+  // Make an AJAX request to retrieve the tags
+  fetch(url)
+  .then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    if (data.tags && Array.isArray(data.tags)) {
+        // Loop through each tag and add it to the list
+        data.tags.forEach(tag => {
+            addTagToList(tag);
+        });
+    } else {
+        console.error('Invalid data format:', data);
+    }
+})
+.catch(error => console.error('Error fetching tags:', error));
+}
 // Function to remove a tag from the DOM
-function removeTag(element) {
-  element.parentElement.remove();
-}
+async function removeTag(element) {
+  // Get the tag value (internal HTML or text content)
+  const tagValue = element.innerHTML.trim(); // Adjust depending on how the tag value is stored
+  // Remove the element from the UI
+  try {
+      // Construct the URL for the remove action
+      const url = `/inc/jtags.php?job=${encodeURIComponent(jbn)}&action=remove&detail=${encodeURIComponent(tagValue)}`;
 
-// Function to append the new tag to the tags container
-function appendTagToContainer(tagValue) {
-  const tagContainer = document.querySelector('.cont');
-  const newTag = document.createElement('div');
-  newTag.className = 'tag';
-  newTag.innerHTML = `${tagValue} <span class="remove" onclick="removeTag(this)"></span>`;
-  tagContainer.appendChild(newTag);
-}
+      // Send the request to jtags.php to remove the tag from the server
+      const response = await fetch(url, {
+          method: 'GET', // Use GET since the PHP file expects the parameters in the URL
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          }
+      });
 
+      // Check for response status
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+
+      // Handle the response from the server
+      if (data.success) {
+          element.remove();
+      } else {
+          console.error('Error removing tag:', data.error);
+      }
+
+  } catch (error) {
+      console.error('Failed to remove tag:', error);
+  }
+}
+function ddclr() {
+  //console.log('ddclr');
+  const dd = document.getElementById('dd');
+  dd.removeAttribute('marker');
+  dd.classList.add('hideme');
+  dd.classList.remove('ddTag');
+  document.getElementById('tag-input-form').style.display = 'none';
+}
 function displayAllVersions() {
   // Create a Set to avoid duplicates
   const versionInfoSet = new Set();
@@ -1504,12 +1671,57 @@ function displayAllVersions() {
     console.log('No files with ?ver parameter found.');
   }
 }
+async function hideTag(tagCard) {
+  // Get the tag details from the tagCard div (assuming the tag text is inside the div)
+  const tagValue = tagCard.querySelector('.tagdets').textContent.trim();
+  
+  if (!tagValue) {
+      console.error("Tag is missing");
+      return;
+  }
 
+  // Construct the URL with query parameters for the hide action
+  const url = `/inc/jtags.php?action=hide&detail=${encodeURIComponent(tagValue)}&job=${jbn}`;
+  
+  console.log(`Hiding tag: ${tagValue}`);
+  
+  try {
+    // Send the GET request to hide the tag on the server
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        }
+    });
+
+    // Log the raw response for debugging
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        // Parse the response as JSON only if the content type is JSON
+        const data = await response.json();
+
+        if (data.success) {
+            console.log(`Tag ${tagValue} successfully hidden.`);
+            tagCard.remove(); // Remove the tagCard div from the UI
+        } else {
+            console.error('Error hiding tag:', data.error);
+        }
+    } else {
+        // If it's not JSON, log the text response
+        const errorText = await response.text();
+        console.error('Unexpected response format:', errorText);
+    }
+
+} catch (error) {
+    console.error('Failed to hide tag:', error);
+}
+}
 
 
 
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
+
   //console.log(window.location.href);
   window.addEventListener('popstate', function(event) {
     console.log('pop');
@@ -1555,10 +1767,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById("slist").addEventListener('click', function (event) {
     var target = event.target;
+
     if (!target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard"))) {
       if (!target.classList.contains("contcard")) {
         target = event.target.parentElement;
       }
+
       var updstr = "";
       var cno = document.getElementById("cnID").value;
       var mrkr = document.getElementById("dd").getAttribute('data-marker');
@@ -1624,13 +1838,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }).catch(error => {
           console.error('Error:', error);
         });
-
-
+      ddclr();
+      /*
       document.getElementById("dd").removeAttribute('marker');
-      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
-
+      */
 
     } else if (target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard") || target.parentElement.parentElement.classList.contains("contcard"))) {
       if (target.parentElement.parentElement.classList.contains("contcard")){
@@ -1720,11 +1933,12 @@ document.addEventListener('DOMContentLoaded', function () {
       } else {
         sendUpdate(cno,'conNote', crd);
       }
-
+      ddclr();
+      /*
       document.getElementById("dd").removeAttribute('marker');
-      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
+      */
     } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard") || target.parentElement.parentElement.classList.contains("addcard"))) {
     event.stopPropagation();
     var addCard = target.parentElement.parentElement;
@@ -1771,11 +1985,17 @@ document.addEventListener('DOMContentLoaded', function () {
           chg = frtLne.innerHTML;
           document.getElementById("add" + fld).innerHTML = chg;
       });
-      document.getElementById("dd").removeAttribute('marker');
-      
+      ddclr();
+      /*document.getElementById("dd").removeAttribute('marker');
       document.getElementById("dd").classList.add("hideme");
-      clrDd();
-    } 
+      clrDd();*/
+    } else if ((!target.classList.contains("add_trash") && !target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
+      event.stopPropagation();
+      addNewTag(target.innerHTML);
+    } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
+      event.stopPropagation();
+      //hideTag()
+    }
 
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
@@ -1895,10 +2115,10 @@ document.addEventListener('DOMContentLoaded', function () {
       if (input.id === "cnam" || input.id === "dnam") {
   
       } else {
-        document.getElementById("dd").removeAttribute('marker');
-        
+        ddclr();
+        /*document.getElementById("dd").removeAttribute('marker');
         document.getElementById("dd").classList.add("hideme");
-        clrDd();
+        clrDd();*/
       }
     });
 
@@ -2362,7 +2582,6 @@ document.getElementById('contlst').addEventListener('click', function (event) {
 //connote functions
 document.getElementById('boscr').addEventListener('click', function () {
   cn_close();
-  
   actcn = null;
   clrcnt();
   cnotUpd();
@@ -2373,13 +2592,16 @@ document.querySelector('.wrapper').addEventListener('click', function (event) {
   const cnamFocused = document.querySelector("#cnam").matches(":focus");
   const dnamFocused = document.querySelector("#dnam").matches(":focus");
   const clientFocused = document.querySelector("#client").matches(":focus");
+  const tagFocused = document.querySelector("#tag-input").matches(":focus");
 
-  if (!cliContactFocused && !cnamFocused && !dnamFocused && !clientFocused) {
+  if (!cliContactFocused && !cnamFocused && !dnamFocused && !clientFocused && !tagFocused) {
+    ddclr();
+    /*
     const dd = document.getElementById('dd');
     dd.removeAttribute('marker');
-    dd.classList.add('hideme');
-    
+    dd.classList.add('hideme');    
     clrDd();
+    */
   }
 });
 document.getElementById('cn-frame').addEventListener('click', function (event) {
@@ -2399,11 +2621,13 @@ document.getElementById('cn-frame').addEventListener('click', function (event) {
   const isExcludedClass = activeElementClass && !["psn", "senRef"].includes(activeElementClass);
   const isExcludedParent = activeElementParentId !== 'ncn';
   if (!cnameInputFocused && isExcludedClass && isExcludedParent) {
+    ddclr();
+    /*
     const dd = document.getElementById('dd');
     dd.removeAttribute('marker');
     dd.classList.add('hideme');
-    
     clrDd();
+    */
   }
 });
 document.querySelectorAll('.cndd').forEach(function (element) {
@@ -2655,10 +2879,11 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
 
   cnAddTds.forEach(function (td) {
       td.addEventListener("focusin", function () {
-          this.parentNode.parentNode.appendChild(document.querySelector('#dd'));
+          /*this.parentNode.parentNode.appendChild(document.querySelector('#dd'));
           document.getElementById("dd").classList.remove("hideme");
           
-          document.getElementById("dd").dataset.marker = "NCN";
+          document.getElementById("dd").dataset.marker = "NCN";*/
+          positionDropdown();
           ddFrtPop(td.innerHTML);
           event.stopPropagation();
       });
@@ -2669,9 +2894,9 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
   });
   //dropdown address book
 document.getElementById("snam").addEventListener("focusin", function (event) {
-    this.parentNode.appendChild(document.querySelector('#dd'));
-    document.getElementById("dd").classList.remove("hideme");
-    
+    /*this.parentNode.appendChild(document.querySelector('#dd'));
+    document.getElementById("dd").classList.remove("hideme");*/
+    positionDropdown();
     document.getElementById("dd").dataset.marker = "s";
     ddPop();
     event.stopPropagation();
@@ -2685,8 +2910,9 @@ document.getElementById("snam").addEventListener("keyup", function () {
 });
 
 document.getElementById("rnam").addEventListener("focusin", function (event) {
-  this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
+  document.getElementById("dd").classList.remove("hideme");*/
+  positionDropdown();
   
   document.getElementById("dd").dataset.marker = "r";
   ddPop();
@@ -2702,8 +2928,9 @@ document.getElementById("rnam").addEventListener("keyup", function () {
 
 document.getElementById("onam").addEventListener("focusin", function (event) {
   event.stopPropagation();
-  this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
+  document.getElementById("dd").classList.remove("hideme");*/
+  positionDropdown();
   document.getElementById("dd").dataset.marker = "o";
   ddPop();
 });
@@ -2714,10 +2941,12 @@ document.getElementById("onam").addEventListener("keyup", function () {
 
 document.querySelectorAll(".cndd").forEach(function (element) {
   element.addEventListener("focus", function () {
+    ddclr();
+    /*
       document.getElementById("dd").removeAttribute('marker');
-      
       document.getElementById("dd").classList.add("hideme");
       clrDd();
+      */
   });
 });
 
@@ -2742,9 +2971,10 @@ document.querySelectorAll("input").forEach(function(input) {
 });
 //dropdown contacts
 document.getElementById("cliContact").addEventListener('focusin', function() {
-  this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
+  document.getElementById("dd").classList.remove("hideme");*/
+  positionDropdown();
+  //updDvH('dd');
   document.getElementById("dd").dataset.marker = "Jcont";
   ddConPop(this.value);
   event.stopPropagation();
@@ -2755,9 +2985,10 @@ document.getElementById("cliContact").addEventListener('keyup', function() {
 });
 
 document.getElementById("client").addEventListener('focusin', function() {
-  this.parentNode.appendChild(document.querySelector('#dd'));
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');
+  updDvH('dd');*/
+  positionDropdown();
   document.getElementById("dd").dataset.marker = "client";
   ddCoPop(this.value);
   event.stopPropagation();
@@ -2946,10 +3177,12 @@ jDetInfo.forEach(function (element) {
         if (element.id === "client" || element.id === "cliContact") {
 
         } else {
+          ddclr();
+          /*
             document.getElementById("dd").removeAttribute('marker');
-            
             document.getElementById("dd").classList.add("hideme");
             clrDd();
+          */
         }
     });
 });
@@ -2959,9 +3192,10 @@ document.getElementById('cn-close').addEventListener('click', function () {
 });
 
 document.getElementById("cnam").addEventListener("focusin", function() {
-  this.parentNode.appendChild(document.querySelector('#dd'));
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');
+  updDvH('dd');*/
+  positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'c');
   ddPop();
 });
@@ -2971,9 +3205,10 @@ document.getElementById("cnam").addEventListener("keyup", function() {
 });
 
 document.getElementById("dnam").addEventListener("focusin", function() {
-  this.parentNode.appendChild(document.querySelector('#dd'));
+  /*this.parentNode.appendChild(document.querySelector('#dd'));
   document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');
+  updDvH('dd');*/
+  positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'd');
   ddPop();
 });
@@ -2983,5 +3218,69 @@ document.getElementById("dnam").addEventListener("keyup", function() {
 });
 notebody.addEventListener('dragover', allowDrop);
 notebody.addEventListener('drop', drop);
- 
+
+document.getElementById('tga').addEventListener('click', function() {
+  const form = document.getElementById('tag-input-form');
+  form.style.display = 'flex';
+  document.getElementById('tag-input').focus();
+
 });
+// Call the function when the input field is focused or the value changes
+document.getElementById('tag-input').addEventListener('input', function() {
+  console.log(this.value);
+  ddTagPop(this.value);
+  
+});
+document.getElementById('tag-input').addEventListener('focus', function() {
+
+  showTagInput();
+});
+document.getElementById('client').addEventListener('input', positionDropdown);
+document.getElementById('client').addEventListener('focus', positionDropdown);
+
+// Recalculate position when the window is resized or scrolled
+window.addEventListener('resize', realignDropdown);
+window.addEventListener('scroll', realignDropdown);
+
+});
+//suggestion list moving and activating
+document.addEventListener('focus', function(event) {
+  if (event.target.classList.contains('ddv')) {
+    //clear and set the data-marker
+    document.getElementById("dd").removeAttribute("data-marker");
+    // Get the ID of the active (focused) element
+    const activeElementId = document.activeElement.id;
+    // Use the active element's ID in a switch statement to determine action
+    switch (activeElementId) {
+      case 'client':
+        break;
+      case 'cliContact':
+        break;
+      case 'tag-input':
+        break;
+      case 'cnam':
+        break;
+      case 'dnam':
+        break;
+      case 'snam':
+        break;
+      case 'rnam':
+        break;
+      case 'onam':
+        break; 
+      default:
+        if (event.target.parentElement.id == 'NCN') {
+        } else {
+        }
+    }
+      //clear the dd contents
+
+      //Move the dd element
+
+      //update the suggestions.
+
+  } else {
+    //clear the data markers and contents.
+
+  }
+}, true);

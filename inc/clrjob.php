@@ -9,6 +9,7 @@ $mrkr = new DateTime();
 $mrkr = $mrkr->format('Y-m-d H:i:s');
 
 
+
 //determine the job to be cleared with the job number
 if (isset($_POST['jobno'])) {
     $jb = trim($_POST['jobno']);
