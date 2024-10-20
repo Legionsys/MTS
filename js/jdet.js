@@ -3232,9 +3232,21 @@ document.getElementById('tag-input').addEventListener('input', function() {
   
 });
 document.getElementById('tag-input').addEventListener('focus', function() {
-
   showTagInput();
 });
+document.getElementById('add-tag-button').addEventListener('click', function() {
+  let tagInput = document.getElementById('tag-input').value;
+  
+  if (tagInput == '') {
+    alert("You must enter in tag information to add it");
+  } else if (jbn == null) {
+    alert("You must have a job number to add a tag");
+  } else {
+    addNewTag(tagInput);
+    document.getElementById('tag-input').value = '';
+  }
+});
+
 document.getElementById('client').addEventListener('input', positionDropdown);
 document.getElementById('client').addEventListener('focus', positionDropdown);
 
