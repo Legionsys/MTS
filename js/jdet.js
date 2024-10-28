@@ -216,7 +216,6 @@ function jnotupd() {
 function jconupd(data) {
   var contlst = document.getElementById('contlst');
   var fragment = document.createDocumentFragment();  // Use a document fragment for better performance
-  console.log('data rec - ' + data);
   data.forEach(function (val) {
     var div = document.createElement('div');
     div.className = 'ccnt_card';
@@ -369,20 +368,20 @@ function jbnot() {
 async function jbcon() {
   var ind = "con";
   var frcon = fr;
+  const localUpd = upd;
   let newCnotData = null;  // Declare a local variable for new data
-
   try {
     const response = await fetch("/inc/job-init.php", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
+      
       body: new URLSearchParams({
         jbn: jbn,  // Assuming jbn is a global or available in this scope
         indi: ind,
       }),
     });
-
     if (!response.ok) {
       console.error(`Failure Con-note - ${jbn}`);
       console.error(`Error: ${response.statusText}`);
@@ -390,7 +389,6 @@ async function jbcon() {
     }
 
     const data = await response.text();
-
     if (data.startsWith('<')) {
       document.getElementById('coll').insertAdjacentHTML('beforeend', data);
     } else {
@@ -400,9 +398,8 @@ async function jbcon() {
       if (frcon === 'Y') {
         ocnot = JSON.parse(JSON.stringify(newCnotData));
       }
-
       // Call jconupd with the locally stored new data
-      if (upd === "y") {
+      if (localUpd === "y") {
         jconupd(newCnotData);  // Pass only the new data to jconupd
       }
     }
