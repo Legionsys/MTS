@@ -1,4 +1,4 @@
-;var mcnf;
+var mcnf;
 var mcnl = [];
 var climkr;
 var timeout = null;
@@ -21,6 +21,7 @@ var tag = null;
 var card = new Map();
 var sncrd = new Map()
 var fr = '';
+var isRotating = false;
 
 function urldecoder(str){
   return str.replace(/&amp;/g, '&')
@@ -212,6 +213,34 @@ function jnotupd() {
   });
   namtTot();
 }
+function jconupd(data) {
+  var contlst = document.getElementById('contlst');
+  var fragment = document.createDocumentFragment();  // Use a document fragment for better performance
+  console.log('data rec - ' + data);
+  data.forEach(function (val) {
+    var div = document.createElement('div');
+    div.className = 'ccnt_card';
+    div.setAttribute('data-id', chknull(val.cnID));
+    
+    div.innerHTML = `
+      <div class="cnnum">${chknull(val.cnNum)}</div>
+      <input type="checkbox" class="mcnprnt" name="mprint" value="${chknull(val.cnID)}">
+      <div class="cnscomp">${chknull(val.snam)}</div>
+      <div class="cnrcomp">${chknull(val.rnam)}</div>
+      <div class="cnitm">${chknull(val.titm)} itms</div>
+      <div class="cnwgt">${chknull(val.twgt)} kg</div>
+      <div class="cnm3">${Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(chknull(val.tcub))} m3
+      </div>
+    `;
+    
+    fragment.appendChild(div);  // Append each card to the fragment
+  });
+
+  contlst.innerHTML = '';  // Clear existing content if needed
+  contlst.appendChild(fragment);  // Append the fragment once to the DOM
+}
+
+/*
 function jconupd() {
   var contlst = document.getElementById('contlst');
   cnot.forEach(function (val) {
@@ -227,7 +256,7 @@ function jconupd() {
     txt += '</div>';
     contlst.insertAdjacentHTML('beforeend', txt);
   });
-}
+}*/
 function jbdu() {
   var frdu = fr;
   var ind = "job";
@@ -337,6 +366,52 @@ function jbnot() {
 
   xhr.send("jbn=" + jbn + "&indi=" + ind);
 }
+async function jbcon() {
+  var ind = "con";
+  var frcon = fr;
+  let newCnotData = null;  // Declare a local variable for new data
+
+  try {
+    const response = await fetch("/inc/job-init.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        jbn: jbn,  // Assuming jbn is a global or available in this scope
+        indi: ind,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(`Failure Con-note - ${jbn}`);
+      console.error(`Error: ${response.statusText}`);
+      return;
+    }
+
+    const data = await response.text();
+
+    if (data.startsWith('<')) {
+      document.getElementById('coll').insertAdjacentHTML('beforeend', data);
+    } else {
+      newCnotData = JSON.parse(data);  // Parse the JSON into the local variable
+      cnot = JSON.parse(JSON.stringify(newCnotData));
+      // If frcon is 'Y', create a deep copy of newCnotData into ocnot
+      if (frcon === 'Y') {
+        ocnot = JSON.parse(JSON.stringify(newCnotData));
+      }
+
+      // Call jconupd with the locally stored new data
+      if (upd === "y") {
+        jconupd(newCnotData);  // Pass only the new data to jconupd
+      }
+    }
+  } catch (error) {
+    console.error("Error in making the request:", error);
+  }
+}
+
+/*
 function jbcon() {
   var ind = "con";
   var frcon = fr;
@@ -372,7 +447,7 @@ function jbcon() {
   };
 
   xhr.send("jbn=" + jbn + "&indi=" + ind);
-}
+}*/
 function confrt(callback) {
   return new Promise((resolve, reject) => {
     var frfr = fr;
@@ -452,15 +527,7 @@ function parseCell(row, dataCol) {
   var cellValue = cell ? parseFloat(cell.innerHTML.replace(/,/g, '')) : NaN;
   return isNaN(cellValue) ? 0 : cellValue;
 }
-function cnotUpd() {
-  if (jbn === "" || jbn === 0) {
-    // Handle the case when jbn is empty or 0
-  } else {
-    var cnlist = mcnl.toString();
-    document.getElementById("contlst").innerHTML = '';
-    jconupd();
-  }
-}
+
 function cnotCHK() {
   var checkboxes = document.querySelectorAll('input:checkbox.mcnprnt');
   
@@ -1368,13 +1435,13 @@ function clrcnt() {
 }
 function cn_close() {
   var upd2 = upd;
-
+  startRotation();
   upd = "y";
   document.getElementById("contlst").innerHTML = "";
   jbcon();
   confrt();
   document.getElementById('boscr').classList.add('hideme');
-
+  stopRotation();
   upd = upd2;
   
 }
@@ -1716,7 +1783,22 @@ async function hideTag(tagCard) {
     console.error('Failed to hide tag:', error);
 }
 }
+function startRotation() {
+  const rcn = document.getElementById('rcn');
+  if (!isRotating) {
+      rcn.classList.add('rotate');  // Start rotation
+      isRotating = true;
+  }
+}
 
+function stopRotation() {
+  const rcn = document.getElementById('rcn');
+  if (isRotating) {
+      rcn.classList.remove('rotate');  // Stop rotation
+      rcn.style.transform = 'rotate(0deg)';  // Reset to original position
+      isRotating = false;
+  }
+}
 
 
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
@@ -1733,7 +1815,6 @@ document.addEventListener('DOMContentLoaded', function () {
   jbn = Number(getSearchParams("job_no")) || 0;
   firstpop();
   namtTot();
-  cnotUpd();
   updchkr();
   displayAllVersions();
 
@@ -2508,7 +2589,6 @@ document.getElementById('cnmove').addEventListener('click', function () {
               
               actcn = null;
               clrcnt();
-              cnotUpd();
             }
           } else {
             alert("There was an error moving this connote,\n" + data);
@@ -2537,7 +2617,6 @@ document.getElementById('cndel').addEventListener('click', function () {
             cn_close();
             
             clrcnt();
-            cnotUpd();
           } else {
             alert("There was an error deleting this connote,\n" + data);
           }
@@ -2584,7 +2663,6 @@ document.getElementById('boscr').addEventListener('click', function () {
   cn_close();
   actcn = null;
   clrcnt();
-  cnotUpd();
 });
 document.querySelector('.wrapper').addEventListener('click', function (event) {
   event.stopPropagation();

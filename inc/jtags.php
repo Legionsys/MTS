@@ -14,8 +14,11 @@ if ($detail === 'null' || $detail === '') {
     $detail = null; // You can set this to an empty string instead if needed
 }
 //echo $user;
-if (!$jobNumber || !$action) {
-    die(json_encode(['error' => 'Job number and action are required']));
+if ((!$jobNumber && $jobNumber != 0) || !$action) {
+    if (!$jobNumber) {
+        die(json_encode(['error' => 'Job number are required']));
+    }
+    die(json_encode(['error' => 'Job number and action are required - act = ' . $action . ' - job - ' . $jobNumber]));
 }
 
 // Switch based on action
@@ -83,7 +86,6 @@ switch ($action) {
         }
         break;
     case 'list':
-
         $srch = '%'.$detail.'%';
         $sql = "SELECT DISTINCT tag FROM jobTags WHERE hide IS NULL AND tag LIKE ? AND tag NOT IN (SELECT tag FROM jobTags WHERE job = ? AND removed IS NULL);";
         $stmt = $conn->prepare($sql);
@@ -98,8 +100,24 @@ switch ($action) {
         header('Content-Type: application/json');
         echo json_encode(['tags' => $tags]);
         break;
+    case 'flist':
+        $srch = '%'.$detail.'%';
+        $sql = "SELECT DISTINCT tag,hide FROM jobTags WHERE tag LIKE ? AND tag NOT IN (SELECT tag FROM jobTags WHERE job = ? AND removed IS NULL);";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $srch, $jobNumber);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $tags = [];
+    
+        while ($row = $result->fetch_assoc()) {
+            $tags[] = $row;
+        }
+        header('Content-Type: application/json');
+        echo json_encode(['tags' => $tags]);
+        break;
+
     default:
-        echo json_encode(['error' => 'Invalid action']);
+        echo json_encode(['error' => 'Invalid action - act = ' . $action]);
         break;
 }
 
