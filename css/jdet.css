@@ -1528,7 +1528,6 @@ button.print-button:hover .print-icon::after {
   width: fit-content;
   background: rgb(200, 200, 200, 1);
   border-radius: 5px 0px 0px 0px;
-
 }
 
 /* Input field to take full width within the form */
@@ -1542,7 +1541,6 @@ button.print-button:hover .print-icon::after {
   width: 11.5rem;
 }
 
-
 #tag-input-form button {
   padding: 5px 10px;
   margin-left: 5px;
@@ -1551,4 +1549,17 @@ button.print-button:hover .print-icon::after {
 }
 .ddTag {
   top: 3rem;
+}
+
+@keyframes rotate {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}
+
+.rotate {
+  animation: rotate 1.5s linear infinite;  /* Full rotation in 1.5 seconds */
 }

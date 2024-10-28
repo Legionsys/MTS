@@ -167,11 +167,14 @@ a {
   border: darkgray solid 0.1rem;
 }
 #cli-fil,
+#tag-fil,
 #search-all,
-#search-cli{
+#search-cli,
+#search-tag{
   background-color: #96FA7F;
 }
-#clisel{
+#clisel,
+#tagsel{
   position: relative;
   z-index: 1;
   width: 100%;
@@ -185,7 +188,8 @@ a {
   cursor:pointer;
 }
 
-#cli-fil{
+#cli-fil,
+#tag-fil{
   margin: 0rem auto;
   font-size: 2.5rem;
   border: rgb(150, 150, 150) solid 0.1rem;
@@ -195,7 +199,8 @@ a {
   position: relative;
   
 }
-#clilst{
+#clilst,
+#taglst{
   /*visibility:hidden;*/
   position: absolute;
   border: 1px solid #5d5d5d;
@@ -207,7 +212,8 @@ a {
   top:-1.5rem;
   padding:1rem;
 }
-#search-cli{
+#search-cli,
+#search-tag{
   width:74.95%;
   position:relative;
   font-size: 2.5rem;
@@ -217,7 +223,8 @@ a {
   padding-left: 1.25rem;
   color: #63666A;
 }
-#cliclr{
+#cliclr,
+#tagclr{
   width:24.95%;
   position:relative;
   font-size: 2.5rem;
@@ -231,7 +238,8 @@ a {
   justify-content: center;
   display: grid;
 }
-.clilstr{
+.clilstr,
+.taglstr{
   width:100%;
   position:relative;
   /*margin-top:1.5rem;*/
@@ -272,7 +280,8 @@ a {
   cursor: pointer;
   align-items: center;
 }
-.scname{
+.scname,
+.stname{
   width: calc(100% - 5rem);
   position: relative;
   flex-flow: row wrap;
@@ -290,7 +299,8 @@ a {
 .vtog:hover{
   background-color:#CC5500;
 }
-#schclitop{
+#schclitop,
+#schtagtop{
   width:100%;
   flex-flow: row wrap;
   display: flex;
@@ -380,7 +390,8 @@ a {
   height:3.75rem; 
   cursor: pointer;
 }*/
-.lstcli{
+.lstcli,
+.lsttag{
   width:100%;
   max-height: 22.5rem;
   overflow-y: scroll;

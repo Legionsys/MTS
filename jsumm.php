@@ -58,6 +58,42 @@
                     </div>
                 </div>
             </div>
+            <!--<div id="tag-fil">
+                <div id="tagsel">
+                    Tag Directory
+                </div>
+                <div id="taglst" class="hidden">
+                    
+                    <div id='schtagtop'>
+                        <input id="search-tag" class="tagwild" type="text" placeholder="Tag Search">
+                        <div id="tagclr">Clear</div>
+                    </div>
+                    <div id="acttag" class="taglstr">
+                        Active Tags
+                        <div id="actimg" class="vlst"><img src="img/down.svg" alt="Open list"></div>
+                    </div>
+                    <div id="acttaglst" class="lsttag">
+
+                    </div>
+                    <div id="detag" class="taglstr">
+                        Inactive Tags
+                        <div id="decimg" class="vlst"><img src="img/left.svg" alt="Closed list"></div>
+                    </div>
+                    <div id="deataglst" class="lsttag hidden">
+                        
+                    </div>
+                </div>
+            </div>-->
+
+
+
+
+
+            <!--<button id="toggleTagFilter" onclick="toggleTagVisibility()">Tags</button>
+            <div id="tagFilterDropdown" style="display:none;">
+                <div id="visibleTags"></div>--> <!-- This will contain visible tags -->
+                <!--<div id="hiddenTags" style="display:none;"></div>--> <!-- This will contain hidden tags and is initially hidden -->
+            <!--</div>-->
             <div class="filt_box">
                 <div class="selectors">
                     <input type="radio" id="all-job" name="job_Tog" value="All" class="radios">
