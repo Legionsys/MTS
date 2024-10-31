@@ -73,7 +73,22 @@
         <input type="checkbox" id="nav-check">
         <div id="nav-head" class="nav-header">
             <div id="nav-title" class="nav-title">
-                Job Management Sheets
+<?php
+    switch ($pName) {
+        case "jdet":
+            echo 'Job Details';
+            break;
+        case "jsumm":
+            echo 'Job Summary';
+            break;
+        case "uman":
+            echo 'User Management';
+            break;
+        default:
+            echo 'Transport System';
+            break;
+    }
+?>
             </div>
         </div>
         <div class="nav-btn">

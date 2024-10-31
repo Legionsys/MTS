@@ -13,7 +13,7 @@ $stxt = mysqli_real_escape_string($conn, $stxt);
 $sql = "SELECT DISTINCT senRef, noItem, psn, itWgt, itLen, itWid, itHei, itQty, unNum, class, sRisk, pkGr, pkDes
         FROM `conDets`
         WHERE CONCAT(ifnull(senRef, ''), ifnull(noItem, ''), ifnull(psn, ''), ifnull(itWgt, ''), ifnull(itLen, ''), ifnull(itWid, ''), ifnull(itHei, ''), ifnull(itQty, ''), ifnull(unNum, ''), ifnull(class, ''), ifnull(sRisk, ''), ifnull(pkGr, ''), ifnull(pkDes, ''))
-        LIKE ? LIMIT 10";
+        LIKE ? and frtDie is null order by itID desc LIMIT 10";
 
 $stmt = mysqli_stmt_init($conn);
 
