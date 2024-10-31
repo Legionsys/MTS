@@ -15,11 +15,9 @@ function joblstUpd() {
   var job = srchJob;
   var inv = srchInv;
   var tags = srchTags.join(',');
-  
 
   // Create a new XMLHttpRequest object
   var xhr = new XMLHttpRequest();
-
   // Configure it: specify the request type (POST), the URL, and whether it should be asynchronous
   xhr.open("POST", "/inc/job-summ-upd.php", true);
 
@@ -73,6 +71,7 @@ function urlUpdate() {
   }
 
   // Handle 'tags' parameter
+
   if (srchTags.length > 0) {
     filters.push('tags=' + encodeURIComponent(srchTags.join(',')));
   } else {
@@ -107,7 +106,7 @@ function cliupd() {
         }
 
         // Update the HTML if srchCli matches
-        if (srchCli == v.clientId) {
+        if (srchCli && srchCli == v.clientId) {
           document.getElementById("clisel").innerHTML = v.clientName;
         }
       });
@@ -151,7 +150,7 @@ function clilstupd() {
     }
   });
 }
-/*
+
 function tagupd() {
   var xhr = new XMLHttpRequest();
   var param1 = encodeURIComponent("flist");
@@ -176,8 +175,7 @@ function tagupd() {
             } else {
               hidtag.push(v);
             }
-
-            if (srchTag == v.tag) {
+            if (srchTag && srchTag == v.tag) {
               document.getElementById("tagsel").innerHTML = v.tag;
             }
           });
@@ -198,54 +196,7 @@ function tagupd() {
     taglstupd();
   };
 }
-*/
 
-/*function tagupd() {
-  var xhr = new XMLHttpRequest();
-  var param1 = encodeURIComponent("flist"); // Replace "value1" with the actual value you want to send
-  var param2 = encodeURIComponent("0");
-  // Configure the request: specify the request type (GET) and the URL
-  xhr.open("GET", `/inc/jtags.php?action=${param1}&job=${param2}`, true);
-
-  // Define the callback function to handle the response
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      // Parse the JSON response
-
-      var tags = JSON.parse(xhr.responseText);
-      console.log(tags);
-
-      acttag = [];
-      hidtag = [];
-      // Iterate over the clients array
-      tags.forEach(function (v) {
-        if (v.hide == "") {
-          acttag.push(v);
-        } else {
-          hidtag.push(v);
-        }
-
-        // Update the HTML if srchCli matches
-        if (srchTag == v.tag) {
-          document.getElementById("tagsel").innerHTML = v.tag;
-        }
-      });
-      console.log(acttag);
-      console.log(hidtag);
-      // Uncomment the following line if you want to log actcli
-      // console.log(actcli);
-    }
-  };
-
-  // Send the request
-  xhr.send();
-
-  // Use the `onload` event to ensure that the request is completed before calling clilstupd
-  xhr.onload = function () {
-    taglstupd();
-  };
-}*/
-/*
 function taglstupd() {
   var searchTagValue = document.getElementById('search-tag').value.toLowerCase();
 
@@ -274,7 +225,7 @@ function taglstupd() {
     }
   });
 }
-*/
+
 
 function getUrlParameter(sParam) {
   var sPageURL = window.location.search.substring(1),
@@ -357,10 +308,10 @@ function selectTag(tag) {
   srchTags = [tag];
 
   // Update the URL with the selected tag filter
-  urlUpdate();
+  //urlUpdate();
 
   // Refresh the job list with the new filter
-  joblstUpd();
+  //joblstUpd();
 }
 window.onload = function () {
   srchAll = getUrlParameter('wild');
@@ -370,7 +321,9 @@ window.onload = function () {
   
   var tagsParam = getUrlParameter('tags');
     srchTags = tagsParam ? tagsParam.split(',') : [];
-
+  if (srchTags.length > 0) {
+    srchTag = srchTags[0];
+  }
   
   // Update the value of the search-all input
   if (srchAll !== "null" && srchAll !== false) {
@@ -400,13 +353,13 @@ window.onload = function () {
   // Call the functions joblstUpd and cliupd
   joblstUpd();
   cliupd();
-  //tagupd();
+  tagupd();
 };
 // Add a popstate event listener to handle the back button navigation
 window.addEventListener('popstate', function(event) {
   joblstUpd(); // Refresh the job list when the user navigates back
   cliupd(); // Refresh the client list when the user navigates back
-  //tagupd();
+  tagupd();
   fetchTags(); //Refresh the tags list when the user navigates back
 });
 
@@ -434,26 +387,32 @@ document.addEventListener("DOMContentLoaded", function () {
     clilstupd();
   });
 
+  document.getElementById("search-tag").addEventListener("keyup", function () {
+    taglstupd();
+  });
+
   document.getElementById("clisel").addEventListener("click", function (event) {
     event.stopPropagation();
     document.getElementById("clilst").classList.remove("hidden");
+    document.getElementById("taglst").classList.add("hidden");
     var value = document.getElementById("search-cli").value;
     document.getElementById("search-cli").focus();
     document.getElementById("search-cli").value = value;
   });
 
-  /*document.getElementById("tagsel").addEventListener("click", function (event) {
+  document.getElementById("tagsel").addEventListener("click", function (event) {
     event.stopPropagation();
     document.getElementById("taglst").classList.remove("hidden");
+    document.getElementById("clilst").classList.add("hidden");
     var value = document.getElementById("search-cli").value;
     document.getElementById("search-tag").focus();
     document.getElementById("search-tag").value = value;
-  });*/
+  });
 
   document.body.addEventListener("click", function () {
     console.log("body click");
     document.getElementById("clilst").classList.add("hidden");
-    //document.getElementById("taglst").classList.add("hidden");
+    document.getElementById("taglst").classList.add("hidden");
   });
 
   document.getElementById("clilst").addEventListener("click", function (event) {
@@ -476,24 +435,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("cliclr").addEventListener("click", function () {
     srchCli = 'null';
-    document.getElementById("clisel").innerHTML = '';
+    document.getElementById("clisel").innerHTML = 'Client Directory';
     document.getElementById("search-cli").value = '';
     urlUpdate();
     joblstUpd();
   });
 
-  /*document.getElementById("tagclr").addEventListener("click", function () {
-    srchTag = 'null';
-    document.getElementById("tagsel").innerHTML = '';
+  document.getElementById("tagclr").addEventListener("click", function () {
+    srchTags = [];
+    document.getElementById("tagsel").innerHTML = 'Tag Directory';
     document.getElementById("search-tag").value = '';
     urlUpdate();
     joblstUpd();
-  });*/
+  });
 
   document.getElementById("clilst").addEventListener("click", function (event) {
     if (event.target.classList.contains("scname")) {
-      console.log(event.target.closest(".selCli").getAttribute("data-id"));
-      console.log(event.target.innerHTML);
+      //console.log(event.target.closest(".selCli").getAttribute("data-id"));
+      //console.log(event.target.innerHTML);
       srchCli = event.target.closest(".selCli").getAttribute("data-id");
       document.getElementById("clisel").innerHTML = event.target.innerHTML;
       document.getElementById("clilst").classList.add("hidden");
@@ -502,17 +461,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  /*document.getElementById("taglst").addEventListener("click", function (event) {
+  document.getElementById("taglst").addEventListener("click", function (event) {
     if (event.target.classList.contains("stname")) {
-      console.log(event.target.closest(".seltag").getAttribute("data-id"));
-      console.log(event.target.innerHTML);
-      srchCli = event.target.closest(".selTag").getAttribute("data-id");
+      //console.log(event.target.closest(".selTag").getAttribute("data-tag"));
+      //console.log(event.target.innerHTML);
+      srchTag = event.target.closest(".selTag").getAttribute("data-tag");
       document.getElementById("tagsel").innerHTML = event.target.innerHTML;
       document.getElementById("taglst").classList.add("hidden");
+      selectTag(srchTag);
       urlUpdate();
       joblstUpd();
     }
-  });*/
+  });
 
   document.getElementById("clilst").addEventListener("click", function (event) {
     console.log(event.target);

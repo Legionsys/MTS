@@ -74,7 +74,7 @@ select{
   width: 2.5%;
 }
 #filt_end {
-  width: 7.5%;
+  width: 2.5%;
 }
 #filt_start {
   width: 20%;
@@ -199,6 +199,9 @@ a {
   position: relative;
   
 }
+#tag-fil{
+  min-width: 22rem;
+}
 #clilst,
 #taglst{
   /*visibility:hidden;*/
@@ -214,7 +217,7 @@ a {
 }
 #search-cli,
 #search-tag{
-  width:74.95%;
+  width:min(74.95%, calc(100% - 83px));
   position:relative;
   font-size: 2.5rem;
   border: rgb(150, 150, 150) solid 1px;
@@ -226,6 +229,7 @@ a {
 #cliclr,
 #tagclr{
   width:24.95%;
+  min-width: 82px;
   position:relative;
   font-size: 2.5rem;
   color: #63666A;
@@ -267,7 +271,8 @@ a {
   padding-right: 1rem;
   padding-left: 1rem;
 }
-.selCli{
+.selCli,
+.selTag {
   position: relative;
   width: 100%;
   font-size: 2rem;
@@ -292,7 +297,8 @@ a {
   font-size: 2rem;
   padding-left: 1rem;
 }
-.selCli:hover{
+.selCli:hover,
+.selTag:hover {
   border: 1px solid #CC5500;
   color: #CC5500;;
 }
