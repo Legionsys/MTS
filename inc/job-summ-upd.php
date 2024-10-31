@@ -50,7 +50,7 @@ if (strlen($clientId) > 0){
     $sql = $sql."jobList.clientId = $clientId AND ";
 };
 if (strlen($wild) > 0){
-    $sql = $sql."concat(ifnull(clientList.clientName,'') ,ifnull(jobList.contd,'') ,ifnull(jobList.contPh,'') ,ifnull(jobList.contEm,'') ,ifnull(jobList.contEm2,'') ,ifnull(jobList.jobRef,'') ,ifnull(jobList.invNum,'') ,ifnull(jobList.cnam,'') ,ifnull(jobList.cadd1,'') ,ifnull(jobList.cadd2,'') ,ifnull(jobList.cadd3,'') ,ifnull(jobList.cst,'') ,ifnull(jobList.cCtc,'') ,ifnull(jobList.cEm,'') ,ifnull(jobList.cCtc2,'') ,ifnull(jobList.cEm2,'') ,ifnull(jobList.dnam,'') ,ifnull(jobList.dadd1,'') ,ifnull(jobList.dadd2,'') ,ifnull(jobList.dadd3,'') ,ifnull(jobList.dst,'') ,ifnull(jobList.dCtc,'') ,ifnull(jobList.dEm,'') ,ifnull(jobList.dCtc2,'') ,ifnull(jobList.dEm2,'')) like '%$wild%' AND ";
+    $sql = $sql."concat(ifnull(jobList.jobID,'') ,ifnull(clientList.clientName,'') ,ifnull(jobList.contd,'') ,ifnull(jobList.contPh,'') ,ifnull(jobList.contEm,'') ,ifnull(jobList.contEm2,'') ,ifnull(jobList.jobRef,'') ,ifnull(jobList.invNum,'') ,ifnull(jobList.cnam,'') ,ifnull(jobList.cadd1,'') ,ifnull(jobList.cadd2,'') ,ifnull(jobList.cadd3,'') ,ifnull(jobList.cst,'') ,ifnull(jobList.cCtc,'') ,ifnull(jobList.cEm,'') ,ifnull(jobList.cCtc2,'') ,ifnull(jobList.cEm2,'') ,ifnull(jobList.dnam,'') ,ifnull(jobList.dadd1,'') ,ifnull(jobList.dadd2,'') ,ifnull(jobList.dadd3,'') ,ifnull(jobList.dst,'') ,ifnull(jobList.dCtc,'') ,ifnull(jobList.dEm,'') ,ifnull(jobList.dCtc2,'') ,ifnull(jobList.dEm2,'')) like '%$wild%' AND ";
 };
 
 if ($job == "Act"){
@@ -62,17 +62,23 @@ if ($job == "Com"){
 
 
 if ($inv == "Pend"){
-    $sql = $sql."jobComp IS NULL ";
+    $sql = $sql."jobComp IS NULL AND ";
 } 
 if ($inv == "Com"){
-    $sql = $sql."jobComp IS NOT NULL ";
+    $sql = $sql."jobComp IS NOT NULL AND ";
 };
 
 if ($tags) {
+    echo "<script>console.log('tags proc');</script>";
+    echo "<script>console.log('tags - ".$tags."');</script>";
     // Assuming you join `jobTags` table with the job table, you can filter jobs based on the selected tags.
     $tagsArray = explode(',', $tags); // Convert tags string to array
     // Example: Modify your SQL query to add a WHERE condition that matches job tags
-    $query .= " AND jobID IN (SELECT job FROM jobTags WHERE removed IS null AND tag IN (" . implode(',', array_map('intval', $tagsArray)) . "))";
+    //echo "<script>console.log('tagsarray - ".$tagsArray."');</script>";
+    //$sql .= "jobID IN (SELECT job FROM jobTags WHERE removed IS null AND tag IN (" . implode(',', array_map('intval', $tagsArray)) . "))";
+$sql .= "jobID IN (SELECT job FROM jobTags WHERE removed IS null AND tag IN (" . implode(',', array_map(function($tag) {
+    return is_numeric($tag) ? (int) $tag : '"' . addslashes($tag) . '"';
+    }, $tagsArray)) . "))";
 };
 
 
@@ -84,7 +90,7 @@ if (substr($sql,-5) == "HERE "){
     $sql = substr($sql,0,strlen($sql)-6);
 };
 
-$sql = $sql."order by jobID;";/*
+$sql = $sql."order by jobDate is Null, jobDate ASC;";/*
 if (strlen($clientId) > 0 and strlen($wild) > 0) {
     $sql = "SELECT * FROM jobList LEFT JOIN clientList on jobList.clientId = clientList.clientId WHERE jobRef like '%$wild%' AND clientId = $clientId order by jobID;";
 } elseif (strlen($clientId) > 0 and strlen($wild) == 0) {
@@ -96,7 +102,7 @@ if (strlen($clientId) > 0 and strlen($wild) > 0) {
 }    */
 
 
-
+echo '<script>console.log("'.$sql.'");</script>';
 $resultData = mysqli_query($conn,$sql);
 if (mysqli_num_rows($resultData) > 0){
     while ($row = mysqli_fetch_assoc($resultData)) {

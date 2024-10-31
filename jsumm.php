@@ -58,7 +58,7 @@
                     </div>
                 </div>
             </div>
-            <!--<div id="tag-fil">
+            <div id="tag-fil">
                 <div id="tagsel">
                     Tag Directory
                 </div>
@@ -83,7 +83,7 @@
                         
                     </div>
                 </div>
-            </div>-->
+            </div>
 
 
 
@@ -144,6 +144,24 @@
                     </label>
                 </div>
             </div>
+            <!--<div class="filt_box">
+                <div class="selectors">
+                    <input type="radio" id="sJob" name="sort_Tog" value="sJob" class="radios" checked="true">
+                    <label for="sJob" class="jt_lab">
+                        
+                        <span class="jt_sp">
+                            Sort Jobs
+                        </span>
+                    </label>
+                    <input type="radio" id="sPick" name="sort_Tog" value="sPick" class="radios">
+                    <label for="sPick" class="jt_lab">
+                    
+                        <span class="jt_sp">
+                            Sort Pick Up
+                        </span>
+                    </label>
+                </div>
+            </div>-->
             <div id="filt_end"></div>
             <a href="/jdet.php">
                 <div id="njdiv">
