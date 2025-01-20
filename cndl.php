@@ -98,19 +98,6 @@ if (mysqli_num_rows($resultData) > 0){
             //CN Type
             if ($i == 0) {
                 $pdf->SetXY(245,24);
-                $pdf->SetFillColor(255,165,165);
-                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
-
-                $pdf->SetFont('Helvetica','B',32);
-                $pdf->SetTextColor(255,255,255);
-                $pdf->SetXY(245,165);
-                $pdf->StartTransform();
-                $pdf->Rotate(90);
-
-                $pdf->Cell(105,40,'RECEIVERS COPY',0,0,'C',false,'',0,false,'T','C');
-                $pdf->StopTransform();
-            } else {
-                $pdf->SetXY(245,24);
                 $pdf->SetFillColor(225,225,225);
                 $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
     
@@ -121,7 +108,20 @@ if (mysqli_num_rows($resultData) > 0){
                 $pdf->Rotate(90);
     
                 $pdf->Cell(105,40,'OFFICE COPY',0,0,'C',false,'',0,false,'T','C');
-                $pdf->StopTransform();                
+                $pdf->StopTransform();   
+            } else {
+                $pdf->SetXY(245,24);
+                $pdf->SetFillColor(255,165,165);
+                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
+
+                $pdf->SetFont('Helvetica','B',32);
+                $pdf->SetTextColor(255,255,255);
+                $pdf->SetXY(245,165);
+                $pdf->StartTransform();
+                $pdf->Rotate(90);
+
+                $pdf->Cell(105,40,'RECEIVERS COPY',0,0,'C',false,'',0,false,'T','C');
+                $pdf->StopTransform();             
             }
             $pdf->SetXY(10,30);
             $pdf->SetTextColor(0,0,0);

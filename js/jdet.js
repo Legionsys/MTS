@@ -581,7 +581,7 @@ function fldupd(init, obj) {
 function clrDd() {
   document.getElementById("slist").innerHTML = "";
 }
-function ddPop() {
+function addbkpop() {
   clrDd();
   var stxt;
 
@@ -1845,8 +1845,159 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById("slist").addEventListener('click', function (event) {
     var target = event.target;
+    console.log(target);
+    console.log(target.classList);
+    console.log(target.parentElement);
+    console.log(target.parentElement.classList);
+    console.log(target.parentElement.parentElement);
+    console.log(target.parentElement.parentElement.classList);
+    //Trash functions
+    if (Array.from(target.classList).some(className => /_trash$/.test(className))) {
+      console.log("trash targeted");
+      //Trash link functions
+      const classActions = { 
+        'classA': function(element) { console.log('Action for classA'); }, 
+        'contcard': function(element) { 
+          //Contact card Trash click
+          console.log('Action for contcard'); 
+          ccard = element;
+          var adBuild = {
+            lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
+            lstcont: ccard.querySelector(".lstcont").innerHTML != '' ? ccard.querySelector(".lstcont").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstcph: ccard.querySelector(".lstcph").innerHTML != '' ? ccard.querySelector(".lstcph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc: ccard.querySelector(".lstctc").innerHTML != '' ? ccard.querySelector(".lstctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc2: ccard.querySelector(".lstctc2").innerHTML != '' ? ccard.querySelector(".lstctc2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+          };
+          var senBuild = JSON.stringify(adBuild);
+          console.log(senBuild);
+          console.log(encodeURIComponent(senBuild));
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              console.log(xhr.responseText);
+                if (xhr.responseText.indexOf('Error') > -1) {
+                    alert('Address Card Removal Error');
+                } else {
+                    /*console.log(xhr.responseText);*/
+                    ccard.remove();
+                }
+            }
+          };
+          xhr.open("POST", "/inc/conrem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
+        }, 
+        'clicard': function(element) { 
+          //Client Card Trash click
+          console.log('Action for clicard'); 
+          console.log(element);
+          //update so that it uses ELEMENT instead of contacard.
+          ccard = element;
+          var adBuild = {
+            lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
+            lstcont: ccard.querySelector(".lstcont").innerHTML != '' ? ccard.querySelector(".lstcont").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstcph: ccard.querySelector(".lstcph").innerHTML != '' ? ccard.querySelector(".lstcph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc: ccard.querySelector(".lstctc").innerHTML != '' ? ccard.querySelector(".lstctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc2: ccard.querySelector(".lstctc2").innerHTML != '' ? ccard.querySelector(".lstctc2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+          };
+          var senBuild = JSON.stringify(adBuild);
+          console.log(senBuild);
+          console.log(encodeURIComponent(senBuild));
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              console.log(xhr.responseText);
+                if (xhr.responseText.indexOf('Error') > -1) {
+                    alert('Address Card Removal Error');
+                } else {
+                    /*console.log(xhr.responseText);*/
+                    ccard.remove();
+                }
+            }
+          };
+          xhr.open("POST", "/inc/conrem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
+        }, 
+        'addcard': function(element) {
+          //Address card trash click
+          console.log('Action for addcard'); 
+          var addCard = element;
+          var adBuild = {
+            nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add1: addCard.querySelector(".add1").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add2: addCard.querySelector(".add2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add3: addCard.querySelector(".add3").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            st: addCard.querySelector(".st").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            pc: addCard.querySelector(".pc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            Ctc: addCard.querySelector(".Ctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            Ph: addCard.querySelector(".Ph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+          };
 
-    if (!target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard"))) {
+          var senBuild = JSON.stringify(adBuild);
+          console.log(senBuild);
+          console.log(encodeURIComponent(senBuild));
+          var xhr = new XMLHttpRequest();
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText.indexOf('Error') > -1) {
+                    alert('Address Card Removal Error');
+                } else {
+                    /*console.log(xhr.responseText);*/
+                    addCard.remove();
+                }
+            }
+          }; 
+
+          xhr.open("POST", "/inc/adrem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
+        }
+      };
+      for (const className in classActions) { 
+        if (classActions.hasOwnProperty(className)) { 
+          const closestElement = event.target.closest(`.${className}`); 
+          if (closestElement) { 
+            classActions[className](closestElement); 
+            break; // Stop after finding the first match 
+          } 
+        } 
+      }
+    } else {
+
+    const classActions = { 
+      'classA': function(element) { console.log('Action for classA'); }, 
+      'contcard': function(element) { 
+        //Contact card click
+        console.log('Action for contcard'); 
+      }, 
+      'clicard': function(element) { 
+        //Client Card Trash click
+        console.log('Action for clicard'); 
+      }, 
+      'addcard': function(element) {
+        //Address card trash click
+        console.log('Action for addcard'); 
+      }
+    };
+    for (const className in classActions) { 
+      if (classActions.hasOwnProperty(className)) { 
+        const closestElement = event.target.closest(`.${className}`); 
+        if (closestElement) { 
+          classActions[className](closestElement); 
+          break; // Stop after finding the first match 
+        } 
+      } 
+    }    
+
+  }
+
+
+
+
+    if (7 === 9) {
+    if (!target.classList.contains("add_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard"))) {
       if (!target.classList.contains("contcard")) {
         target = event.target.parentElement;
       }
@@ -1923,7 +2074,7 @@ document.addEventListener('DOMContentLoaded', function () {
       clrDd();
       */
 
-    } else if (target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard") || target.parentElement.parentElement.classList.contains("contcard"))) {
+    } else if (target.classList.contains("add_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard") || target.parentElement.parentElement.classList.contains("contcard"))) {
       if (target.parentElement.parentElement.classList.contains("contcard")){
         ccard = target.parentElement.parentElement;
       } else if (target.parentElement.classList.contains("contcard")) {
@@ -2074,7 +2225,7 @@ document.addEventListener('DOMContentLoaded', function () {
       event.stopPropagation();
       //hideTag()
     }
-
+  }
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
@@ -2973,7 +3124,7 @@ document.getElementById("snam").addEventListener("focusin", function (event) {
     document.getElementById("dd").classList.remove("hideme");*/
     positionDropdown();
     document.getElementById("dd").dataset.marker = "s";
-    ddPop();
+    addbkpop();
     event.stopPropagation();
 });
 
@@ -2981,7 +3132,7 @@ document.getElementById("snam").addEventListener("keyup", function () {
     this.classList.add("pending");
     document.getElementById("snam").classList.remove("updated");
     updchkr();
-    ddPop();
+    addbkpop();
 });
 
 document.getElementById("rnam").addEventListener("focusin", function (event) {
@@ -2990,7 +3141,7 @@ document.getElementById("rnam").addEventListener("focusin", function (event) {
   positionDropdown();
   
   document.getElementById("dd").dataset.marker = "r";
-  ddPop();
+  addbkpop();
   event.stopPropagation();
 });
 
@@ -2998,7 +3149,7 @@ document.getElementById("rnam").addEventListener("keyup", function () {
   this.classList.add("pending");
   document.getElementById("rnam").classList.remove("updated");
   updchkr();
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("onam").addEventListener("focusin", function (event) {
@@ -3007,11 +3158,11 @@ document.getElementById("onam").addEventListener("focusin", function (event) {
   document.getElementById("dd").classList.remove("hideme");*/
   positionDropdown();
   document.getElementById("dd").dataset.marker = "o";
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("onam").addEventListener("keyup", function () {
-  ddPop();
+  addbkpop();
 });
 
 document.querySelectorAll(".cndd").forEach(function (element) {
@@ -3060,9 +3211,6 @@ document.getElementById("cliContact").addEventListener('keyup', function() {
 });
 
 document.getElementById("client").addEventListener('focusin', function() {
-  /*this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").dataset.marker = "client";
   ddCoPop(this.value);
@@ -3272,11 +3420,11 @@ document.getElementById("cnam").addEventListener("focusin", function() {
   updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'c');
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("cnam").addEventListener("keyup", function() {
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("dnam").addEventListener("focusin", function() {
@@ -3285,11 +3433,11 @@ document.getElementById("dnam").addEventListener("focusin", function() {
   updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'd');
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("dnam").addEventListener("keyup", function() {
-  ddPop();
+  addbkpop();
 });
 notebody.addEventListener('dragover', allowDrop);
 notebody.addEventListener('drop', drop);
@@ -3372,3 +3520,14 @@ document.addEventListener('focus', function(event) {
 
   }
 }, true);
+
+window.addEventListener('beforeunload', (event) => {
+
+  if (document.getElementById("updcheck").classList.contains("chkpend")) {
+      // Trigger any needed updates here
+      document.getElementById("updcheck").focus(); // Trigger blur-based save if relevant
+
+      // Show a confirmation dialog
+      event.returnValue = 'Pending Changes detected, attempting to update server. Are you sure you want to leave?';
+  }
+});
