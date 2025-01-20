@@ -64,7 +64,7 @@ $now = date('Y-m-d H:i:s');
         if ($val == '') {
             $where .= $mkr . $key . ' IS NULL AND ';
         } else {
-            $where .= $mkr . $key . '="' . str_replace('"', '""', $val) . '" AND ';
+            $where .= $mkr . $key . '="' . safeStrReplace('"', '""', $val) . '" AND ';
         }
     }
     $where = substr($where, 0, strlen($where)-5);

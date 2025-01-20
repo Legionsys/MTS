@@ -232,7 +232,7 @@ class TCPDF_STATIC {
 				case 'start': {
 					if (strpos($border, 'B') !== false) {
 						// remove bottom line
-						$newkey = str_replace('B', '', $border);
+						$newkey = safeStrReplace('B', '', $border);
 						if (strlen($newkey) > 0) {
 							$brd[$newkey] = $style;
 						}
@@ -243,7 +243,7 @@ class TCPDF_STATIC {
 				case 'middle': {
 					if (strpos($border, 'B') !== false) {
 						// remove bottom line
-						$newkey = str_replace('B', '', $border);
+						$newkey = safeStrReplace('B', '', $border);
 						if (strlen($newkey) > 0) {
 							$brd[$newkey] = $style;
 						}
@@ -252,7 +252,7 @@ class TCPDF_STATIC {
 					}
 					if (strpos($border, 'T') !== false) {
 						// remove bottom line
-						$newkey = str_replace('T', '', $border);
+						$newkey = safeStrReplace('T', '', $border);
 						if (strlen($newkey) > 0) {
 							$brd[$newkey] = $style;
 						}
@@ -263,7 +263,7 @@ class TCPDF_STATIC {
 				case 'end': {
 					if (strpos($border, 'T') !== false) {
 						// remove bottom line
-						$newkey = str_replace('T', '', $border);
+						$newkey = safeStrReplace('T', '', $border);
 						if (strlen($newkey) > 0) {
 							$brd[$newkey] = $style;
 						}
@@ -365,7 +365,7 @@ class TCPDF_STATIC {
 		foreach ($replace as $rep) {
 			foreach ($rep[3] as $a) {
 				if (strpos($page, $a) !== false) {
-					$page = str_replace($a, $rep[0], $page);
+					$page = safeStrReplace($a, $rep[0], $page);
 					$diff += ($rep[2] - $rep[1]);
 				}
 			}
@@ -396,7 +396,7 @@ class TCPDF_STATIC {
 	 * @public static
 	 */
 	public static function getFormattedDate($time) {
-		return substr_replace(date('YmdHisO', intval($time)), '\'', (0 - 2), 0).'\'';
+		return subsafeStrReplace(date('YmdHisO', intval($time)), '\'', (0 - 2), 0).'\'';
 	}
 
 	/**
@@ -1172,8 +1172,8 @@ class TCPDF_STATIC {
 		$css = $tidy_head->value;
 		$css = preg_replace('/<style([^>]+)>/ims', '<style>', $css);
 		$css = preg_replace('/<\/style>(.*)<style>/ims', "\n", $css);
-		$css = str_replace('/*<![CDATA[*/', '', $css);
-		$css = str_replace('/*]]>*/', '', $css);
+		$css = safeStrReplace('/*<![CDATA[*/', '', $css);
+		$css = safeStrReplace('/*]]>*/', '', $css);
 		preg_match('/<style>(.*)<\/style>/ims', $css, $matches);
 		if (isset($matches[1])) {
 			$css = strtolower($matches[1]);
@@ -1186,7 +1186,7 @@ class TCPDF_STATIC {
 		$tidy_body = tidy_get_body($tidy);
 		$html = $tidy_body->value;
 		// fix some self-closing tags
-		$html = str_replace('<br>', '<br />', $html);
+		$html = safeStrReplace('<br>', '<br />', $html);
 		// remove some empty tag blocks
 		$html = preg_replace('/<div([^\>]*)><\/div>/', '', $html);
 		$html = preg_replace('/<p([^\>]*)><\/p>/', '', $html);
@@ -1545,7 +1545,7 @@ class TCPDF_STATIC {
 		foreach($patterns_array as $val) {
 			if (!TCPDF_STATIC::empty_string($val)) {
 				$val = trim($val);
-				$val = str_replace('\'', '\\\'', $val);
+				$val = safeStrReplace('\'', '\\\'', $val);
 				$key = preg_replace('/[0-9]+/', '', $val);
 				$patterns[$key] = $val;
 			}
@@ -1935,7 +1935,7 @@ class TCPDF_STATIC {
 		//
 		$url = $file;
 		if (preg_match('%^//%', $url) && !empty($_SERVER['HTTP_HOST'])) {
-			$url = $protocol.':'.str_replace(' ', '%20', $url);
+			$url = $protocol.':'.safeStrReplace(' ', '%20', $url);
 		}
 		$url = htmlspecialchars_decode($url);
 		$alt[] = $url;
@@ -1949,7 +1949,7 @@ class TCPDF_STATIC {
 				$host = $protocol.'://'.$_SERVER['HTTP_HOST'];
 				if (strpos($url, $host) === 0) {
 				    // convert URL to full server path
-				    $tmp = str_replace($host, $_SERVER['DOCUMENT_ROOT'], $url);
+				    $tmp = safeStrReplace($host, $_SERVER['DOCUMENT_ROOT'], $url);
 				    $alt[] = htmlspecialchars_decode(urldecode($tmp));
 				}
 			}

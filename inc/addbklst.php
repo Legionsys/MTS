@@ -6,10 +6,10 @@ if (isset($_POST['stxt'])) {
 $emparray = array();
 require_once 'dbh.inc.php';
 
-$stxt = str_replace(" and ","%",$stxt);
-$stxt = str_replace(" AND ","%",$stxt);
-$stxt = str_replace(" And ","%",$stxt);
-$stxt = str_replace("'","%",$stxt);
+$stxt = safeStrReplace(" and ","%",$stxt);
+$stxt = safeStrReplace(" AND ","%",$stxt);
+$stxt = safeStrReplace(" And ","%",$stxt);
+$stxt = safeStrReplace("'","%",$stxt);
 
 //$sql = "SELECT a.cnID,a.cnNum,a.snam,a.rnam,sum(ifnull(b.noItem,0)) as titm,sum(ifnull(b.itWgt,0)) as twgt,sum(ifnull((b.itLen*b.itWid*b.itHei*b.itQty)/1000000,0)) as tcub FROM conNotes a LEFT JOIN conDets b on a.cnID = b.cnID WHERE a.jobID = $jbno group by a.cnID,a.cnNum,a.snam,a.rnam;";
 

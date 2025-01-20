@@ -85,7 +85,7 @@ class TCPDF_FONTS {
 		$font_name = preg_replace('/[^a-z0-9_]/', '', $font_name);
 		$search  = array('bold', 'oblique', 'italic', 'regular');
 		$replace = array('b', 'i', 'i', '');
-		$font_name = str_replace($search, $replace, $font_name);
+		$font_name = safeStrReplace($search, $replace, $font_name);
 		if (empty($font_name)) {
 			// set generic name
 			$font_name = 'tcpdffont';

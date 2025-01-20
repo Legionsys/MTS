@@ -1622,8 +1622,8 @@ class TCPDFBarcode {
 		}
 		$bararray = array('code' => $code, 'maxw' => 0, 'maxh' => 2, 'bcode' => array());
 		$k = 0;
-		$code = str_replace('-', '', $code);
-		$code = str_replace(' ', '', $code);
+		$code = safeStrReplace('-', '', $code);
+		$code = safeStrReplace(' ', '', $code);
 		$len = strlen($code);
 		// calculate checksum
 		$sum = 0;

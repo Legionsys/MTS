@@ -7,10 +7,11 @@ if (isset($_POST["submit"])) {
     if(isset($_POST["remember"])){
         $rm = $_POST["remember"];
     }
-    require_once 'dbh.inc.php';
-    require_once 'functions.inc.php';
 
-   
+    define("FS_ROOT", realpath(dirname(__DIR__)));
+    require_once FS_ROOT.'/dbh.inc.php';
+    require_once FS_ROOT.'/functions.inc.php';
+    
     if (emptyInputLogin($username, $pwd) !== false) {
         header("location: ../index.php?error=emptyinput");
         exit();

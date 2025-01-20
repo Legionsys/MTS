@@ -4327,12 +4327,12 @@ class TCPDF {
 		// search and include font file
 		if (TCPDF_STATIC::empty_string($fontfile) OR (!@TCPDF_STATIC::file_exists($fontfile))) {
 			// build a standard filenames for specified font
-			$tmp_fontfile = str_replace(' ', '', $family).strtolower($style).'.php';
+			$tmp_fontfile = safeStrReplace(' ', '', $family).strtolower($style).'.php';
 			$fontfile = TCPDF_FONTS::getFontFullPath($tmp_fontfile, $fontdir);
 			if (TCPDF_STATIC::empty_string($fontfile)) {
 				$missing_style = true;
 				// try to remove the style part
-				$tmp_fontfile = str_replace(' ', '', $family).'.php';
+				$tmp_fontfile = safeStrReplace(' ', '', $family).'.php';
 				$fontfile = TCPDF_FONTS::getFontFullPath($tmp_fontfile, $fontdir);
 			}
 		}
@@ -5139,7 +5139,7 @@ class TCPDF {
 	 */
 	protected function getCellCode($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M') {
 		// replace 'NO-BREAK SPACE' (U+00A0) character with a simple space
-		$txt = str_replace(TCPDF_FONTS::unichr(160, $this->isunicode), ' ', $txt);
+		$txt = safeStrReplace(TCPDF_FONTS::unichr(160, $this->isunicode), ' ', $txt);
 		$prev_cell_margin = $this->cell_margin;
 		$prev_cell_padding = $this->cell_padding;
 		$txt = TCPDF_STATIC::removeSHY($txt, $this->isunicode);
@@ -5449,7 +5449,7 @@ class TCPDF {
 			if (($align == 'J') AND ($ns > 0)) {
 				if ($this->isUnicodeFont()) {
 					// get string width without spaces
-					$width = $this->GetStringWidth(str_replace(' ', '', $txt));
+					$width = $this->GetStringWidth(safeStrReplace(' ', '', $txt));
 					// calculate average space width
 					$spacewidth = -1000 * ($w - $width - $this->cell_padding['L'] - $this->cell_padding['R']) / ($ns?$ns:1) / ($this->FontSize?$this->FontSize:1);
 					if ($this->font_stretching != 100) {
@@ -5457,7 +5457,7 @@ class TCPDF {
 						$spacewidth /= ($this->font_stretching / 100);
 					}
 					// set word position to be used with TJ operator
-					$txt2 = str_replace(chr(0).chr(32), ') '.sprintf('%F', $spacewidth).' (', $txt2);
+					$txt2 = safeStrReplace(chr(0).chr(32), ') '.sprintf('%F', $spacewidth).' (', $txt2);
 					$unicode_justification = true;
 				} else {
 					// get string width
@@ -5474,7 +5474,7 @@ class TCPDF {
 				$width = $w - $this->cell_padding['L'] - $this->cell_padding['R'];
 			}
 			// replace carriage return characters
-			$txt2 = str_replace("\r", ' ', $txt2);
+			$txt2 = safeStrReplace("\r", ' ', $txt2);
 			switch ($align) {
 				case 'C': {
 					$dx = ($w - $width) / 2;
@@ -6363,7 +6363,7 @@ class TCPDF {
 			$margin = $this->cell_margin;
 		}
 		// remove carriage returns
-		$s = str_replace("\r", '', $txt);
+		$s = safeStrReplace("\r", '', $txt);
 		// check if string contains arabic text
 		if (preg_match(TCPDF_FONT_DATA::$uni_RE_PATTERN_ARABIC, $s)) {
 			$arabic = true;
@@ -7642,7 +7642,7 @@ class TCPDF {
 			// replace the ByteRange
 			$byterange = sprintf('/ByteRange[0 %u %u %u]', $byte_range[1], $byte_range[2], $byte_range[3]);
 			$byterange .= str_repeat(' ', ($byterange_string_len - strlen($byterange)));
-			$pdfdoc = str_replace(TCPDF_STATIC::$byterange_string, $byterange, $pdfdoc);
+			$pdfdoc = safeStrReplace(TCPDF_STATIC::$byterange_string, $byterange, $pdfdoc);
 			// write the document to a temporary folder
 			$tempdoc = TCPDF_STATIC::getObjFilename('doc', $this->file_id);
 			$f = TCPDF_STATIC::fopenLocal($tempdoc, 'wb');
@@ -7937,7 +7937,7 @@ class TCPDF {
 						$chrdiff = floor(($diff + 11) * $ratio);
 						$shift = str_repeat(' ', $chrdiff);
 					}
-					$page = str_replace($aa, $shift, $page);
+					$page = safeStrReplace($aa, $shift, $page);
 				}
 			}
 		}
@@ -8015,7 +8015,7 @@ class TCPDF {
 			// replace right shift alias
 			$temppage = $this->replaceRightShiftPageNumAliases($temppage, $pnalias[4], max($pdiff, $gdiff));
 			// replace EPS marker
-			$temppage = str_replace($this->epsmarker, '', $temppage);
+			$temppage = safeStrReplace($this->epsmarker, '', $temppage);
 			//Page
 			$this->page_obj_id[$n] = $this->_newobj();
 			$out = '<<';
@@ -9301,7 +9301,7 @@ class TCPDF {
 	protected function _putxobjects() {
 		foreach ($this->xobjects as $key => $data) {
 			if (isset($data['outdata'])) {
-				$stream = str_replace($this->epsmarker, '', trim($data['outdata']));
+				$stream = safeStrReplace($this->epsmarker, '', trim($data['outdata']));
 				$out = $this->_getobj($data['n'])."\n";
 				$out .= '<<';
 				$out .= ' /Type /XObject';
@@ -9405,7 +9405,7 @@ class TCPDF {
 		foreach ($this->spot_colors as $name => $color) {
 			$this->_newobj();
 			$this->spot_colors[$name]['n'] = $this->n;
-			$out = '[/Separation /'.str_replace(' ', '#20', $name);
+			$out = '[/Separation /'.safeStrReplace(' ', '#20', $name);
 			$out .= ' /DeviceCMYK <<';
 			$out .= ' /Range [0 1 0 1 0 1 0 1] /C0 [0 0 0 0]';
 			$out .= ' '.sprintf('/C1 [%F %F %F %F] ', ($color['C'] / 100), ($color['M'] / 100), ($color['Y'] / 100), ($color['K'] / 100));
@@ -14132,9 +14132,9 @@ class TCPDF {
 			}
 			if (!empty($spot_colors)) {
 				$spot_colors = substr($spot_colors, 1);
-				$colors = str_replace('ALLSPOT', $spot_colors, $colors);
+				$colors = safeStrReplace('ALLSPOT', $spot_colors, $colors);
 			} else {
-				$colors = str_replace('ALLSPOT', 'NONE', $colors);
+				$colors = safeStrReplace('ALLSPOT', 'NONE', $colors);
 			}
 		}
 		$bars = explode(',', $colors);
@@ -14268,16 +14268,16 @@ class TCPDF {
 		$type = strtoupper($type);
 		$type = preg_replace('/[^A-Z\-\,]*/', '', $type);
 		// split type in single components
-		$type = str_replace('-', ',', $type);
-		$type = str_replace('TL', 'T,L', $type);
-		$type = str_replace('TR', 'T,R', $type);
-		$type = str_replace('BL', 'F,L', $type);
-		$type = str_replace('BR', 'F,R', $type);
-		$type = str_replace('A', 'T,L', $type);
-		$type = str_replace('B', 'T,R', $type);
-		$type = str_replace('T,RO', 'BO', $type);
-		$type = str_replace('C', 'F,L', $type);
-		$type = str_replace('D', 'F,R', $type);
+		$type = safeStrReplace('-', ',', $type);
+		$type = safeStrReplace('TL', 'T,L', $type);
+		$type = safeStrReplace('TR', 'T,R', $type);
+		$type = safeStrReplace('BL', 'F,L', $type);
+		$type = safeStrReplace('BR', 'F,R', $type);
+		$type = safeStrReplace('A', 'T,L', $type);
+		$type = safeStrReplace('B', 'T,R', $type);
+		$type = safeStrReplace('T,RO', 'BO', $type);
+		$type = safeStrReplace('C', 'F,L', $type);
+		$type = safeStrReplace('D', 'F,R', $type);
 		$crops = explode(',', strtoupper($type));
 		// remove duplicates
 		$crops = array_unique($crops);
@@ -15070,7 +15070,7 @@ class TCPDF {
 					// extract spot color name
 					$color_name = $matches[0];
 					// remove color name from string
-					$line = str_replace(' '.$color_name, '', $line);
+					$line = safeStrReplace(' '.$color_name, '', $line);
 					// remove pharentesis from color name
 					$color_name = substr($color_name, 1, -1);
 				}
@@ -16137,10 +16137,10 @@ class TCPDF {
 		if ($width == 0) {
 			$width = $this->w - $this->lMargin - $this->rMargin;
 		}
-		$cell_margin['T'] = $this->getHTMLUnitToUnits(str_replace('auto', '0', $cell_margin['T']), $width, 'px', false);
-		$cell_margin['R'] = $this->getHTMLUnitToUnits(str_replace('auto', '0', $cell_margin['R']), $width, 'px', false);
-		$cell_margin['B'] = $this->getHTMLUnitToUnits(str_replace('auto', '0', $cell_margin['B']), $width, 'px', false);
-		$cell_margin['L'] = $this->getHTMLUnitToUnits(str_replace('auto', '0', $cell_margin['L']), $width, 'px', false);
+		$cell_margin['T'] = $this->getHTMLUnitToUnits(safeStrReplace('auto', '0', $cell_margin['T']), $width, 'px', false);
+		$cell_margin['R'] = $this->getHTMLUnitToUnits(safeStrReplace('auto', '0', $cell_margin['R']), $width, 'px', false);
+		$cell_margin['B'] = $this->getHTMLUnitToUnits(safeStrReplace('auto', '0', $cell_margin['B']), $width, 'px', false);
+		$cell_margin['L'] = $this->getHTMLUnitToUnits(safeStrReplace('auto', '0', $cell_margin['L']), $width, 'px', false);
 		return $cell_margin;
 	}
 
@@ -16452,9 +16452,9 @@ class TCPDF {
 			$html = preg_replace("'<select([^\>]*)>'si", "<select\\1 opt=\"", $html);
 			$html = preg_replace("'#!NwL!#</select>'si", "\" />", $html);
 		}
-		$html = str_replace("\n", ' ', $html);
+		$html = safeStrReplace("\n", ' ', $html);
 		// restore textarea newlines
-		$html = str_replace('<TBR>', "\n", $html);
+		$html = safeStrReplace('<TBR>', "\n", $html);
 		// remove extra spaces from code
 		$html = preg_replace('/[\s]+<\/(table|tr|ul|ol|dl)>/', '</\\1>', $html);
 		$html = preg_replace('/'.$this->re_space['p'].'+<\/(td|th|li|dt|dd)>/'.$this->re_space['m'], '</\\1>', $html);
@@ -16583,10 +16583,10 @@ class TCPDF {
 						}
 						$key = $i;
 						// mark nested tables
-						$dom[($dom[$key]['parent'])]['content'] = str_replace('<table', '<table nested="true"', $dom[($dom[$key]['parent'])]['content']);
+						$dom[($dom[$key]['parent'])]['content'] = safeStrReplace('<table', '<table nested="true"', $dom[($dom[$key]['parent'])]['content']);
 						// remove thead sections from nested tables
-						$dom[($dom[$key]['parent'])]['content'] = str_replace('<thead>', '', $dom[($dom[$key]['parent'])]['content']);
-						$dom[($dom[$key]['parent'])]['content'] = str_replace('</thead>', '', $dom[($dom[$key]['parent'])]['content']);
+						$dom[($dom[$key]['parent'])]['content'] = safeStrReplace('<thead>', '', $dom[($dom[$key]['parent'])]['content']);
+						$dom[($dom[$key]['parent'])]['content'] = safeStrReplace('</thead>', '', $dom[($dom[$key]['parent'])]['content']);
 					}
 					// store header rows on a new table
 					if (
@@ -16608,7 +16608,7 @@ class TCPDF {
 					}
 					if (($dom[$key]['value'] == 'table') AND (!TCPDF_STATIC::empty_string($dom[($dom[$key]['parent'])]['thead']))) {
 						// remove the nobr attributes from the table header
-						$dom[($dom[$key]['parent'])]['thead'] = str_replace(' nobr="true"', '', $dom[($dom[$key]['parent'])]['thead']);
+						$dom[($dom[$key]['parent'])]['thead'] = safeStrReplace(' nobr="true"', '', $dom[($dom[$key]['parent'])]['thead']);
 						$dom[($dom[$key]['parent'])]['thead'] .= '</tablehead>';
 					}
 				} else {
@@ -16743,7 +16743,7 @@ class TCPDF {
 						if (isset($dom[$key]['style']['font-weight'])) {
 							if (strtolower($dom[$key]['style']['font-weight'][0]) == 'n') {
 								if (strpos($dom[$key]['fontstyle'], 'B') !== false) {
-									$dom[$key]['fontstyle'] = str_replace('B', '', $dom[$key]['fontstyle']);
+									$dom[$key]['fontstyle'] = safeStrReplace('B', '', $dom[$key]['fontstyle']);
 								}
 							} elseif (strtolower($dom[$key]['style']['font-weight'][0]) == 'b') {
 								$dom[$key]['fontstyle'] .= 'B';
@@ -16907,7 +16907,7 @@ class TCPDF {
 						}
 						foreach ($cellside as $psk => $psv) {
 							if (isset($dom[$key]['style']['margin-'.$psv])) {
-								$dom[$key]['margin'][$psk] = $this->getHTMLUnitToUnits(str_replace('auto', '0', $dom[$key]['style']['margin-'.$psv]), 0, 'px', false);
+								$dom[$key]['margin'][$psk] = $this->getHTMLUnitToUnits(safeStrReplace('auto', '0', $dom[$key]['style']['margin-'.$psv]), 0, 'px', false);
 							}
 						}
 						// check for CSS border-spacing properties
@@ -17792,8 +17792,8 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 								$maxkk = count($lnstring[1]) - 1;
 								for ($kk=0; $kk <= $maxkk; ++$kk) {
 									// restore special characters
-									$lnstring[1][$kk] = str_replace('#!#OP#!#', '(', $lnstring[1][$kk]);
-									$lnstring[1][$kk] = str_replace('#!#CP#!#', ')', $lnstring[1][$kk]);
+									$lnstring[1][$kk] = safeStrReplace('#!#OP#!#', '(', $lnstring[1][$kk]);
+									$lnstring[1][$kk] = safeStrReplace('#!#CP#!#', ')', $lnstring[1][$kk]);
 									// store number of spaces on the strings
 									$lnstring[2][$kk] = substr_count($lnstring[1][$kk], $spacestr);
 									// count total spaces on line
@@ -17887,7 +17887,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 											// justify block
 											if (preg_match('/([0-9\.\+\-]*)[\s]('.$strpiece[1][0].')[\s]('.$strpiece[2][0].')([\s]*)/x', $pmid, $pmatch) == 1) {
 												$newpmid = sprintf('%F',(floatval($pmatch[1]) + $spacew)).' '.$pmatch[2].' x*#!#*x'.$pmatch[3].$pmatch[4];
-												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
+												$pmid = safeStrReplace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid);
 											}
 											break;
@@ -17934,7 +17934,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 												$newx = sprintf('%F',(floatval($pmatch[1]) + $x_diff));
 												$neww = sprintf('%F',(floatval($pmatch[3]) + $w_diff));
 												$newpmid = $newx.' '.$pmatch[2].' '.$neww.' '.$pmatch[4].' x*#!#*x'.$pmatch[5].$pmatch[6];
-												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
+												$pmid = safeStrReplace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid, $newx, $neww);
 											}
 											break;
@@ -17952,7 +17952,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 												$newx2 = sprintf('%F',(floatval($pmatch[3]) + $spacew));
 												$newx3 = sprintf('%F',(floatval($pmatch[5]) + $spacew));
 												$newpmid = $newx1.' '.$pmatch[2].' '.$newx2.' '.$pmatch[4].' '.$newx3.' '.$pmatch[6].' x*#!#*x'.$pmatch[7].$pmatch[8];
-												$pmid = str_replace($pmatch[0], $newpmid, $pmid);
+												$pmid = safeStrReplace($pmatch[0], $newpmid, $pmid);
 												unset($pmatch, $newpmid, $newx1, $newx2, $newx3);
 											}
 											break;
@@ -17989,7 +17989,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 									}
 								} // end of while
 								// remove markers
-								$pmid = str_replace('x*#!#*x', '', $pmid);
+								$pmid = safeStrReplace('x*#!#*x', '', $pmid);
 								if ($this->isUnicodeFont()) {
 									// multibyte characters
 									$spacew = $spacewidthu;
@@ -18004,12 +18004,12 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 									if (preg_match_all('/\[\(([^\)]*)\)\]/x', $pmid, $pamatch) > 0) {
 										foreach($pamatch[0] as $pk => $pmatch) {
 											$replace = $pamatch[1][$pk];
-											$replace = str_replace('#!#OP#!#', '(', $replace);
-											$replace = str_replace('#!#CP#!#', ')', $replace);
-											$newpmid = '[('.str_replace(chr(0).chr(32), ') '.sprintf('%F', $spacew).' (', $replace).')]';
+											$replace = safeStrReplace('#!#OP#!#', '(', $replace);
+											$replace = safeStrReplace('#!#CP#!#', ')', $replace);
+											$newpmid = '[('.safeStrReplace(chr(0).chr(32), ') '.sprintf('%F', $spacew).' (', $replace).')]';
 											$pos = strpos($pmid, $pmatch, $pos);
 											if ($pos !== FALSE) {
-												$pmid = substr_replace($pmid, $newpmid, $pos, strlen($pmatch));
+												$pmid = subsafeStrReplace($pmid, $newpmid, $pos, strlen($pmatch));
 											}
 											++$pos;
 										}
@@ -18986,10 +18986,10 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						$testscrtype = @parse_url($imgsrc);
 						if (empty($testscrtype['query'])) {
 							// convert URL to server path
-							$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+							$imgsrc = safeStrReplace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
 						} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
 							// convert URL to server path
-							$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+							$imgsrc = safeStrReplace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
 						}
 					}
 					// get image type
@@ -21157,7 +21157,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 				--$newpage;
 				$newjs = "this.addField(\'".$pamatch[1][$pk]."\',\'".$pamatch[2][$pk]."\',".$newpage;
-				$this->javascript = str_replace($pmatch, $newjs, $this->javascript);
+				$this->javascript = safeStrReplace($pmatch, $newjs, $this->javascript);
 			}
 			unset($pamatch);
 		}
@@ -21345,7 +21345,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				}
 				--$newpage;
 				$newjs = "this.addField(\'".$pamatch[1][$pk]."\',\'".$pamatch[2][$pk]."\',".$newpage;
-				$this->javascript = str_replace($pmatch, $newjs, $this->javascript);
+				$this->javascript = safeStrReplace($pmatch, $newjs, $this->javascript);
 			}
 			unset($pamatch);
 		}
@@ -21608,7 +21608,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						} else {
 							$nr = TCPDF_FONTS::UTF8ToUTF16BE($sfill.' ', false, $this->isunicode, $this->CurrentFont).$nu;
 						}
-						$temppage = str_replace($u, $nr, $temppage);
+						$temppage = safeStrReplace($u, $nr, $temppage);
 					}
 					foreach ($pnalias['a'] as $a) {
 						$sfill = str_repeat($filler, max(0, (strlen($a) - strlen($na.' '))));
@@ -21617,7 +21617,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						} else {
 							$nr = $sfill.' '.$na;
 						}
-						$temppage = str_replace($a, $nr, $temppage);
+						$temppage = safeStrReplace($a, $nr, $temppage);
 					}
 				}
 				// save changes
@@ -21687,8 +21687,8 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 				$maxpage = max($maxpage, $outline['p']);
 			}
 			// replace templates with current values
-			$row = str_replace('#TOC_DESCRIPTION#', $outline['t'], $row);
-			$row = str_replace('#TOC_PAGE_NUMBER#', $pagenum, $row);
+			$row = safeStrReplace('#TOC_DESCRIPTION#', $outline['t'], $row);
+			$row = safeStrReplace('#TOC_PAGE_NUMBER#', $pagenum, $row);
 			// add link to page
 			$row = '<a href="#'.$outline['p'].','.$outline['y'].'">'.$row.'</a>';
 			// write bookmark entry
@@ -21748,7 +21748,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						} else {
 							$nr = $nu;
 						}
-						$temppage = str_replace($u, $nr, $temppage);
+						$temppage = safeStrReplace($u, $nr, $temppage);
 					}
 					foreach ($pnalias['a'] as $a) {
 						if ($correct_align) {
@@ -21761,7 +21761,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						} else {
 							$nr = $na;
 						}
-						$temppage = str_replace($a, $nr, $temppage);
+						$temppage = safeStrReplace($a, $nr, $temppage);
 					}
 				}
 				// save changes
@@ -24397,10 +24397,10 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						$testscrtype = @parse_url($img);
 						if (empty($testscrtype['query'])) {
 							// convert URL to server path
-							$img = str_replace(K_PATH_URL, K_PATH_MAIN, $img);
+							$img = safeStrReplace(K_PATH_URL, K_PATH_MAIN, $img);
 						} elseif (preg_match('|^https?://|', $img) !== 1) {
 							// convert server path to URL
-							$img = str_replace(K_PATH_MAIN, K_PATH_URL, $img);
+							$img = safeStrReplace(K_PATH_MAIN, K_PATH_URL, $img);
 						}
 					}
 					// get image type
@@ -24521,7 +24521,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						}
 						if (!empty($use['attribs']['style'])) {
 							// merge styles
-							$attribs['style'] = str_replace(';;',';',';'.$use['attribs']['style'].$attribs['style']);
+							$attribs['style'] = safeStrReplace(';;',';',';'.$use['attribs']['style'].$attribs['style']);
 						}
 						$attribs = array_merge($use['attribs'], $attribs);
 						$this->startSVGElementHandler($parser, $use['name'], $attribs);
