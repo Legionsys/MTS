@@ -18,7 +18,9 @@ if (isset($_POST['inv'])) {
 };
 
 $tags = isset($_POST['tags']) ? $_POST['tags'] : null;
-
+if ($tags = 'null') {
+    $tags == null;
+}
 
 define("FS_ROOT", realpath(dirname(__FILE__)));
 require_once FS_ROOT.'/dbh.inc.php';
@@ -68,9 +70,7 @@ if ($inv == "Com"){
     $sql = $sql."jobComp IS NOT NULL AND ";
 };
 
-if ($tags) {
-    echo "<script>console.log('tags proc');</script>";
-    echo "<script>console.log('tags - ".$tags."');</script>";
+if ($tags && $tags != null && $tags != 'null') {
     // Assuming you join `jobTags` table with the job table, you can filter jobs based on the selected tags.
     $tagsArray = explode(',', $tags); // Convert tags string to array
     // Example: Modify your SQL query to add a WHERE condition that matches job tags
@@ -102,7 +102,7 @@ if (strlen($clientId) > 0 and strlen($wild) > 0) {
 }    */
 
 
-echo '<script>console.log("'.$sql.'");</script>';
+//echo '<script>console.log("'.$sql.'");</script>';
 $resultData = mysqli_query($conn,$sql);
 if (mysqli_num_rows($resultData) > 0){
     while ($row = mysqli_fetch_assoc($resultData)) {
