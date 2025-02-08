@@ -18,7 +18,7 @@ if (isset($_POST['cno'])) {
         die("ERROR: " . mysqli_error($conn));
     }
 
-    $updstr = str_replace('<br>', "\n", urldecode($updstr));
+    $updstr = safeStrReplace('<br>', "\n", urldecode($updstr));
     $updstr = mysqli_real_escape_string($conn, $updstr);
 
     mysqli_stmt_bind_param($stmt, "si", $updstr, $cno);

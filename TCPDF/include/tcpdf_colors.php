@@ -320,7 +320,7 @@ class TCPDF_COLORS {
 		// RGB ARRAY
 		if (substr($color, 0, 3) == 'rgb') {
 			$codes = substr($color, 4);
-			$codes = str_replace(')', '', $codes);
+			$codes = safeStrReplace(')', '', $codes);
 			$returncolor = explode(',', $codes);
 			foreach ($returncolor as $key => $val) {
 				if (strpos($val, '%') > 0) {
@@ -337,7 +337,7 @@ class TCPDF_COLORS {
 		// CMYK ARRAY
 		if (substr($color, 0, 4) == 'cmyk') {
 			$codes = substr($color, 5);
-			$codes = str_replace(')', '', $codes);
+			$codes = safeStrReplace(')', '', $codes);
 			$returncolor = explode(',', $codes);
 			foreach ($returncolor as $key => $val) {
 				if (strpos($val, '%') !== false) {

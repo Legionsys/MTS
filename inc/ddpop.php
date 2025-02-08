@@ -11,9 +11,9 @@ require_once 'dbh.inc.php';
 //check if mrkr is in approved list
 if (in_array($mrkr, array('client','address'))) {
     //clean up search string
-    $stxt = str_replace(" and ","%",$stxt);
-    $stxt = str_replace(" AND ","%",$stxt);
-    $stxt = str_replace(" And ","%",$stxt);
+    $stxt = safeStrReplace(" and ","%",$stxt);
+    $stxt = safeStrReplace(" AND ","%",$stxt);
+    $stxt = safeStrReplace(" And ","%",$stxt);
 
     //set SQL string based off of mrkr and stxt
     if ($mrkr == 'client') {

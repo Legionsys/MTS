@@ -32,6 +32,13 @@ $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName);
 if (!$conn) {
     die("Connection Failed: " . mysqli_connect_error());
 }
+
+//functions
+
+function safeStrReplace($search, $replace, $subject) {
+    return str_replace($search, $replace, $subject ?? '');
+}
+
 /*/**
  * Log SQL error to errtable
  *

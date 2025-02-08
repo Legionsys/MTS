@@ -1859,7 +1859,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'classA': function(element) { console.log('Action for classA'); }, 
         'contcard': function(element) { 
           //Contact card Trash click
-          console.log('Action for contcard'); 
+          console.log('Trash Action for contcard'); 
           ccard = element;
           var adBuild = {
             lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
