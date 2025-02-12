@@ -64,17 +64,18 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
 
     // Determine data types for binding parameters
     $types = str_repeat('s', count($updData)) . 'i';
-
-    $refParams = array();
-    foreach (array_merge(array_values($updData), [$cno]) as $key => $value) {
-        $refParams[$key] = &$value;
+    $bind_params = array();
+    $value_refs = array();
+    foreach ($updData as &$value) { // Note: &$value for reference
+        $value_refs[] = &$value;
     }
+    $bind_params = $value_refs;
+    $bind_params[] = &$cno; // Add jobID last, by reference
 
-    //    $params = array_merge([$stmt, $types], array_values($updData), [$cno]);
-
-    // Bind parameters dynamically
-    call_user_func_array('mysqli_stmt_bind_param', array_merge([$stmt, $types], $refParams));
-    //call_user_func_array('mysqli_stmt_bind_param', $params);
+    if (!call_user_func_array('mysqli_stmt_bind_param', array_merge([$stmt, $types], $bind_params))) {
+        echo "ERROR: Binding parameters failed - " . mysqli_stmt_error($stmt);
+        exit();
+    }
 
     // Execute the query
     if (!mysqli_stmt_execute($stmt)) {
@@ -88,27 +89,3 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
     exit();
 }
 mysqli_stmt_close($stmt);
-?>
-
-/*
-if (isset($_POST['updstr'])) {
-$updstr = trim($_POST['updstr']);
-};
-*/
-/* define("FS_ROOT", realpath(dirname(__FILE__)));
-require_once FS_ROOT.'/dbh.inc.php';*//*
-
-require_once 'dbh.inc.php';
-
-$sql = "UPDATE jobList set $updstr where jobID=?;";
-$stmt = mysqli_stmt_init($conn);
-
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-return "ERROR";
-exit();
-}
-mysqli_stmt_bind_param($stmt, "i", $cno);
-
-mysqli_stmt_execute($stmt);
-$resultData = mysqli_insert_id($conn);
-echo $resultData;*/

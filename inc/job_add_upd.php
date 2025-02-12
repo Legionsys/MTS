@@ -16,13 +16,13 @@ if ($val == "") {
 require_once 'dbh.inc.php';
 $sql = "UPDATE jobList set " . $col . " = ? where jobID = ?;";
 $stmt = mysqli_stmt_init($conn);
-if (!mysqli_stmt_prepare($stmt,$sql)) {
+if (!mysqli_stmt_prepare($stmt, $sql)) {
     return "ERROR on prepare";
     exit();
 }
 //change bindings if date req.
 mysqli_stmt_bind_param($stmt, "si", $val, $jobn);
-mysqli_stmt_execute($stmt); 
+mysqli_stmt_execute($stmt);
 
 
 if (mysqli_affected_rows($conn) > 0) {
@@ -37,7 +37,7 @@ if (mysqli_affected_rows($conn) > 0) {
         mysqli_stmt_execute($stmt);
 
         $resultData2 = mysqli_stmt_get_result($stmt);
-        
+
         if ($row = mysqli_fetch_assoc($resultData2)) {
 
             if ($row[$col] == $val) {
@@ -46,7 +46,6 @@ if (mysqli_affected_rows($conn) > 0) {
                 echo "error";
             }
         }
-
     } else {
         die("ERROR: " . mysqli_error($conn));
     }
@@ -57,18 +56,3 @@ if (mysqli_affected_rows($conn) > 0) {
 
 // Close the database connection
 mysqli_close($conn);
-
-
-
-
-
-//$resultData = mysqli_insert_id($conn);
-//if ($resultData != null ) {
-//    return $resultData;
-//} else {
-//    return "ERROR on result";
-//    exit();
-//}
-//mysqli_stmt_close($stmt);
-
-?>
