@@ -28,6 +28,7 @@ $dBName = "aden_MOORTSP";
 
 
 $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName);
+mysqli_set_charset($conn, "utf8mb4");
 
 if (!$conn) {
     die("Connection Failed: " . mysqli_connect_error());
@@ -35,10 +36,17 @@ if (!$conn) {
 
 //functions
 
-function safeStrReplace($search, $replace, $subject) {
+function safeStrReplace($search, $replace, $subject)
+{
     return str_replace($search, $replace, $subject ?? '');
 }
-
+function cleanUTF8($str)
+{
+    if (mb_detect_encoding($str, 'UTF-8', true) === false) {
+        $str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
+    }
+    return $str;
+}
 /*/**
  * Log SQL error to errtable
  *
