@@ -9,7 +9,7 @@ require_once FS_ROOT . '/dbh.inc.php';
 $jobNumber = isset($_GET['job']) ? intval($_GET['job']) : null;
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 $detail = isset($_GET['detail']) ? $_GET['detail'] : null;
-$user = isset($_GET['useruid']) ? $_GET['useruid'] : null;
+$user = isset($_SESSION['useruid']) ? $_SESSION['useruid'] : null;
 
 header('Content-Type: application/json');
 if ($detail === 'null' || $detail === '') {

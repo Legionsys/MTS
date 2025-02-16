@@ -6,12 +6,13 @@ if ($builtJSON === FALSE) {
 }
 $url_Decode = urldecode($builtJSON);
 $con_arr = json_decode($url_Decode, true);
+
 if ($con_arr === null && json_last_error() !== JSON_ERROR_NONE) {
     echo 'Error decoding JSON';
     exit();
 }
 
-$jobktc = [
+$ktc = [
     'clientName' => 'clientName',
     'lstNam' => 'contd',
     'lstPh' => 'contPh',
@@ -47,7 +48,7 @@ foreach ($con_arr as $key => $val) {
 }
 $where = substr($where, 0, strlen($where) - 5);
 $sql = $sql . $where . ')';
-echo $sql;
+//echo $sql;
 $stmt = mysqli_stmt_init($conn);
 if (!mysqli_stmt_prepare($stmt, $sql)) {
     return "Error prepare failure";

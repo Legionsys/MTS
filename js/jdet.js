@@ -118,17 +118,18 @@ function chknull(value) {
 }
 function jsupupd() {
   const fragment = document.createDocumentFragment(); // Create a document fragment
+  //console.log("Sups.length = " + sups.length);
+  if (sups.length > 0) {
+    sups.forEach(function (val) {
+      const jsID = chknull(val.jsID);
+      const jsName = chknull(val.jsName);
+      const jsType = chknull(val.jsType);
+      const jsDesc = chknull(val.jsDesc);
+      const jsEst = chknull(val.jsEst);
+      const jsInvRec = chknull(val.jsInvRec);
+      const jsNotes = chknull(val.jsNotes);
 
-  sups.forEach(function (val) {
-    const jsID = chknull(val.jsID);
-    const jsName = chknull(val.jsName);
-    const jsType = chknull(val.jsType);
-    const jsDesc = chknull(val.jsDesc);
-    const jsEst = chknull(val.jsEst);
-    const jsInvRec = chknull(val.jsInvRec);
-    const jsNotes = chknull(val.jsNotes);
-
-    const txt = `
+      const txt = `
       <div class="supln" data-id="${jsID}">
         <div contenteditable="true" data-col="jsName" class="supSu lsup">${jsName}</div>
         <div contenteditable="true" data-col="jsType" class="supTy lsup">${jsType}</div>
@@ -140,102 +141,104 @@ function jsupupd() {
       </div>
     `;
 
-    fragment.appendChild(document.createRange().createContextualFragment(txt)); // Append the HTML to the fragment
-  });
-
+      fragment.appendChild(document.createRange().createContextualFragment(txt)); // Append the HTML to the fragment
+    });
+  }
   document.getElementById('supbody').appendChild(fragment); // Append the fragment to the DOM
 }
 function jnotupd() {
   notebody.innerHTML = '';
-
-  notes.forEach(function (val) {
-    /*
-    const item = document.createElement('div');
-    item.classList.add('draggable-item');
-    item.classList.add('tr');
-    item.draggable = true;
-    item.setAttribute('ondragstart', 'dragStart(event)');
-    item.setAttribute('data-id', chknull(val.jnID));
-    item.setAttribute('data-ord', chknull(val.jnOrd));
-    item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
-    notebody.appendChild(item);
-    */
-    const item = document.createElement('div');
-    item.classList.add('draggable-item');
-    item.classList.add('tr');
-    item.setAttribute('data-id', chknull(val.jnID));
-    item.setAttribute('data-ord', chknull(val.jnOrd));
+  if (notes.length > 0) {
+    notes.forEach(function (val) {
+      /*
+      const item = document.createElement('div');
+      item.classList.add('draggable-item');
+      item.classList.add('tr');
+      item.draggable = true;
+      item.setAttribute('ondragstart', 'dragStart(event)');
+      item.setAttribute('data-id', chknull(val.jnID));
+      item.setAttribute('data-ord', chknull(val.jnOrd));
+      item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
+      notebody.appendChild(item);
+      */
+      const item = document.createElement('div');
+      item.classList.add('draggable-item');
+      item.classList.add('tr');
+      item.setAttribute('data-id', chknull(val.jnID));
+      item.setAttribute('data-ord', chknull(val.jnOrd));
     
-    const dragHandle = document.createElement('div');
-    dragHandle.classList.add('drag-handle');
-    dragHandle.setAttribute('ondragstart', 'dragStart(event)');
-    dragHandle.draggable = true;
+      const dragHandle = document.createElement('div');
+      dragHandle.classList.add('drag-handle');
+      dragHandle.setAttribute('ondragstart', 'dragStart(event)');
+      dragHandle.draggable = true;
     
-    const dragImage = document.createElement('img');
-    dragImage.classList.add('scroll_img');
-    dragImage.alt = 'Move Note';
-    dragImage.src = '/img/scroll.png';
+      const dragImage = document.createElement('img');
+      dragImage.classList.add('scroll_img');
+      dragImage.alt = 'Move Note';
+      dragImage.src = '/img/scroll.png';
     
-    dragHandle.appendChild(dragImage);
+      dragHandle.appendChild(dragImage);
     
-    const noteContent = document.createElement('div');
-    noteContent.classList.add('ncol', 'td');
-    noteContent.contentEditable = 'true';
-    noteContent.setAttribute('data-col', 'jnNote');
-    noteContent.innerHTML = chknull(val.jnNote);
+      const noteContent = document.createElement('div');
+      noteContent.classList.add('ncol', 'td');
+      noteContent.contentEditable = 'true';
+      noteContent.setAttribute('data-col', 'jnNote');
+      noteContent.innerHTML = chknull(val.jnNote);
     
-    const amtContent = document.createElement('div');
-    amtContent.classList.add('namt', 'td');
-    amtContent.contentEditable = 'true';
-    amtContent.setAttribute('data-col', 'jnAmt');
-    amtContent.innerHTML = numberFormat(chknull(val.jnAmt), 2, '.', ',');
+      const amtContent = document.createElement('div');
+      amtContent.classList.add('namt', 'td');
+      amtContent.contentEditable = 'true';
+      amtContent.setAttribute('data-col', 'jnAmt');
+      amtContent.innerHTML = numberFormat(chknull(val.jnAmt), 2, '.', ',');
     
-    const trashDiv = document.createElement('div');
-    trashDiv.classList.add('ntra', 'td');
+      const trashDiv = document.createElement('div');
+      trashDiv.classList.add('ntra', 'td');
     
-    const cmdImgDiv = document.createElement('div');
-    cmdImgDiv.classList.add('cmd_img');
-    cmdImgDiv.setAttribute('data-id', chknull(val.jnID));
+      const cmdImgDiv = document.createElement('div');
+      cmdImgDiv.classList.add('cmd_img');
+      cmdImgDiv.setAttribute('data-id', chknull(val.jnID));
     
-    const trashImg = document.createElement('img');
-    trashImg.classList.add('ntrash', 'nbut');
-    trashImg.alt = 'Delete Note';
-    trashImg.src = '/img/trash.svg';
+      const trashImg = document.createElement('img');
+      trashImg.classList.add('ntrash', 'nbut');
+      trashImg.alt = 'Delete Note';
+      trashImg.src = '/img/trash.svg';
     
-    cmdImgDiv.appendChild(trashImg);
-    trashDiv.appendChild(cmdImgDiv);
+      cmdImgDiv.appendChild(trashImg);
+      trashDiv.appendChild(cmdImgDiv);
     
-    item.appendChild(dragHandle);
-    item.appendChild(noteContent);
-    item.appendChild(amtContent);
-    item.appendChild(trashDiv);
+      item.appendChild(dragHandle);
+      item.appendChild(noteContent);
+      item.appendChild(amtContent);
+      item.appendChild(trashDiv);
     
-    notebody.appendChild(item);
-  });
+      notebody.appendChild(item);
+    });
+  }
   namtTot();
 }
 function jconupd(data) {
   var contlst = document.getElementById('contlst');
   var fragment = document.createDocumentFragment();  // Use a document fragment for better performance
-  data.forEach(function (val) {
-    var div = document.createElement('div');
-    div.className = 'ccnt_card';
-    div.setAttribute('data-id', chknull(val.cnID));
+  if (data.length > 0) {
+    data.forEach(function (val) {
+      var div = document.createElement('div');
+      div.className = 'ccnt_card';
+      div.setAttribute('data-id', chknull(val.cnID));
     
-    div.innerHTML = `
+      div.innerHTML = `
       <div class="cnnum">${chknull(val.cnNum)}</div>
       <input type="checkbox" class="mcnprnt" name="mprint" value="${chknull(val.cnID)}">
       <div class="cnscomp">${chknull(val.snam)}</div>
       <div class="cnrcomp">${chknull(val.rnam)}</div>
       <div class="cnitm">${chknull(val.titm)} itms</div>
       <div class="cnwgt">${chknull(val.twgt)} kg</div>
-      <div class="cnm3">${Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(chknull(val.tcub))} m3
+      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3
       </div>
     `;
     
-    fragment.appendChild(div);  // Append each card to the fragment
-  });
-
+      fragment.appendChild(div);  // Append each card to the fragment
+    });
+  }
   contlst.innerHTML = '';  // Clear existing content if needed
   contlst.appendChild(fragment);  // Append the fragment once to the DOM
 }
@@ -338,10 +341,6 @@ function jbnot() {
   xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
   xhr.onreadystatechange = function () {
-    console.log("readyState = " + xhr.readyState);
-    console.log("status = " + xhr.status);
-    console.log("responseText = " + xhr.responseText);
-    console.log("response" + xhr.response);
     if (xhr.readyState == 4) {
       if (xhr.status == 200) {
         var data = xhr.responseText;
@@ -367,7 +366,7 @@ function jbnot() {
   xhr.onerror = function () {
     console.log("Error in making the request.");
   };
-  console.log("jbn=" + jbn + "&indi=" + ind);
+  //console.log("jbn=" + jbn + "&indi=" + ind);
   xhr.send("jbn=" + jbn + "&indi=" + ind);
 }
 async function jbcon() {
@@ -658,7 +657,7 @@ function ddConPop(val) {
     })
     .then(response => response.text())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
@@ -781,16 +780,14 @@ function ddTagPop(val) {
   }
   
   const fetchUrl = `/inc/jtags.php?action=list&detail=${encodeURIComponent(query)}&job=${jbn}`;
-  console.log(`Fetching from URL: ${fetchUrl}`); 
-
   // AJAX request to jtags.php
   fetch(fetchUrl)
     .then(response => {
-      console.log('Raw Response: ', response); // Log the raw response object
+      //console.log('Raw Response: ', response); // Log the raw response object
       return response.json();
     })
     .then(data => {
-      console.log('Parsed JSON Response: ', data); // Log the parsed JSON response
+      //console.log('Parsed JSON Response: ', data); // Log the parsed JSON response
 
       const dropdown = document.getElementById('slist'); // Get the slist element inside dd
       dropdown.innerHTML = ''; // Clear any existing content
@@ -812,9 +809,7 @@ function ddTagPop(val) {
           trashImg.className = 'img_trash tag_trash'; // Set the class to tag_trash for hiding functionality
           trashImg.src = '/img/trash.svg'; // Path to the trash icon
           trashImg.alt = 'Delete Tag';
-          trashImg.onclick = function() {
-            hideTag(tagCard); // Function to hide the tag
-          };
+
 
           // Append the trash image to the trash div
           trashDiv.appendChild(trashImg);
@@ -1437,12 +1432,14 @@ function clearTagInput() {
 }
 // Function to handle the "Add" button click
 async function addNewTag(ntv) {
+  console.log(ntv);
   const tagValue = ntv.trim();
+  console.log(tagValue);
   if (tagValue) {
       try {
           // Construct the URL with query parameters
           const url = `/inc/jtags.php?job=${encodeURIComponent(jbn)}&action=add&detail=${encodeURIComponent(tagValue)}`;
-
+        console.log(url);
           // Send the request as a GET request with query parameters
           const response = await fetch(url, {
               method: 'GET',
@@ -1801,6 +1798,7 @@ document.addEventListener('DOMContentLoaded', function () {
             lstPh: ccard.querySelector(".lstPh").innerHTML != '' ? ccard.querySelector(".lstPh").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
             lstEm: ccard.querySelector(".lstEm").innerHTML != '' ? ccard.querySelector(".lstEm").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
           };
+          console.log(adBuild);
           var senBuild = JSON.stringify(adBuild);
           console.log(senBuild);
           console.log(encodeURIComponent(senBuild));
@@ -1848,6 +1846,10 @@ document.addEventListener('DOMContentLoaded', function () {
           xhr.open("POST", "/inc/clirem.php", true);
           xhr.setRequestHeader("Content-Type", "application/json");
           xhr.send(encodeURIComponent(senBuild));
+        },
+        'tagcard': function (element) {
+          event.stopPropagation();
+          hideTag(element);
         },
         'addcard': function (element) {
           //Address card trash click
@@ -1897,13 +1899,14 @@ document.addEventListener('DOMContentLoaded', function () {
         'contcard': function (element) {
           event.preventDefault(); // Prevents input from losing focus
           var target = element;
+          console.log(target);
           if (target.parentNode.classList.contains('clicard')) {
             var target = target.parentNode;
           }
-          document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
-          document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
-          document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
-          document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
+          document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstNam").innerHTML);
+          document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstPh").innerHTML);
+          document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstEm").innerHTML);
+          document.getElementById("cliContEm2").value = "";
           document.getElementById("cliContact").classList.add("pending");
           document.getElementById("cliContPh").classList.add("pending");
           document.getElementById("cliContEm").classList.add("pending");
@@ -1911,16 +1914,16 @@ document.addEventListener('DOMContentLoaded', function () {
           updchkr();
           // call job-dets-upd function with built cards
           card.clear();
-          card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
-          card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-          card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-          card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+          card.set("cliContact", urldecoder(target.querySelector(".lstNam").innerHTML));
+          card.set("cliContPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+          card.set("cliContEm", urldecoder(target.querySelector(".lstEm").innerHTML));
+          card.set("cliContEm2", "");
     
           sncrd.clear();
-          sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
-          sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-          sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-          sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+          sncrd.set("contd", urldecoder(target.querySelector(".lstNam").innerHTML));
+          sncrd.set("contPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+          sncrd.set("contEm", urldecoder(target.querySelector(".lstEm").innerHTML));
+          sncrd.set("contEm2", "");
     
           jobupd(sncrd, card);
     
@@ -1968,7 +1971,26 @@ document.addEventListener('DOMContentLoaded', function () {
               // Handle error if clich() fails
               console.error('clich() failed:', error);
           });
-        ddclr();
+          ddclr();
+        },
+        'tagcard': function (element) {
+          event.stopPropagation();
+          addNewTag(urldecoder(element.querySelector(".tagdets").innerHTML));
+          ddclr();
+        },
+        'frtLne': function (element) {
+          event.stopPropagation();
+          if (!target.classList.contains("frtLne") && target.parentElement.classList.contains("frtLne")) {
+            target = target.parentElement;
+          }
+          var fld = "";
+          var chg = "";
+          Array.from(target.childNodes).forEach(function (frtLne) {
+              fld = frtLne.dataset.marker;
+              chg = frtLne.innerHTML;
+              document.getElementById("add" + fld).innerHTML = chg;
+          });
+          ddclr();
       },
         'addcard': function (element) {
           // Select the element
@@ -2010,32 +2032,6 @@ document.addEventListener('DOMContentLoaded', function () {
       } 
     }    
 
-  }
-    if (7 === 9) {
-      if (target.classList.contains("frtLne") || target.parentElement.classList.contains("frtLne")) {
-      //fix this one
-      event.stopPropagation();
-      if (!target.classList.contains("frtLne") && target.parentElement.classList.contains("frtLne")) {
-        target = target.parentElement;
-      }
-      var fld = "";
-      var chg = "";
-      Array.from(target.childNodes).forEach(function (frtLne) {
-          fld = frtLne.dataset.marker;
-          chg = frtLne.innerHTML;
-          document.getElementById("add" + fld).innerHTML = chg;
-      });
-      ddclr();
-      /*document.getElementById("dd").removeAttribute('marker');
-      document.getElementById("dd").classList.add("hideme");
-      clrDd();*/
-    } else if ((!target.classList.contains("add_trash") && !target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
-      event.stopPropagation();
-      addNewTag(target.innerHTML);
-    } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
-      event.stopPropagation();
-      //hideTag()
-    }
   }
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
