@@ -31,6 +31,20 @@ $conn = mysqli_connect($serverName, $dBUsername, $dBPassword, $dBName);
 if (!$conn) {
     die("Connection Failed: " . mysqli_connect_error());
 }
+
+//functions
+
+function safeStrReplace($search, $replace, $subject)
+{
+    return str_replace($search, $replace, $subject ?? '');
+}
+function cleanUTF8($str)
+{
+    if (mb_detect_encoding($str, 'UTF-8', true) === false) {
+        $str = mb_convert_encoding($str, 'UTF-8', 'ISO-8859-1');
+    }
+    return $str;
+}
 /*/**
  * Log SQL error to errtable
  *
