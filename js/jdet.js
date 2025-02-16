@@ -708,14 +708,17 @@ function ddCoPop(val) {
 
     // Check if the first row starts with 'Error'
     if (rtrn.length > 0 && !rtrn[0].clientName.startsWith('Error')) {
-        // Get the container div
+      // Get the container div
+      
         const slistDiv = document.getElementById('slist');
 
-        // Iterate through each row in the data
+      // Iterate through each row in the data
+        
         rtrn.forEach(row => {
 
             if (marker == 'Jcont') {
             } else if (marker == 'client') {
+            
             // Create the container div element
             const cliDIV = document.createElement('div');
             cliDIV.className = 'clicard';
