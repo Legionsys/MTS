@@ -1,14 +1,16 @@
 <?php
+session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 define("FS_ROOT", realpath(dirname(__FILE__)));
-require_once FS_ROOT.'/dbh.inc.php';
-session_start();
+require_once FS_ROOT . '/dbh.inc.php';
+
 // Get required parameters
 $jobNumber = isset($_GET['job']) ? intval($_GET['job']) : null;
 $action = isset($_GET['action']) ? $_GET['action'] : null;
 $detail = isset($_GET['detail']) ? $_GET['detail'] : null;
-$user = $_SESSION["useruid"]; 
+$user = isset($_SESSION['useruid']) ? $_SESSION['useruid'] : null;
+
 header('Content-Type: application/json');
 if ($detail === 'null' || $detail === '') {
     $detail = null; // You can set this to an empty string instead if needed
@@ -86,14 +88,14 @@ switch ($action) {
         }
         break;
     case 'list':
-        $srch = '%'.$detail.'%';
+        $srch = '%' . $detail . '%';
         $sql = "SELECT DISTINCT tag FROM jobTags WHERE hide IS NULL AND tag LIKE ? AND tag NOT IN (SELECT tag FROM jobTags WHERE job = ? AND removed IS NULL);";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("si", $srch, $jobNumber);
         $stmt->execute();
         $result = $stmt->get_result();
         $tags = [];
-    
+
         while ($row = $result->fetch_assoc()) {
             $tags[] = $row['tag'];
         }
@@ -101,14 +103,14 @@ switch ($action) {
         echo json_encode(['tags' => $tags]);
         break;
     case 'flist':
-        $srch = '%'.$detail.'%';
+        $srch = '%' . $detail . '%';
         $sql = "SELECT DISTINCT tag,hide FROM jobTags WHERE tag LIKE ? AND tag NOT IN (SELECT tag FROM jobTags WHERE job = ? AND removed IS NULL);";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("si", $srch, $jobNumber);
         $stmt->execute();
         $result = $stmt->get_result();
         $tags = [];
-    
+
         while ($row = $result->fetch_assoc()) {
             $tags[] = $row;
         }

@@ -22,6 +22,7 @@ var card = new Map();
 var sncrd = new Map()
 var fr = '';
 var isRotating = false;
+var clrhld;
 
 function urldecoder(str){
   return str.replace(/&amp;/g, '&')
@@ -117,17 +118,18 @@ function chknull(value) {
 }
 function jsupupd() {
   const fragment = document.createDocumentFragment(); // Create a document fragment
+  //console.log("Sups.length = " + sups.length);
+  if (sups.length > 0) {
+    sups.forEach(function (val) {
+      const jsID = chknull(val.jsID);
+      const jsName = chknull(val.jsName);
+      const jsType = chknull(val.jsType);
+      const jsDesc = chknull(val.jsDesc);
+      const jsEst = chknull(val.jsEst);
+      const jsInvRec = chknull(val.jsInvRec);
+      const jsNotes = chknull(val.jsNotes);
 
-  sups.forEach(function (val) {
-    const jsID = chknull(val.jsID);
-    const jsName = chknull(val.jsName);
-    const jsType = chknull(val.jsType);
-    const jsDesc = chknull(val.jsDesc);
-    const jsEst = chknull(val.jsEst);
-    const jsInvRec = chknull(val.jsInvRec);
-    const jsNotes = chknull(val.jsNotes);
-
-    const txt = `
+      const txt = `
       <div class="supln" data-id="${jsID}">
         <div contenteditable="true" data-col="jsName" class="supSu lsup">${jsName}</div>
         <div contenteditable="true" data-col="jsType" class="supTy lsup">${jsType}</div>
@@ -139,102 +141,104 @@ function jsupupd() {
       </div>
     `;
 
-    fragment.appendChild(document.createRange().createContextualFragment(txt)); // Append the HTML to the fragment
-  });
-
+      fragment.appendChild(document.createRange().createContextualFragment(txt)); // Append the HTML to the fragment
+    });
+  }
   document.getElementById('supbody').appendChild(fragment); // Append the fragment to the DOM
 }
 function jnotupd() {
   notebody.innerHTML = '';
-
-  notes.forEach(function (val) {
-    /*
-    const item = document.createElement('div');
-    item.classList.add('draggable-item');
-    item.classList.add('tr');
-    item.draggable = true;
-    item.setAttribute('ondragstart', 'dragStart(event)');
-    item.setAttribute('data-id', chknull(val.jnID));
-    item.setAttribute('data-ord', chknull(val.jnOrd));
-    item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
-    notebody.appendChild(item);
-    */
-    const item = document.createElement('div');
-    item.classList.add('draggable-item');
-    item.classList.add('tr');
-    item.setAttribute('data-id', chknull(val.jnID));
-    item.setAttribute('data-ord', chknull(val.jnOrd));
+  if (notes.length > 0) {
+    notes.forEach(function (val) {
+      /*
+      const item = document.createElement('div');
+      item.classList.add('draggable-item');
+      item.classList.add('tr');
+      item.draggable = true;
+      item.setAttribute('ondragstart', 'dragStart(event)');
+      item.setAttribute('data-id', chknull(val.jnID));
+      item.setAttribute('data-ord', chknull(val.jnOrd));
+      item.innerHTML = '<div class="drag-handle"><img class="scroll_img" alt="Move Note" src="/img/scroll.png"></div><div contenteditable="true" data-col="jnNote" class="ncol td">' + chknull(val.jnNote) + '</div><div contenteditable="true" data-col="jnAmt" class="namt td">' + numberFormat(chknull(val.jnAmt), 2, '.', ',') + '</div><div class="ntra td"><div class="cmd_img" data-id="' + chknull(val.jnID) + '"><img class="ntrash nbut" alt="Delete Note" src="/img/trash.svg"></div></div>'
+      notebody.appendChild(item);
+      */
+      const item = document.createElement('div');
+      item.classList.add('draggable-item');
+      item.classList.add('tr');
+      item.setAttribute('data-id', chknull(val.jnID));
+      item.setAttribute('data-ord', chknull(val.jnOrd));
     
-    const dragHandle = document.createElement('div');
-    dragHandle.classList.add('drag-handle');
-    dragHandle.setAttribute('ondragstart', 'dragStart(event)');
-    dragHandle.draggable = true;
+      const dragHandle = document.createElement('div');
+      dragHandle.classList.add('drag-handle');
+      dragHandle.setAttribute('ondragstart', 'dragStart(event)');
+      dragHandle.draggable = true;
     
-    const dragImage = document.createElement('img');
-    dragImage.classList.add('scroll_img');
-    dragImage.alt = 'Move Note';
-    dragImage.src = '/img/scroll.png';
+      const dragImage = document.createElement('img');
+      dragImage.classList.add('scroll_img');
+      dragImage.alt = 'Move Note';
+      dragImage.src = '/img/scroll.png';
     
-    dragHandle.appendChild(dragImage);
+      dragHandle.appendChild(dragImage);
     
-    const noteContent = document.createElement('div');
-    noteContent.classList.add('ncol', 'td');
-    noteContent.contentEditable = 'true';
-    noteContent.setAttribute('data-col', 'jnNote');
-    noteContent.innerHTML = chknull(val.jnNote);
+      const noteContent = document.createElement('div');
+      noteContent.classList.add('ncol', 'td');
+      noteContent.contentEditable = 'true';
+      noteContent.setAttribute('data-col', 'jnNote');
+      noteContent.innerHTML = chknull(val.jnNote);
     
-    const amtContent = document.createElement('div');
-    amtContent.classList.add('namt', 'td');
-    amtContent.contentEditable = 'true';
-    amtContent.setAttribute('data-col', 'jnAmt');
-    amtContent.innerHTML = numberFormat(chknull(val.jnAmt), 2, '.', ',');
+      const amtContent = document.createElement('div');
+      amtContent.classList.add('namt', 'td');
+      amtContent.contentEditable = 'true';
+      amtContent.setAttribute('data-col', 'jnAmt');
+      amtContent.innerHTML = numberFormat(chknull(val.jnAmt), 2, '.', ',');
     
-    const trashDiv = document.createElement('div');
-    trashDiv.classList.add('ntra', 'td');
+      const trashDiv = document.createElement('div');
+      trashDiv.classList.add('ntra', 'td');
     
-    const cmdImgDiv = document.createElement('div');
-    cmdImgDiv.classList.add('cmd_img');
-    cmdImgDiv.setAttribute('data-id', chknull(val.jnID));
+      const cmdImgDiv = document.createElement('div');
+      cmdImgDiv.classList.add('cmd_img');
+      cmdImgDiv.setAttribute('data-id', chknull(val.jnID));
     
-    const trashImg = document.createElement('img');
-    trashImg.classList.add('ntrash', 'nbut');
-    trashImg.alt = 'Delete Note';
-    trashImg.src = '/img/trash.svg';
+      const trashImg = document.createElement('img');
+      trashImg.classList.add('ntrash', 'nbut');
+      trashImg.alt = 'Delete Note';
+      trashImg.src = '/img/trash.svg';
     
-    cmdImgDiv.appendChild(trashImg);
-    trashDiv.appendChild(cmdImgDiv);
+      cmdImgDiv.appendChild(trashImg);
+      trashDiv.appendChild(cmdImgDiv);
     
-    item.appendChild(dragHandle);
-    item.appendChild(noteContent);
-    item.appendChild(amtContent);
-    item.appendChild(trashDiv);
+      item.appendChild(dragHandle);
+      item.appendChild(noteContent);
+      item.appendChild(amtContent);
+      item.appendChild(trashDiv);
     
-    notebody.appendChild(item);
-  });
+      notebody.appendChild(item);
+    });
+  }
   namtTot();
 }
 function jconupd(data) {
   var contlst = document.getElementById('contlst');
   var fragment = document.createDocumentFragment();  // Use a document fragment for better performance
-  data.forEach(function (val) {
-    var div = document.createElement('div');
-    div.className = 'ccnt_card';
-    div.setAttribute('data-id', chknull(val.cnID));
+  if (data.length > 0) {
+    data.forEach(function (val) {
+      var div = document.createElement('div');
+      div.className = 'ccnt_card';
+      div.setAttribute('data-id', chknull(val.cnID));
     
-    div.innerHTML = `
+      div.innerHTML = `
       <div class="cnnum">${chknull(val.cnNum)}</div>
       <input type="checkbox" class="mcnprnt" name="mprint" value="${chknull(val.cnID)}">
       <div class="cnscomp">${chknull(val.snam)}</div>
       <div class="cnrcomp">${chknull(val.rnam)}</div>
       <div class="cnitm">${chknull(val.titm)} itms</div>
       <div class="cnwgt">${chknull(val.twgt)} kg</div>
-      <div class="cnm3">${Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(chknull(val.tcub))} m3
+      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3
       </div>
     `;
     
-    fragment.appendChild(div);  // Append each card to the fragment
-  });
-
+      fragment.appendChild(div);  // Append each card to the fragment
+    });
+  }
   contlst.innerHTML = '';  // Clear existing content if needed
   contlst.appendChild(fragment);  // Append the fragment once to the DOM
 }
@@ -362,7 +366,7 @@ function jbnot() {
   xhr.onerror = function () {
     console.log("Error in making the request.");
   };
-
+  //console.log("jbn=" + jbn + "&indi=" + ind);
   xhr.send("jbn=" + jbn + "&indi=" + ind);
 }
 async function jbcon() {
@@ -581,7 +585,7 @@ function fldupd(init, obj) {
 function clrDd() {
   document.getElementById("slist").innerHTML = "";
 }
-function ddPop() {
+function addbkpop() {
   clrDd();
   var stxt;
 
@@ -653,7 +657,7 @@ function ddConPop(val) {
     })
     .then(response => response.text())
     .then(data => {
-      console.log(data);
+      //console.log(data);
       document.getElementById("slist").innerHTML = data;
     })
     .catch(error => {
@@ -711,94 +715,35 @@ function ddCoPop(val) {
         rtrn.forEach(row => {
 
             if (marker == 'Jcont') {
-              
             } else if (marker == 'client') {
             // Create the container div element
-            const contcardDiv = document.createElement('div');
-            contcardDiv.className = 'contcard';
-            // Add event listeners to contcard div
-            contcardDiv.addEventListener('mousedown', function(event) {
-              event.preventDefault(); // Prevents input from losing focus
-              var target = event.target;
-              if (target.classList.contains('img_trash')) {
-                return;
-              }
-              if (target.parentNode.classList.contains('contcard')) {
-                var target = event.target.parentNode;
-              }
-              document.getElementById("client").value = urldecoder(target.querySelector(".lstcli").innerHTML);
-              document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
-              document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
-              document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
-              document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
-              document.getElementById("client").classList.add("pending");
-              document.getElementById("cliContact").classList.add("pending");
-              document.getElementById("cliContPh").classList.add("pending");
-              document.getElementById("cliContEm").classList.add("pending");
-              document.getElementById("cliContEm2").classList.add("pending");
-              updchkr();
-              //Set marker to cancel client update
-              climkr = 1;
-              //Call job client update
-              clich(urldecoder(target.querySelector(".lstcli").innerHTML), "Card").then(() => {
-                // call job-dets-upd function with built cards
-                card.clear();
-                card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
-                card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-                card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-                card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
-        
-                sncrd.clear();
-                sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
-                sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
-                sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
-                sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
-        
-                jobupd(sncrd, card);
-        
-                document.getElementById("jobRef").focus();
-
-          
-              }).catch(error => {
-                  // Handle error if clich() fails
-                  console.error('clich() failed:', error);
-              });
-              ddclr();
-              /*
-              document.getElementById("dd").removeAttribute('marker');
-              document.getElementById("dd").classList.add("hideme");
-              clrDd();
-              */
-            });
-            contcardDiv.addEventListener('mouseup', function(event) {
-                event.preventDefault(); // Prevents input from losing focus
-            });
-
+            const cliDIV = document.createElement('div');
+            cliDIV.className = 'clicard';
             // Create and append child div elements for each row property
             const lstcliDiv = document.createElement('div');
             lstcliDiv.className = 'lstcli';
             lstcliDiv.textContent = row.clientName;
-            contcardDiv.appendChild(lstcliDiv);
+            cliDIV.appendChild(lstcliDiv);
 
             const lstcontDiv = document.createElement('div');
             lstcontDiv.className = 'lstcont';
             lstcontDiv.textContent = row.contd;
-            contcardDiv.appendChild(lstcontDiv);
+            cliDIV.appendChild(lstcontDiv);
 
             const lstcphDiv = document.createElement('div');
             lstcphDiv.className = 'lstcph';
             lstcphDiv.textContent = row.contPh;
-            contcardDiv.appendChild(lstcphDiv);
+            cliDIV.appendChild(lstcphDiv);
 
             const lstctcDiv = document.createElement('div');
             lstctcDiv.className = 'lstctc';
             lstctcDiv.textContent = row.contEm;
-            contcardDiv.appendChild(lstctcDiv);
+            cliDIV.appendChild(lstctcDiv);
 
             const lstctc2Div = document.createElement('div');
             lstctc2Div.className = 'lstctc2';
             lstctc2Div.textContent = row.contEm2;
-            contcardDiv.appendChild(lstctc2Div);
+            cliDIV.appendChild(lstctc2Div);
 
             const trashbutt = document.createElement('div');
             trashbutt.className = 'add_trash';
@@ -809,10 +754,10 @@ function ddCoPop(val) {
             imgTrash.src = '/img/trash.svg';
             trashbutt.appendChild(imgTrash);
 
-            contcardDiv.appendChild(trashbutt);
+            cliDIV.appendChild(trashbutt);
 
             // Append the container div to the slist div
-            slistDiv.appendChild(contcardDiv);
+            slistDiv.appendChild(cliDIV);
       }});
     }})
     .catch(error => {
@@ -826,26 +771,23 @@ function ddCoPop(val) {
   }
 }
 function ddTagPop(val) {
-  const inputField = document.getElementById('tag-input'); // Assuming your input field has this ID
-  let query = val.trim(); // Get the value of the input field
+  const inputField = document.getElementById('tag-input'); 
+  let query = val.trim(); 
 
-  // Ensure the query is not empty
+  
   if (query === '') {
     query = null;
   }
   
   const fetchUrl = `/inc/jtags.php?action=list&detail=${encodeURIComponent(query)}&job=${jbn}`;
-  
-  console.log(`Fetching from URL: ${fetchUrl}`); // Log the URL being fetched
-
   // AJAX request to jtags.php
   fetch(fetchUrl)
     .then(response => {
-      console.log('Raw Response: ', response); // Log the raw response object
+      //console.log('Raw Response: ', response); // Log the raw response object
       return response.json();
     })
     .then(data => {
-      console.log('Parsed JSON Response: ', data); // Log the parsed JSON response
+      //console.log('Parsed JSON Response: ', data); // Log the parsed JSON response
 
       const dropdown = document.getElementById('slist'); // Get the slist element inside dd
       dropdown.innerHTML = ''; // Clear any existing content
@@ -853,11 +795,9 @@ function ddTagPop(val) {
       if (data.tags && data.tags.length > 0) {
         // Loop through the array and create the necessary divs
         data.tags.forEach(tag => {
-          // Create the tagcard div (formatted like contcard)
           const tagCard = document.createElement('div');
           tagCard.className = 'tagcard'; // Apply the tagcard class for styling
 
-          // Create the tagdets div (formatted like lstNam)
           const tagDets = document.createElement('div');
           tagDets.className = 'tagdets lstNam'; // Apply both tagdets and lstNam classes for styling
           tagDets.textContent = tag; // Set the tag name
@@ -869,9 +809,7 @@ function ddTagPop(val) {
           trashImg.className = 'img_trash tag_trash'; // Set the class to tag_trash for hiding functionality
           trashImg.src = '/img/trash.svg'; // Path to the trash icon
           trashImg.alt = 'Delete Tag';
-          trashImg.onclick = function() {
-            hideTag(tagCard); // Function to hide the tag
-          };
+
 
           // Append the trash image to the trash div
           trashDiv.appendChild(trashImg);
@@ -1237,9 +1175,6 @@ function ccntLoad(cno) {
 function clich(client, msg) {
     return new Promise((resolve, reject) => {
         var updclient = encodeURIComponent(client);
-
-        
-
         fetch("/inc/job-cli-ch.php", {
             method: 'POST',
             headers: {
@@ -1329,7 +1264,6 @@ function logOrderChange() {
   xhr.onerror = function () {
     console.error("Error in making the request.");
   };
-
   const requestBody = `nord=${newOrder}&job=${jbn}`;
   xhr.send(requestBody);
 
@@ -1358,13 +1292,15 @@ function hlChange(){
   //update server
   sendUpdate(cno,'conNote', crd);
 }
-function jobupd(scrd,crd) {
+function jobupd(scrd, crd) {
   fetch("/inc/job-dets-upd.php", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-      body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(scrd))) + "&cno=" + jbn,
+    
+    body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(scrd))) + "&cno=" + jbn,
+      
     }).then(response => response.text()).then(data => {
       if (data == "success") {
         for (let [key, value] of crd) {
@@ -1449,7 +1385,8 @@ function showTagInput() {
   if (dd) {
       dd.classList.add('ddTag');
       dd.dataset.marker = "TAG";
-      document.querySelector(".ddbrtxt").innerHTML = "Tag Suggestions";
+    document.querySelector(".ddbrtxt").innerHTML = "Tag Suggestions";
+    document.getElementById('slist').innerHTML = '';
       ddTagPop("");
   } 
 }
@@ -1495,13 +1432,14 @@ function clearTagInput() {
 }
 // Function to handle the "Add" button click
 async function addNewTag(ntv) {
+  console.log(ntv);
   const tagValue = ntv.trim();
-
+  console.log(tagValue);
   if (tagValue) {
       try {
           // Construct the URL with query parameters
           const url = `/inc/jtags.php?job=${encodeURIComponent(jbn)}&action=add&detail=${encodeURIComponent(tagValue)}`;
-
+        console.log(url);
           // Send the request as a GET request with query parameters
           const response = await fetch(url, {
               method: 'GET',
@@ -1743,7 +1681,6 @@ async function hideTag(tagCard) {
       console.error("Tag is missing");
       return;
   }
-
   // Construct the URL with query parameters for the hide action
   const url = `/inc/jtags.php?action=hide&detail=${encodeURIComponent(tagValue)}&job=${jbn}`;
   
@@ -1808,6 +1745,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const notebody = document.getElementById('notebody');
   actcn = null;
   climkr = 0;
+  clrhld = 0;
   //jbn = 0;
   jbn = Number(getSearchParams("job_no")) || 0;
   firstpop();
@@ -1845,236 +1783,256 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById("slist").addEventListener('click', function (event) {
     var target = event.target;
-
-    if (!target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard"))) {
-      if (!target.classList.contains("contcard")) {
-        target = event.target.parentElement;
-      }
-
-      var updstr = "";
-      var cno = document.getElementById("cnID").value;
-      var mrkr = document.getElementById("dd").getAttribute('data-marker');
-
-      //set document fields and sncrd for sending and card for updating status
-      if (mrkr == 'Jcont') {
-        document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstNam").innerHTML);
-        document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstPh").innerHTML);
-        document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstEm").innerHTML);
-
-        document.getElementById("cliContact").classList.add("pending");
-        document.getElementById("cliContPh").classList.add("pending");
-        document.getElementById("cliContEm").classList.add("pending");
-
-        updchkr();
-        card.set("cliContact", urldecoder(target.querySelector(".lstNam").innerHTML));
-        card.set("cliContPh", urldecoder(target.querySelector(".lstPh").innerHTML));
-        card.set("cliContEm", urldecoder(target.querySelector(".lstEm").innerHTML));
-
-        sncrd.set("contd", urldecoder(target.querySelector(".lstNam").innerHTML));
-        sncrd.set("contPh", urldecoder(target.querySelector(".lstPh").innerHTML));
-        sncrd.set("contEm", urldecoder(target.querySelector(".lstEm").innerHTML));
-      } else if (mrkr == 'client') {  
-        return;
-      } else {
-        document.getElementById(mrkr + "Ctc").value = target.querySelector(".lstNam").innerHTML;
-        document.getElementById(mrkr + "Ph").value = target.querySelector(".lstPh").innerHTML;
-        
-        document.getElementById(mrkr + "Ctc").classList.add("pending");
-        document.getElementById(mrkr + "Ph").classList.add("pending");
-
-        card.set(mrkr + "Ctc", target.querySelector(".lstNam").innerHTML);
-        card.set(mrkr + "Ph", target.querySelector(".lstPh").innerHTML);
-  
-        sncrd.set(mrkr + "Ctc", urldecoder(target.querySelector(".lstNam").innerHTML));
-        sncrd.set(mrkr + "Ph", urldecoder(target.querySelector(".lstPh").innerHTML));
-
-        if (mrkr == 'r' || mrkr == 'c') {
-
-        } else {
-          sendUpdate(cno,'conNote', card);
-          updstr = "";
-        }
-      }
-  
-      fetch("/inc/job-dets-upd.php", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-          body: "updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(sncrd))) + "&cno=" + jbn,
-        }).then(response => response.text()).then(data => {
-          if (data == "success") {
-            for (let [key, value] of card) {
-              document.getElementById(key).classList.remove("pending");
-              document.getElementById(key).value = value;
-              document.getElementById(key).classList.add("updated");
-            }
-            updchkr();
-          } else {
-            alert(data);
-          }
-        }).catch(error => {
-          console.error('Error:', error);
-        });
-      ddclr();
-      /*
-      document.getElementById("dd").removeAttribute('marker');
-      document.getElementById("dd").classList.add("hideme");
-      clrDd();
-      */
-
-    } else if (target.classList.contains("img_trash") && (target.classList.contains('contcard') || target.parentElement.classList.contains("contcard") || target.parentElement.parentElement.classList.contains("contcard"))) {
-      if (target.parentElement.parentElement.classList.contains("contcard")){
-        ccard = target.parentElement.parentElement;
-      } else if (target.parentElement.classList.contains("contcard")) {
-        ccard = target.parentElement;
-      } else if (target.classList.contains("contcard")) {
-        ccard = target;
-      } else {
-        alert("Error removing Contact information from List. Please advise an administrator");
-        return;
-      }
-
-      var adBuild = {
-        lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
-        lstcont: ccard.querySelector(".lstcont").innerHTML != '' ? ccard.querySelector(".lstcont").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
-        lstcph: ccard.querySelector(".lstcph").innerHTML != '' ? ccard.querySelector(".lstcph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
-        lstctc: ccard.querySelector(".lstctc").innerHTML != '' ? ccard.querySelector(".lstctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
-        lstctc2: ccard.querySelector(".lstctc2").innerHTML != '' ? ccard.querySelector(".lstctc2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
-    };
-    var senBuild = JSON.stringify(adBuild);
-    console.log(senBuild);
-    console.log(encodeURIComponent(senBuild));
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          console.log(xhr.responseText);
-            if (xhr.responseText.indexOf('Error') > -1) {
+    //Trash functions
+    if (Array.from(target.classList).some(className => /_trash$/.test(className))) {
+      console.log("trash targeted");
+      //Trash link functions
+      const classActions = {
+        'contcard': function (element) {
+          clrhld = 1;
+          //Contact card Trash click
+          ccard = element;
+          var adBuild = {
+            clientName: document.getElementById('client').value,
+            lstNam: ccard.querySelector(".lstNam").innerHTML != '' ? ccard.querySelector(".lstNam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstPh: ccard.querySelector(".lstPh").innerHTML != '' ? ccard.querySelector(".lstPh").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstEm: ccard.querySelector(".lstEm").innerHTML != '' ? ccard.querySelector(".lstEm").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+          };
+          console.log(adBuild);
+          var senBuild = JSON.stringify(adBuild);
+          console.log(senBuild);
+          console.log(encodeURIComponent(senBuild));
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              console.log(xhr.responseText);
+              if (xhr.responseText.indexOf('Error') > -1) {
                 alert('Address Card Removal Error');
-            } else {
+              } else {
+                ccard.remove();
+              }
+            }
+          };
+          xhr.open("POST", "/inc/conrem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
+        },
+        'clicard': function (element) {
+          //update so that it uses ELEMENT instead of contacard.
+          clrhld = 1;
+          ccard = element;
+          var adBuild = {
+            lstcli: ccard.querySelector(".lstcli").innerHTML != '' ? ccard.querySelector(".lstcli").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : document.getElementById('client').value,
+            lstcont: ccard.querySelector(".lstcont").innerHTML != '' ? ccard.querySelector(".lstcont").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstcph: ccard.querySelector(".lstcph").innerHTML != '' ? ccard.querySelector(".lstcph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc: ccard.querySelector(".lstctc").innerHTML != '' ? ccard.querySelector(".lstctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+            lstctc2: ccard.querySelector(".lstctc2").innerHTML != '' ? ccard.querySelector(".lstctc2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">") : null,
+          };
+          var senBuild = JSON.stringify(adBuild);
+          //console.log(senBuild);
+          //console.log(encodeURIComponent(senBuild));
+          var xhr = new XMLHttpRequest();
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              //console.log(xhr.responseText);
+              if (xhr.responseText.indexOf('Error') > -1) {
+                alert('Address Card Removal Error');
+              } else {
                 /*console.log(xhr.responseText);*/
                 ccard.remove();
+              }
             }
+          };
+          xhr.open("POST", "/inc/clirem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
+        },
+        'tagcard': function (element) {
+          event.stopPropagation();
+          hideTag(element);
+        },
+        'addcard': function (element) {
+          //Address card trash click
+          clrhld = 1;
+          var addCard = element;
+          var adBuild = {
+            nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add1: addCard.querySelector(".add1").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add2: addCard.querySelector(".add2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            add3: addCard.querySelector(".add3").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            st: addCard.querySelector(".st").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            pc: addCard.querySelector(".pc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            Ctc: addCard.querySelector(".Ctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+            Ph: addCard.querySelector(".Ph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
+          };
+
+          var senBuild = JSON.stringify(adBuild);
+          var xhr = new XMLHttpRequest();
+
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+              if (xhr.responseText.indexOf('Error') > -1) {
+                alert('Address Card Removal Error');
+              } else {
+                /*console.log(xhr.responseText);*/
+                addCard.remove();
+              }
+            }
+          };
+
+          xhr.open("POST", "/inc/adrem.php", true);
+          xhr.setRequestHeader("Content-Type", "application/json");
+          xhr.send(encodeURIComponent(senBuild));
         }
-    };
-
-    xhr.open("POST", "/inc/conrem.php", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(encodeURIComponent(senBuild));
-    
-    } else if ((!target.classList.contains("add_trash") && !target.parentElement.classList.contains("add_trash")) && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard") || target.parentElement.parentElement.classList.contains("addcard"))) {
-      event.stopPropagation();
-      if (!target.classList.contains("addcard")) {
-        target = event.target.parentElement;
+      };
+      for (const className in classActions) {
+        if (classActions.hasOwnProperty(className)) {
+          const closestElement = event.target.closest(`.${className}`);
+          if (closestElement) {
+            classActions[className](closestElement);
+            break; // Stop after finding the first match 
+          }
+        }
       }
-      var updstr = "";
-      var cno = document.getElementById("cnID").value;
-      var fld = "";
-      var chg = "";
-      var mrkr = document.getElementById("dd").dataset.marker;
-      var crd = new Map();
-
-      Array.from(target.children).forEach(function (child) {
-          if (!child.classList.contains('add_trash')) {
+    } else {
+      const classActions = {
+        'contcard': function (element) {
+          event.preventDefault(); // Prevents input from losing focus
+          var target = element;
+          console.log(target);
+          if (target.parentNode.classList.contains('clicard')) {
+            var target = target.parentNode;
+          }
+          document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstNam").innerHTML);
+          document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstPh").innerHTML);
+          document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstEm").innerHTML);
+          document.getElementById("cliContEm2").value = "";
+          document.getElementById("cliContact").classList.add("pending");
+          document.getElementById("cliContPh").classList.add("pending");
+          document.getElementById("cliContEm").classList.add("pending");
+          document.getElementById("cliContEm2").classList.add("pending");
+          updchkr();
+          // call job-dets-upd function with built cards
+          card.clear();
+          card.set("cliContact", urldecoder(target.querySelector(".lstNam").innerHTML));
+          card.set("cliContPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+          card.set("cliContEm", urldecoder(target.querySelector(".lstEm").innerHTML));
+          card.set("cliContEm2", "");
+    
+          sncrd.clear();
+          sncrd.set("contd", urldecoder(target.querySelector(".lstNam").innerHTML));
+          sncrd.set("contPh", urldecoder(target.querySelector(".lstPh").innerHTML));
+          sncrd.set("contEm", urldecoder(target.querySelector(".lstEm").innerHTML));
+          sncrd.set("contEm2", "");
+    
+          jobupd(sncrd, card);
+    
+          document.getElementById("jobRef").focus();
+          ddclr();
+        },
+        'clicard': function (element) {
+          event.preventDefault(); // Prevents input from losing focus
+          var target = element;
+          if (target.parentNode.classList.contains('clicard')) {
+            var target = target.parentNode;
+          }
+          document.getElementById("client").value = urldecoder(target.querySelector(".lstcli").innerHTML);
+          document.getElementById("cliContact").value = urldecoder(target.querySelector(".lstcont").innerHTML);
+          document.getElementById("cliContPh").value = urldecoder(target.querySelector(".lstcph").innerHTML);
+          document.getElementById("cliContEm").value = urldecoder(target.querySelector(".lstctc").innerHTML);
+          document.getElementById("cliContEm2").value = urldecoder(target.querySelector(".lstctc2").innerHTML);
+          document.getElementById("client").classList.add("pending");
+          document.getElementById("cliContact").classList.add("pending");
+          document.getElementById("cliContPh").classList.add("pending");
+          document.getElementById("cliContEm").classList.add("pending");
+          document.getElementById("cliContEm2").classList.add("pending");
+          updchkr();
+          //Set marker to cancel client update
+          climkr = 1;
+          //Call job client update
+          clich(urldecoder(target.querySelector(".lstcli").innerHTML), "Card").then(() => {
+            // call job-dets-upd function with built cards
+            card.clear();
+            card.set("cliContact", urldecoder(target.querySelector(".lstcont").innerHTML));
+            card.set("cliContPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+            card.set("cliContEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+            card.set("cliContEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+    
+            sncrd.clear();
+            sncrd.set("contd", urldecoder(target.querySelector(".lstcont").innerHTML));
+            sncrd.set("contPh", urldecoder(target.querySelector(".lstcph").innerHTML));
+            sncrd.set("contEm", urldecoder(target.querySelector(".lstctc").innerHTML));
+            sncrd.set("contEm2", urldecoder(target.querySelector(".lstctc2").innerHTML));
+    
+            jobupd(sncrd, card);
+    
+            document.getElementById("jobRef").focus();
+          }).catch(error => {
+              // Handle error if clich() fails
+              console.error('clich() failed:', error);
+          });
+          ddclr();
+        },
+        'tagcard': function (element) {
+          event.stopPropagation();
+          addNewTag(urldecoder(element.querySelector(".tagdets").innerHTML));
+          ddclr();
+        },
+        'frtLne': function (element) {
+          event.stopPropagation();
+          if (!target.classList.contains("frtLne") && target.parentElement.classList.contains("frtLne")) {
+            target = target.parentElement;
+          }
+          var fld = "";
+          var chg = "";
+          Array.from(target.childNodes).forEach(function (frtLne) {
+              fld = frtLne.dataset.marker;
+              chg = frtLne.innerHTML;
+              document.getElementById("add" + fld).innerHTML = chg;
+          });
+          ddclr();
+      },
+        'addcard': function (element) {
+          // Select the element
+          let mrkr = document.getElementById("dd").dataset.marker;
+          var addCard = element;
+          
+          var fld = "";
+          var chg = "";
+          Array.from(addCard.children).forEach(function (child) {
+            if (!child.classList.contains('add_trash')) {
               fld = mrkr + child.classList[0];
               chg = child.innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
               document.getElementById(fld).value = chg;
               document.getElementById(fld).classList.add("pending");
               document.getElementById(fld).classList.remove("updated");
-              updchkr();
-              crd.set(fld, chg);
-              updstr += fld + "='" + chg.replace(/\'/g, "''") + "',";
-          }
-      });
-
-      updstr = updstr.substring(0, (updstr.length - 1));
-      if (mrkr === 'd' || mrkr === 'c') {
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", "/inc/job-dets-upd.php", true);
-          xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-
-          xhr.onreadystatechange = function () {
-              if (xhr.readyState === 4 && xhr.status === 200) {
-                  /*console.log(xhr.responseText);*/
-                  if (xhr.responseText === "success") {
-                      crd.forEach(function (value, key) {
-                          document.getElementById(key).value = value;
-                          document.getElementById(key).classList.add("updated");
-                          document.getElementById(key).classList.remove("pending");
-                      });
-                      updchkr();
-                  }
-              }
-          };
-          xhr.send("updstr=" + encodeURIComponent(JSON.stringify(Object.fromEntries(crd))) + "&cno=" + encodeURIComponent(jbn));
-      } else {
-        sendUpdate(cno,'conNote', crd);
-      }
-      ddclr();
-      /*
-      document.getElementById("dd").removeAttribute('marker');
-      document.getElementById("dd").classList.add("hideme");
-      clrDd();
-      */
-    } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("addcard") || target.parentElement.classList.contains("addcard") || target.parentElement.parentElement.classList.contains("addcard"))) {
-    event.stopPropagation();
-    var addCard = target.parentElement.parentElement;
-    var adBuild = {
-        nam: addCard.querySelector(".nam").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        add1: addCard.querySelector(".add1").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        add2: addCard.querySelector(".add2").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        add3: addCard.querySelector(".add3").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        st: addCard.querySelector(".st").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        pc: addCard.querySelector(".pc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        Ctc: addCard.querySelector(".Ctc").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-        Ph: addCard.querySelector(".Ph").innerHTML.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">"),
-    };
-
-    var senBuild = JSON.stringify(adBuild);
-    console.log(senBuild);
-    console.log(encodeURIComponent(senBuild));
-    var xhr = new XMLHttpRequest();
-
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            if (xhr.responseText.indexOf('Error') > -1) {
-                alert('Address Card Removal Error');
-            } else {
-                /*console.log(xhr.responseText);*/
-                addCard.remove();
+              card.set(fld, chg);
+              sncrd.set(fld, chg);
             }
-        }
-    };
+          });
+          updchkr();
+          if (mrkr === 'd' || mrkr === 'c') {
 
-    xhr.open("POST", "/inc/adrem.php", true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.send(encodeURIComponent(senBuild));
-    } else if (target.classList.contains("frtLne") || target.parentElement.classList.contains("frtLne")) {
-      //fix this one
-      event.stopPropagation();
-      if (!target.classList.contains("frtLne") && target.parentElement.classList.contains("frtLne")) {
-        target = target.parentElement;
+            jobupd(sncrd, card);
+          } else {
+            var cno = document.getElementById("cnID").value;
+            sendUpdate(cno, 'conNote', card);
+          }
+          ddclr();
+    
       }
-      var fld = "";
-      var chg = "";
-      Array.from(target.childNodes).forEach(function (frtLne) {
-          fld = frtLne.dataset.marker;
-          chg = frtLne.innerHTML;
-          document.getElementById("add" + fld).innerHTML = chg;
-      });
-      ddclr();
-      /*document.getElementById("dd").removeAttribute('marker');
-      document.getElementById("dd").classList.add("hideme");
-      clrDd();*/
-    } else if ((!target.classList.contains("add_trash") && !target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
-      event.stopPropagation();
-      addNewTag(target.innerHTML);
-    } else if ((target.classList.contains("add_trash") || target.parentElement.classList.contains("add_trash")) && (target.classList.contains("tagcard") || target.parentElement.classList.contains("tagcard") || target.parentElement.parentElement.classList.contains("tagcard"))) {
-      event.stopPropagation();
-      //hideTag()
-    }
+    };
+    for (const className in classActions) { 
+      if (classActions.hasOwnProperty(className)) { 
+        const closestElement = event.target.closest(`.${className}`); 
+        if (closestElement) { 
+          classActions[className](closestElement); 
+          break; // Stop after finding the first match 
+        } 
+      } 
+    }    
 
+  }
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
@@ -2099,6 +2057,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var ent = element.value;
       var fldId = element.id;
       card.set(element.name, ent);
+      
       fetch("/inc/job-dets-upd.php", {
         method: 'POST',
         headers: {
@@ -2123,7 +2082,6 @@ document.addEventListener('DOMContentLoaded', function () {
     checkbox.addEventListener('change', function () {
       var val = checkbox.checked ? new Date().toISOString().split('T')[0] : "";
       var col = checkbox.getAttribute("data-par");
-  
       fetch("/inc/job_add_upd.php", {
         method: 'POST',
         headers: {
@@ -2146,6 +2104,9 @@ document.addEventListener('DOMContentLoaded', function () {
       var cur = '';
       var og = '';
       var valprep = encodeURIComponent(val);
+      console.log("col = " + col);
+      console.log("val = " + val);
+      console.log("did = " + did);
       fetch("/inc/job_add_upd.php", {
         method: 'POST',
         headers: {
@@ -2182,7 +2143,8 @@ document.addEventListener('DOMContentLoaded', function () {
   
         updchkr();
       } else {
-        alert("Error in updating: " + data);
+          alert("Error in updating: " + data);
+          console.log('here');
       }
       }).catch(function (error) {
         console.error('Error:', error);
@@ -2670,7 +2632,11 @@ document.querySelector('.wrapper').addEventListener('click', function (event) {
   const tagFocused = document.querySelector("#tag-input").matches(":focus");
 
   if (!cliContactFocused && !cnamFocused && !dnamFocused && !clientFocused && !tagFocused) {
-    ddclr();
+    if (clrhld === 0) {
+      ddclr();
+    } else {
+      clrhld = 0; 
+    }
     /*
     const dd = document.getElementById('dd');
     dd.removeAttribute('marker');
@@ -2973,7 +2939,7 @@ document.getElementById("snam").addEventListener("focusin", function (event) {
     document.getElementById("dd").classList.remove("hideme");*/
     positionDropdown();
     document.getElementById("dd").dataset.marker = "s";
-    ddPop();
+    addbkpop();
     event.stopPropagation();
 });
 
@@ -2981,7 +2947,7 @@ document.getElementById("snam").addEventListener("keyup", function () {
     this.classList.add("pending");
     document.getElementById("snam").classList.remove("updated");
     updchkr();
-    ddPop();
+    addbkpop();
 });
 
 document.getElementById("rnam").addEventListener("focusin", function (event) {
@@ -2990,7 +2956,7 @@ document.getElementById("rnam").addEventListener("focusin", function (event) {
   positionDropdown();
   
   document.getElementById("dd").dataset.marker = "r";
-  ddPop();
+  addbkpop();
   event.stopPropagation();
 });
 
@@ -2998,7 +2964,7 @@ document.getElementById("rnam").addEventListener("keyup", function () {
   this.classList.add("pending");
   document.getElementById("rnam").classList.remove("updated");
   updchkr();
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("onam").addEventListener("focusin", function (event) {
@@ -3007,11 +2973,11 @@ document.getElementById("onam").addEventListener("focusin", function (event) {
   document.getElementById("dd").classList.remove("hideme");*/
   positionDropdown();
   document.getElementById("dd").dataset.marker = "o";
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("onam").addEventListener("keyup", function () {
-  ddPop();
+  addbkpop();
 });
 
 document.querySelectorAll(".cndd").forEach(function (element) {
@@ -3060,9 +3026,6 @@ document.getElementById("cliContact").addEventListener('keyup', function() {
 });
 
 document.getElementById("client").addEventListener('focusin', function() {
-  /*this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").dataset.marker = "client";
   ddCoPop(this.value);
@@ -3117,7 +3080,7 @@ document.getElementById("addsup").addEventListener('click', function () {
 
           xhr.open("POST", "/inc/job-sup-add.php", true);
           xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-          xhr.send("jobno=" + jbn + "&crd=" + encodeURIComponent(JSON.stringify(kv)));
+        xhr.send("jobno=" + jbn + "&crd=" + encodeURIComponent(JSON.stringify(kv)));
       }
   }
 });
@@ -3267,29 +3230,23 @@ document.getElementById('cn-close').addEventListener('click', function () {
 });
 
 document.getElementById("cnam").addEventListener("focusin", function() {
-  /*this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'c');
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("cnam").addEventListener("keyup", function() {
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("dnam").addEventListener("focusin", function() {
-  /*this.parentNode.appendChild(document.querySelector('#dd'));
-  document.getElementById("dd").classList.remove("hideme");
-  updDvH('dd');*/
   positionDropdown();
   document.getElementById("dd").setAttribute('data-marker', 'd');
-  ddPop();
+  addbkpop();
 });
 
 document.getElementById("dnam").addEventListener("keyup", function() {
-  ddPop();
+  addbkpop();
 });
 notebody.addEventListener('dragover', allowDrop);
 notebody.addEventListener('drop', drop);
@@ -3372,3 +3329,14 @@ document.addEventListener('focus', function(event) {
 
   }
 }, true);
+
+window.addEventListener('beforeunload', (event) => {
+
+  if (document.getElementById("updcheck").classList.contains("chkpend")) {
+      // Trigger any needed updates here
+      document.getElementById("updcheck").focus(); // Trigger blur-based save if relevant
+
+      // Show a confirmation dialog
+      event.returnValue = 'Pending Changes detected, attempting to update server. Are you sure you want to leave?';
+  }
+});

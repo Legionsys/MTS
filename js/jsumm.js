@@ -35,7 +35,7 @@ function joblstUpd() {
 
   // Convert the data to a URL-encoded string
   var formData = "wild=" + encodeURIComponent(wild) + "&cli=" + encodeURIComponent(cli) + "&job=" + encodeURIComponent(job) + "&inv=" + encodeURIComponent(inv) + "&tags=" + encodeURIComponent(tags);
-
+  console.log(formData);
   // Send the request with the form data
   xhr.send(formData);
 }

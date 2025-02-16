@@ -25,23 +25,47 @@ if ($indi == "job") {
 
 //$sql = "SELECT * FROM conNotes where cnID=?";
 $stmt = mysqli_stmt_init($conn);
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-    echo "<script>console.log('Error with return');</script>";
+if (!mysqli_stmt_prepare($stmt, $sql)) {
+    error_log("SQL Prepare Error: " . mysqli_error($conn));
+    echo "<script>console.log('SQL Prepare Error: " . mysqli_error($conn) . "');</script>";
     exit();
 }
 mysqli_stmt_bind_param($stmt, "i", $job);
-mysqli_stmt_execute($stmt);
+if (!mysqli_stmt_execute($stmt)) {
+    error_log("SQL Execution Error: " . mysqli_stmt_error($stmt));
+    echo "<script>console.log('SQL Execution Error: " . mysqli_stmt_error($stmt) . "');</script>";
+    exit();
+}
 
 $resultData = mysqli_stmt_get_result($stmt);
-if (mysqli_num_rows($resultData) > 0){
+if (mysqli_num_rows($resultData) > 0) {
     while ($row = mysqli_fetch_assoc($resultData)) {
         $emparray[] = $row;
     }
-    echo json_encode($emparray);
- } else {
-    $result = false;
-    echo "<script>console.log('Error or Zero rows for job ".$job." using ind ".$indi."');</script>";     
+    if (!empty($emparray)) {
+        if (headers_sent()) {
+            die("Headers already sent");
+        }
+        header('Content-Type: application/json');
+        for ($i = 0; $i < count($emparray); $i++) {
+            foreach ($emparray[$i] as $key => $value) {
+                if (is_string($value)) {
+                    $emparray[$i][$key] = cleanUTF8($value);
+                }
+            }
+        }
+        $jsonData = json_encode($emparray);
+        if ($jsonData === false) {
+            error_log("JSON encode failed: " . json_last_error_msg());
+            echo json_encode(array("error" => "JSON encoding failed: " . json_last_error_msg()));
+        } else {
+            echo $jsonData;
+        }
+    } else {
+        echo json_encode(array("error" => "No data found"));
+    }
+} else {
+    echo json_encode(array("error" => "No results"));
 }
 
 mysqli_stmt_close($stmt);
-?>

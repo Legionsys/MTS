@@ -1,5 +1,7 @@
 <?php
 //include library
+
+
 define("FS_ROOT", realpath(dirname(__FILE__)));
 require FS_ROOT.'/inc/dbh.inc.php';
 include(FS_ROOT.'/TCPDF/tcpdf.php');
@@ -7,7 +9,7 @@ include(FS_ROOT.'/TCPDF/tcpdf.php');
 $pdf = new TCPDF('L','mm','A4');
 //Getting Data from Server
 if (isset($_GET['CNID'])) {
-    $CNID = str_replace("|",",",$_GET['CNID']);
+    $CNID = safeStrReplace("|",",",$_GET['CNID']);
 } else {
     exit();
 }
@@ -15,6 +17,7 @@ $MKR = '';
 if (isset($_GET['mrkr'])) {
     $MKR = $_GET['mrkr'];
 }
+
 
 
 //pull data from Server
@@ -25,7 +28,7 @@ if (mysqli_num_rows($resultData) > 0){
     //check for multiple con notes and set file name Accordingly
 
     while ($row = mysqli_fetch_assoc($resultData)) {
-        if (strlen($CNID)==strlen(str_replace(",","",$CNID))) {
+        if (strlen($CNID)==strlen(safeStrReplace(",","",$CNID))) {
             $fnam = $row['cnNum'];
         } else {
             $fnam = "MTS_CN_Pack";
@@ -98,19 +101,6 @@ if (mysqli_num_rows($resultData) > 0){
             //CN Type
             if ($i == 0) {
                 $pdf->SetXY(245,24);
-                $pdf->SetFillColor(255,165,165);
-                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
-
-                $pdf->SetFont('Helvetica','B',32);
-                $pdf->SetTextColor(255,255,255);
-                $pdf->SetXY(245,165);
-                $pdf->StartTransform();
-                $pdf->Rotate(90);
-
-                $pdf->Cell(105,40,'RECEIVERS COPY',0,0,'C',false,'',0,false,'T','C');
-                $pdf->StopTransform();
-            } else {
-                $pdf->SetXY(245,24);
                 $pdf->SetFillColor(225,225,225);
                 $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
     
@@ -121,7 +111,20 @@ if (mysqli_num_rows($resultData) > 0){
                 $pdf->Rotate(90);
     
                 $pdf->Cell(105,40,'OFFICE COPY',0,0,'C',false,'',0,false,'T','C');
-                $pdf->StopTransform();                
+                $pdf->StopTransform();   
+            } else {
+                $pdf->SetXY(245,24);
+                $pdf->SetFillColor(255,165,165);
+                $pdf->Cell(40,176,'',1,0,'L',true,'',0,false,'','C');
+
+                $pdf->SetFont('Helvetica','B',32);
+                $pdf->SetTextColor(255,255,255);
+                $pdf->SetXY(245,165);
+                $pdf->StartTransform();
+                $pdf->Rotate(90);
+
+                $pdf->Cell(105,40,'RECEIVERS COPY',0,0,'C',false,'',0,false,'T','C');
+                $pdf->StopTransform();             
             }
             $pdf->SetXY(10,30);
             $pdf->SetTextColor(0,0,0);
@@ -400,41 +403,41 @@ if (mysqli_num_rows($resultData) > 0){
             //Sender
             $pdf->SetXY(20,30);
             $pdf->SetFont('Helvetica','',12);
-            $pdf->Cell(82,6,str_replace("&nbsp"," ",$row['snam']),0,2,''); //Company Name
-            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['sadd1']),0,2,''); //Add1
+            $pdf->Cell(82,6,safeStrReplace("&nbsp"," ",$row['snam']),0,2,''); //Company Name
+            $pdf->Cell(82,6,safeStrReplace("&nbsp;"," ",$row['sadd1']),0,2,''); //Add1
             $pdf->SetXY(10,42);
-            $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['sadd2']),0,2,''); //Add2
-            $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['sadd3']),0,0,''); //Add3
-            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['sst']),0,0,'C',false,'',0,false,'','B');
-            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['spc']),0,1,'C',false,'',0,false,'','B');
+            $pdf->Cell(92,6,safeStrReplace("&nbsp;"," ",$row['sadd2']),0,2,''); //Add2
+            $pdf->Cell(69,6,safeStrReplace("&nbsp;"," ",$row['sadd3']),0,0,''); //Add3
+            $pdf->Cell(10,6,safeStrReplace("&nbsp;"," ",$row['sst']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,safeStrReplace("&nbsp;"," ",$row['spc']),0,1,'C',false,'',0,false,'','B');
             $pdf->Cell(9,6,'',0,0,'C',false,'',0,false,'','C');
-            $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['sCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(51,6,safeStrReplace("&nbsp;"," ",$row['sCtc']),0,0,'L',false,'',0,false,'','C');
             $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-            $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['sPh']),0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(29,6,safeStrReplace("&nbsp;"," ",$row['sPh']),0,0,'C',false,'',0,false,'','C');
             //Receiver
             $pdf->SetXY(116,30);
             $pdf->SetFont('Helvetica','',12);
-            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['rnam']),0,2,''); //Company Name
-            $pdf->Cell(82,6,str_replace("&nbsp;"," ",$row['radd1']),0,2,''); //Add1
+            $pdf->Cell(82,6,safeStrReplace("&nbsp;"," ",$row['rnam']),0,2,''); //Company Name
+            $pdf->Cell(82,6,safeStrReplace("&nbsp;"," ",$row['radd1']),0,2,''); //Add1
             $pdf->SetXY(106,42);
-            $pdf->Cell(92,6,str_replace("&nbsp;"," ",$row['radd2']),0,2,''); //Add2
-            $pdf->Cell(69,6,str_replace("&nbsp;"," ",$row['radd3']),0,0,''); //Add3
-            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['rst']),0,0,'C',false,'',0,false,'','B');
-            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['rpc']),0,1,'C',false,'',0,false,'','B');
+            $pdf->Cell(92,6,safeStrReplace("&nbsp;"," ",$row['radd2']),0,2,''); //Add2
+            $pdf->Cell(69,6,safeStrReplace("&nbsp;"," ",$row['radd3']),0,0,''); //Add3
+            $pdf->Cell(10,6,safeStrReplace("&nbsp;"," ",$row['rst']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,safeStrReplace("&nbsp;"," ",$row['rpc']),0,1,'C',false,'',0,false,'','B');
             $pdf->Cell(105,6,'',0,0,'C',false,'',0,false,'','C');
-            $pdf->Cell(51,6,str_replace("&nbsp;"," ",$row['rCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(51,6,safeStrReplace("&nbsp;"," ",$row['rCtc']),0,0,'L',false,'',0,false,'','C');
             $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-            $pdf->Cell(29,6,str_replace("&nbsp;"," ",$row['rPh']),0,0,'C',false,'',0,false,'','C');
+            $pdf->Cell(29,6,safeStrReplace("&nbsp;"," ",$row['rPh']),0,0,'C',false,'',0,false,'','C');
             //Other Party
             $pdf->SetXY(101,69);
             $pdf->SetFont('Helvetica','',12);
-            $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['onam']),0,2,''); //Company Name
-            $pdf->Cell(97,6,str_replace("&nbsp;"," ",$row['oadd1']),0,2,''); //Add1
-            $pdf->Cell(36,6,str_replace("&nbsp;"," ",$row['oCtc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(97,6,safeStrReplace("&nbsp;"," ",$row['onam']),0,2,''); //Company Name
+            $pdf->Cell(97,6,safeStrReplace("&nbsp;"," ",$row['oadd1']),0,2,''); //Add1
+            $pdf->Cell(36,6,safeStrReplace("&nbsp;"," ",$row['oCtc']),0,0,'L',false,'',0,false,'','C');
             $pdf->Cell(3,6,'',0,0,'L',false,'',0,false,'','C');
-            $pdf->Cell(35,6,str_replace("&nbsp;"," ",$row['oPh']),0,0,'L',false,'',0,false,'','C');
-            $pdf->Cell(10,6,str_replace("&nbsp;"," ",$row['ost']),0,0,'C',false,'',0,false,'','B');
-            $pdf->Cell(13,6,str_replace("&nbsp;"," ",$row['opc']),0,1,'C',false,'',0,false,'','B');
+            $pdf->Cell(35,6,safeStrReplace("&nbsp;"," ",$row['oPh']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(10,6,safeStrReplace("&nbsp;"," ",$row['ost']),0,0,'C',false,'',0,false,'','B');
+            $pdf->Cell(13,6,safeStrReplace("&nbsp;"," ",$row['opc']),0,1,'C',false,'',0,false,'','B');
             //biller tick
             $pdf->SetFont('zapfdingbats','',12);
             if ($row['pAcc']=='s') {
@@ -449,13 +452,13 @@ if (mysqli_num_rows($resultData) > 0){
             }
             $pdf->SetFont('Helvetica','',14);
             $pdf->SetXY(25,75);
-            $pdf->Cell(24,6,str_replace("&nbsp;"," ",$row['pAcc']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(24,6,safeStrReplace("&nbsp;"," ",$row['pAcc']),0,0,'L',false,'',0,false,'','C');
             $pdf->Cell(13,6,'',0,0,'L',false,'',0,false,'','C');
-            $pdf->Cell(26,6,str_replace("&nbsp;"," ",$row['pQuo']),0,0,'L',false,'',0,false,'','C');
+            $pdf->Cell(26,6,safeStrReplace("&nbsp;"," ",$row['pQuo']),0,0,'L',false,'',0,false,'','C');
 
             //OSC
             $pdf->SetFont('Helvetica','',14);
-            $pdf->MultiCell(152,19.2,str_replace("<br>",'\n',str_replace("&nbsp;"," ",$row['osc'])),0,'L',false,0,91,95.4,true,0,false,true,0,'C');
+            $pdf->MultiCell(152,19.2,safeStrReplace("<br>",'\n',safeStrReplace("&nbsp;"," ",$row['osc'])),0,'L',false,0,91,95.4,true,0,false,true,0,'C');
 
             $ccnid = $row['cnID'];
             $sql = "SELECT * FROM `conDets` WHERE cnID = $ccnid and frtDie is Null order by class desc LIMIT 5;";
@@ -474,19 +477,19 @@ if (mysqli_num_rows($resultData) > 0){
             //Freight Table
                     $pdf->SetFont('Helvetica','',11);
                     $pdf->SetXY(10,$hei);
-                    $pdf->Cell(30,7,str_replace("&nbsp;"," ",$frln['senRef']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['noItem']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(64,7,str_replace("&nbsp;"," ",$frln['psn']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(17,7,str_replace("&nbsp;"," ",$frln['itWgt']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itLen']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itWid']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itHei']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['itQty']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['unNum']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['class']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['sRisk']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(12,7,str_replace("&nbsp;"," ",$frln['pkGr']),0,0,'C',false,'',0,false,'T','C');
-                    $pdf->Cell(13,7,str_replace("&nbsp;"," ",$frln['pkDes']),0,1,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(30,7,safeStrReplace("&nbsp;"," ",$frln['senRef']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(13,7,safeStrReplace("&nbsp;"," ",$frln['noItem']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(64,7,safeStrReplace("&nbsp;"," ",$frln['psn']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(17,7,safeStrReplace("&nbsp;"," ",$frln['itWgt']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['itLen']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['itWid']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['itHei']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['itQty']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['unNum']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['class']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['sRisk']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(12,7,safeStrReplace("&nbsp;"," ",$frln['pkGr']),0,0,'C',false,'',0,false,'T','C');
+                    $pdf->Cell(13,7,safeStrReplace("&nbsp;"," ",$frln['pkDes']),0,1,'C',false,'',0,false,'T','C');
                     //update vars
                     $titm = $titm + $frln['noItem'];//item total
                     $twgt = $twgt + $frln['itWgt'];//weight total

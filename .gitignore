@@ -2,3 +2,4 @@
 inc/dbh.inc.php
 .cpanel.yml
 .gitignore
+phpinfo.php

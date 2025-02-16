@@ -18,14 +18,14 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
     }, $updData);
 
     define("FS_ROOT", realpath(dirname(__FILE__)));
-    require_once FS_ROOT.'/dbh.inc.php';
+    require_once FS_ROOT . '/dbh.inc.php';
 
     // Validate and sanitize column names
     $sqlColumns = "SHOW COLUMNS FROM jobList;";
     $resultColumns = mysqli_query($conn, $sqlColumns);
 
     if (!$resultColumns) {
-        echo "ERROR: Unable to fetch column names";
+        echo "ERROR: Unable to fetch column names - " . mysqli_error($conn);
         exit();
     }
 
@@ -52,6 +52,11 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
     $sql = "UPDATE jobList SET $updateString WHERE jobID=?;";
     $stmt = mysqli_stmt_init($conn);
 
+    if (!$stmt) {
+        echo "ERROR: Statement initialization failed - " . mysqli_error($conn);
+        exit();
+    }
+
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmt);
         exit();
@@ -59,10 +64,18 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
 
     // Determine data types for binding parameters
     $types = str_repeat('s', count($updData)) . 'i';
-    $params = array_merge([$stmt, $types], array_values($updData), [$cno]);
+    $bind_params = array();
+    $value_refs = array();
+    foreach ($updData as &$value) { // Note: &$value for reference
+        $value_refs[] = &$value;
+    }
+    $bind_params = $value_refs;
+    $bind_params[] = &$cno; // Add jobID last, by reference
 
-    // Bind parameters dynamically
-    call_user_func_array('mysqli_stmt_bind_param', $params);
+    if (!call_user_func_array('mysqli_stmt_bind_param', array_merge([$stmt, $types], $bind_params))) {
+        echo "ERROR: Binding parameters failed - " . mysqli_stmt_error($stmt);
+        exit();
+    }
 
     // Execute the query
     if (!mysqli_stmt_execute($stmt)) {
@@ -75,28 +88,4 @@ if (isset($_POST['updstr']) && !empty($_POST['updstr'])) {
     echo "ERROR: No JSON data received";
     exit();
 }
-/*
-if (isset($_POST['updstr'])) {
-    $updstr = trim($_POST['updstr']);
-};
-*/
-/*    define("FS_ROOT", realpath(dirname(__FILE__)));
-    require_once FS_ROOT.'/dbh.inc.php';*//*
-
-require_once 'dbh.inc.php';
-
-$sql = "UPDATE jobList set $updstr where jobID=?;";
-$stmt = mysqli_stmt_init($conn);
-
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-    return "ERROR";
-    exit();
-}
-mysqli_stmt_bind_param($stmt, "i", $cno);
-
-mysqli_stmt_execute($stmt);    
-$resultData = mysqli_insert_id($conn);
-echo $resultData;
 mysqli_stmt_close($stmt);
-*/
-?>
