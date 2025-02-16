@@ -21,7 +21,7 @@ $ktc = [
     'lstctc' => 'contEm',
     'lstctc2' => 'contEm2'
 ];
-echo json_encode($ktc);
+//echo json_encode($ktc);
 //replace keys, and check array for missing keys
 foreach ($ktc as $oldKey => $newKey) {
     // Check if the old key exists in the array
@@ -42,7 +42,7 @@ foreach ($ktc as $oldKey => $newKey) {
     }
 }
 
-echo json_encode($con_arr);
+//echo json_encode($con_arr);
 
 
 //Database connection
@@ -69,7 +69,7 @@ foreach ($con_arr as $key => $val) {
 }
 $where = substr($where, 0, strlen($where) - 5);
 $sql = $sql . $where . ')';
-echo $sql;
+//echo $sql;
 $stmt = mysqli_stmt_init($conn);
 
 if (!mysqli_stmt_prepare($stmt, $sql)) {
@@ -87,7 +87,7 @@ if (!mysqli_stmt_execute($stmt)) {
 
 $affectedRows = mysqli_stmt_affected_rows($stmt);
 
-echo $sql;
+//echo $sql;
 echo "Table Joblist: $affectedRows rows updated.\n";
 //$resultData = mysqli_insert_id($conn);
 //echo $resultData;
