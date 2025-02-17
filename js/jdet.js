@@ -464,9 +464,17 @@ function confrt(callback) {
           if (data.substring(0, 1) == '<') {
             document.getElementById('coll').insertAdjacentHTML('beforeend', data);
           } else {
-            frt = JSON.parse(data);
+            try {
+              frt = JSON.parse(data);
+            } catch (e) {
+              frt = [];
+            }
             if (frfr == 'Y') {
-              ofrt = JSON.parse(JSON.stringify(frt));
+              try {
+                ofrt = JSON.parse(JSON.stringify(frt));
+              } catch (e) {
+                ofrt = [];
+              }
             }
           }
           if (callback) callback(null, xhr);
@@ -1062,48 +1070,50 @@ function frtload(cno) {
   var oind = -1;
   var cntBody = document.getElementById('cnt_body');
   cntBody.innerHTML = '';
-  frt.forEach(function (val) {
-    if (val.cnID == cno) {
-      oind = -1;
-      ofrt.forEach(function (oval, i) {
-        if (oval.itID == val.itID) {
-          oind = i;
-          return false;
-        }
-      });
-      var row = document.createElement('tr');
-      row.setAttribute('data-id', val.itID);
-      row.innerHTML = '<td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + (val.senRef !== null ? val.senRef : '') + '</td>' +
-                      '<td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + (val.noItem !== null ? val.noItem : '') + '</td>' +
-                      '<td contenteditable="true" id="psn" data-col="psn" class="psn">' + (val.psn !== null ? val.psn : '') + '</td>' +
-                      '<td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + (val.itWgt !== null ? val.itWgt : '') + '</td>' +
-                      '<td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + (val.itLen !== null ? val.itLen : '') + '</td>' +
-                      '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + (val.itWid !== null ? val.itWid : '') + '</td>' +
-                      '<td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + (val.itHei !== null ? val.itHei : '') + '</td>' +
-                      '<td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + (val.itQty !== null ? val.itQty : '') + '</td>' +
-                      '<td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + (val.unNum !== null ? val.unNum : '') + '</td>' +
-                      '<td contenteditable="true" id="class" data-col="class" class="class">' + (val.class !== null ? val.class : '') + '</td>' +
-                      '<td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + (val.sRisk !== null ? val.sRisk : '') + '</td>' +
-                      '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + (val.pkGr !== null ? val.pkGr : '') + '</td>' +
-                      '<td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + (val.pkDes !== null ? val.pkDes : '') + '</td>' +
-                      '<td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
-      cntBody.appendChild(row);
-
-      var rows = cntBody.querySelectorAll('tr[data-id="' + val.itID + '"]');
-      rows.forEach(function (row) {
-        var cells = row.querySelectorAll('td[id]');
-        cells.forEach(function (cell) {
-          if (oind == -1) {
-            cell.classList.add('updated');
-          } else { 
-            if (cell.innerHTML != (ofrt[oind][cell.getAttribute('data-col')] !== null ? ofrt[oind][cell.getAttribute('data-col')] : '')) {
-              cell.classList.add('updated');
-            }
+  if (frt.length > 0) {
+    frt.forEach(function (val) {
+      if (val.cnID == cno) {
+        oind = -1;
+        ofrt.forEach(function (oval, i) {
+          if (oval.itID == val.itID) {
+            oind = i;
+            return false;
           }
         });
-      });
-    }
-  });
+        var row = document.createElement('tr');
+        row.setAttribute('data-id', val.itID);
+        row.innerHTML = '<td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + (val.senRef !== null ? val.senRef : '') + '</td>' +
+          '<td contenteditable="true" id="noItem" data-col="noItem" class="noItem">' + (val.noItem !== null ? val.noItem : '') + '</td>' +
+          '<td contenteditable="true" id="psn" data-col="psn" class="psn">' + (val.psn !== null ? val.psn : '') + '</td>' +
+          '<td contenteditable="true" id="itWgt" data-col="itWgt" class="itWgt">' + (val.itWgt !== null ? val.itWgt : '') + '</td>' +
+          '<td contenteditable="true" id="itLen" data-col="itLen" class="itLen">' + (val.itLen !== null ? val.itLen : '') + '</td>' +
+          '<td contenteditable="true" id="itWid" data-col="itWid" class="itWid">' + (val.itWid !== null ? val.itWid : '') + '</td>' +
+          '<td contenteditable="true" id="itHei" data-col="itHei" class="itHei">' + (val.itHei !== null ? val.itHei : '') + '</td>' +
+          '<td contenteditable="true" id="itQty" data-col="itQty" class="itQty">' + (val.itQty !== null ? val.itQty : '') + '</td>' +
+          '<td contenteditable="true" id="unNum" data-col="unNum" class="unNum">' + (val.unNum !== null ? val.unNum : '') + '</td>' +
+          '<td contenteditable="true" id="class" data-col="class" class="class">' + (val.class !== null ? val.class : '') + '</td>' +
+          '<td contenteditable="true" id="sRisk" data-col="sRisk" class="sRisk">' + (val.sRisk !== null ? val.sRisk : '') + '</td>' +
+          '<td contenteditable="true" id="pkGr" data-col="pkGr" class="pkGr">' + (val.pkGr !== null ? val.pkGr : '') + '</td>' +
+          '<td contenteditable="true" id="pkDes" data-col="pkDes" class="pkDes">' + (val.pkDes !== null ? val.pkDes : '') + '</td>' +
+          '<td class="cn_ctrls" data-col="cmd"><div class="cmd_img"><img class="cntrash" class="cnbut" alt="Delete Freight Note Line" src="/img/trash.svg"></div></td></tr>';
+        cntBody.appendChild(row);
+
+        var rows = cntBody.querySelectorAll('tr[data-id="' + val.itID + '"]');
+        rows.forEach(function (row) {
+          var cells = row.querySelectorAll('td[id]');
+          cells.forEach(function (cell) {
+            if (oind == -1) {
+              cell.classList.add('updated');
+            } else {
+              if (cell.innerHTML != (ofrt[oind][cell.getAttribute('data-col')] !== null ? ofrt[oind][cell.getAttribute('data-col')] : '')) {
+                cell.classList.add('updated');
+              }
+            }
+          });
+        });
+      }
+    });
+  }
 
   if (pauseReq) {
     pauseReq = false;
