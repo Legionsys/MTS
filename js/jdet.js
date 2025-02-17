@@ -311,9 +311,17 @@ function jbsu() {
         if (data.substring(0, 1) == '<') {
           document.getElementById('coll').insertAdjacentHTML('beforeend', data);
         } else {
-          sups = JSON.parse(data);
+          try {
+            sups = JSON.parse(data);
+          } catch (e) {
+            sups = [];
+          }
           if (frsu == 'Y') {
-            osups = JSON.parse(JSON.stringify(sups));
+            try {
+              osups = JSON.parse(JSON.stringify(sups));
+            } catch (e) {
+              osups = [];
+            }
           }
           if (upd === "y") {
             jsupupd();
@@ -347,9 +355,17 @@ function jbnot() {
         if (data.substring(0, 1) == '<') {
           document.getElementById('coll').insertAdjacentHTML('beforeend', data);
         } else {
-          notes = JSON.parse(data);
+          try {
+            notes = JSON.parse(data);
+          } catch (e) {
+            notes = [];
+          }
           if (frnot == 'Y') {
-            onotes = JSON.parse(JSON.stringify(notes));
+            try {
+              onotes = JSON.parse(JSON.stringify(notes));
+            } catch (e) {
+              onotes = [];
+            }
           }
           if (upd === "y") {
             jnotupd();
@@ -397,10 +413,18 @@ async function jbcon() {
       document.getElementById('coll').insertAdjacentHTML('beforeend', data);
     } else {
       newCnotData = JSON.parse(data);  // Parse the JSON into the local variable
-      cnot = JSON.parse(JSON.stringify(newCnotData));
+      try {
+        cnot = JSON.parse(JSON.stringify(newCnotData));
+      } catch (e) {
+        cnot = [];
+      }
       // If frcon is 'Y', create a deep copy of newCnotData into ocnot
       if (frcon === 'Y') {
-        ocnot = JSON.parse(JSON.stringify(newCnotData));
+        try {
+          ocnot = JSON.parse(JSON.stringify(newCnotData));
+        } catch (e) {
+          ocnot = [];
+        }
       }
       // Call jconupd with the locally stored new data
       if (localUpd === "y") {
@@ -730,6 +754,12 @@ function ddCoPop(val) {
             // Create the container div element
             const cliDIV = document.createElement('div');
             cliDIV.className = 'clicard';
+              cliDIV.addEventListener('click', () => {
+                console.log("Event flag");
+              climkr = 1;
+            });
+      
+
             // Create and append child div elements for each row property
             const lstcliDiv = document.createElement('div');
             lstcliDiv.className = 'lstcli';
@@ -1793,8 +1823,22 @@ document.addEventListener('DOMContentLoaded', function () {
     alert("No Changes made");
 }
   });
+  document.getElementById("slist").addEventListener('mouseover', function (event) {
+    if (event.target.closest('.clicard')) {
+      climkr = 1; // Set climkr to 1 when hovering over a clicard
+    }
+  }, true); // Use capture phase to ensure early detection
+
+  document.getElementById("slist").addEventListener('mouseout', function (event) {
+    if (event.target.closest('.clicard')) {
+      climkr = 0; // Reset climkr to 0 when leaving a clicard
+    }
+  }, true); // Use capture phase for consistency
+
 
   document.getElementById("slist").addEventListener('click', function (event) {
+    event.stopPropagation;
+    console.log("click event");
     var target = event.target;
     //Trash functions
     if (Array.from(target.classList).some(className => /_trash$/.test(className))) {
@@ -1944,6 +1988,7 @@ document.addEventListener('DOMContentLoaded', function () {
           ddclr();
         },
         'clicard': function (element) {
+          climkr = 1;
           event.preventDefault(); // Prevents input from losing focus
           var target = element;
           if (target.parentNode.classList.contains('clicard')) {
@@ -1984,6 +2029,7 @@ document.addEventListener('DOMContentLoaded', function () {
               // Handle error if clich() fails
               console.error('clich() failed:', error);
           });
+          climkr = 0;
           ddclr();
         },
         'tagcard': function (element) {
@@ -2049,9 +2095,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   document.querySelector("input[name=clientName]").addEventListener('change', function () {
     if (climkr !== 1) {
-      console.log("update from change event");
       var client = document.querySelector("input[name=clientName]").value;
-      console.log('client=' + client);
       clich(client,"UPD");
     } else {
       climkr = 0;
