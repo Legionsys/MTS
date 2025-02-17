@@ -50,7 +50,9 @@ if (!mysqli_stmt_prepare($stmtInsert, $sqlInsert)) {
 // Bind parameters dynamically
 $types = "i" . str_repeat("s", count($data));
 $bindParams = array($stmtInsert, $types, $cnum);
-$bindParams = array_merge($bindParams, array_values($data));
+foreach ($data as &$value) { // Note the & here to pass by reference
+    $bindParams[] = $value;
+}
 
 call_user_func_array('mysqli_stmt_bind_param', $bindParams);
 
@@ -179,4 +181,3 @@ if (mysqli_num_rows($resultData) > 0){
     echo json_encode($emparray); 
 }
 mysqli_stmt_close($stmt);*/
-?>
