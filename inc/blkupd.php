@@ -11,7 +11,7 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
     $ori = $link['ori'];
     $table = "";
     $idvar = "";
-    switch ($ori){
+    switch ($ori) {
         case "jobDetails":
             $table = "jobList";
             $idvar = "jobID";
@@ -42,12 +42,12 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
     }, $updData);
 
     define("FS_ROOT", realpath(dirname(__FILE__)));
-    require_once FS_ROOT.'/dbh.inc.php';
+    require_once FS_ROOT . '/dbh.inc.php';
 
     // Validate and sanitize column names
     $sqlColumns = "SHOW COLUMNS FROM $table;";
     $resultColumns = mysqli_query($conn, $sqlColumns);
-    
+
     if (!$resultColumns) {
         echo "ERROR: Unable to fetch column names";
         exit();
@@ -75,7 +75,7 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
     // Construct the prepared statement
     $sql = "UPDATE $table SET $updateString WHERE $idvar=?;";
     $stmt = mysqli_stmt_init($conn);
-    
+
     if (!mysqli_stmt_prepare($stmt, $sql)) {
         echo "ERROR: Prepare failed - " . mysqli_stmt_error($stmt);
         exit();
@@ -83,10 +83,20 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
 
     // Determine data types for binding parameters
     $types = str_repeat('s', count($updData)) . 'i';
+    // Bind parameters manually
+    $bind_params = array();
+    $bind_params[] = $types;
+    foreach ($updData as $key => $val) {
+        $bind_params[] = &$updData[$key]; // Pass by reference
+    }
+    $bind_params[] = &$id; // Pass by reference
+
+    call_user_func_array('mysqli_stmt_bind_param', $bind_params);
+    /*
     $params = array_merge([$stmt, $types], array_values($updData), [$id]);
     // Bind parameters dynamically
     call_user_func_array('mysqli_stmt_bind_param', $params);
-
+*/
     // Execute the query
     if (!mysqli_stmt_execute($stmt)) {
         echo "ERROR: Execute failed - " . mysqli_stmt_error($stmt);
@@ -98,4 +108,3 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
     echo "ERROR: No JSON data received";
     exit();
 }
-?>
