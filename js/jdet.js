@@ -271,9 +271,17 @@ function jbdu() {
     if (xhr.readyState == 4) {
       if (xhr.status == 200) {
         var data = xhr.responseText;
-        jdets = JSON.parse(data);
+        try {
+          jdets = JSON.parse(data);
+        } catch (e) { 
+          jdets = [];
+        }
         if (frdu == 'Y') {
-          ojdets = JSON.parse(JSON.stringify(jdets));
+          try {
+            ojdets = JSON.parse(JSON.stringify(jdets));
+          } catch (e) { 
+          ojdets = [];
+        }
         }
         if (data.substring(0, 1) == '<') {
           document.getElementById('coll').insertAdjacentHTML('beforeend', data);
@@ -2240,6 +2248,9 @@ document.addEventListener('DOMContentLoaded', function () {
             body: "txt=" + encodedVal.replace(/\+/g, '%2B') + "&amt=" + namt + "&jobno=" + jbn,
           }).then(response => response.text()).then(function (data) {
             nnote = JSON.parse(data);
+            if (!Array.isArray(notes)) {
+              notes = [];  // Initialize as an array if it's not one
+            }
             notes.push(nnote);
             /*
             const item = document.createElement('div');
@@ -2505,15 +2516,27 @@ document.addEventListener('DOMContentLoaded', function () {
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var data = xhr.responseText;
-          var txt = '';
+          console.log(data);
           if (data.substring(0, 1) === '<') {
             document.getElementById('coll').insertAdjacentHTML('beforeend', data);
           } else {
-            var obj = JSON.parse(data);
-            cnot.push(obj[0]);
-            ocnot.push(obj[0]);
-            ccntLoad(obj[0].cnID);
-          }
+            try {
+              var obj = JSON.parse(data);
+              if (Array.isArray(obj)) {
+                if (!Array.isArray(cnot)) {
+                  cnot = [];  // Initialize as an array if it's not one
+                }
+                if (!Array.isArray(ocnot)) {
+                  ocnot = [];  // Initialize as an array if it's not one
+                }
+                cnot.push(obj[0]);
+                ocnot.push(obj[0]);
+                ccntLoad(obj[0].cnID);
+              }
+              } catch (e) {
+                console.error("Parsing error:", e);
+              }
+            }
         } else if (xhr.status !== 200) {
           console.log("Error: " + xhr.responseText);
         }
@@ -2649,6 +2672,9 @@ document.getElementById('contlst').addEventListener('click', function (event) {
   if (event.target.classList.contains('mcnprnt')) {
     mcnf = "Y";
     if (event.target.checked) {
+      if (!Array.isArray(mcnl)) {
+        mcnl = [];  // Initialize as an array if it's not one
+      }
       mcnl.push(event.target.value);
     } else {
       var remItem = event.target.value;
@@ -2779,7 +2805,10 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
             return;
           }
 
-          var rtrn = JSON.parse(xhr.responseText);
+        var rtrn = JSON.parse(xhr.responseText);
+        if (!Array.isArray(frt)) {
+          frt = [];  // Initialize as an array if it's not one
+        }
           frt.push(rtrn);
           /*console.log(rtrn);*/
           var frtItem = frt[frt.length - 1];
@@ -3121,7 +3150,10 @@ document.getElementById("addsup").addEventListener('click', function () {
                   if (xhr.responseText[0] !== '{') {
                       alert("Error when trying to add supplier supplier!\n" + xhr.responseText);
                   } else {
-                      nsup = JSON.parse(xhr.responseText);
+                    nsup = JSON.parse(xhr.responseText);
+                    if (!Array.isArray(sups)) {
+                      sups = [];  // Initialize as an array if it's not one
+                    }
                       sups.push(nsup);
                       var txt = '<div class="supln" data-id="' + chknull(nsup.jsID) + '"><div contenteditable="true" data-col="jsName" class="supSu lsup updated">' + chknull(nsup.jsName) + '</div><div contenteditable="true" data-col="jsType" class="supTy lsup updated">' + chknull(nsup.jsType) + '</div><div contenteditable="true" data-col="jsDesc" class="supDe lsup updated">' + chknull(nsup.jsDesc) + '</div><div contenteditable="true" data-col="jsEst" class="supEc lsup updated">$' + numberFormat(chknull(nsup.jsEst), 2, '.', ',') + '</div><div contenteditable="true" data-col="jsInvRec" class="supIr lsup updated">' + chknull(nsup.jsInvRec) + '</div><div contenteditable="true" data-col="jsNotes" class="supNo lsup updated">' + chknull(nsup.jsNotes) + '</div><div class="suprm td" data-id="' + chknull(nsup.jsID) + '">Remove Supplier</div></div>';
                       document.getElementById("supbody").insertAdjacentHTML('afterbegin', txt);
