@@ -85,6 +85,7 @@ if (isset($_POST['lnk']) && !empty($_POST['lnk'])) {
     $types = str_repeat('s', count($updData)) . 'i';
     // Bind parameters manually
     $bind_params = array();
+    $bind_params[] = &$stmt;  // Add this line to include the statement object
     $bind_params[] = $types;
     foreach ($updData as $key => $val) {
         $bind_params[] = &$updData[$key]; // Pass by reference
