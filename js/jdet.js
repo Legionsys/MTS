@@ -1381,9 +1381,13 @@ async function processConnote(njn, cno, ncnum) {
     await confrt(); // Call confrt without parameters
     clrcnt();
     ccntLoad(njn);
+    const oricnt = [];
+    const cpycnt = [];
 
-    const oricnt = frt.filter(item => item.cnID == cno);
-    const cpycnt = frt.filter(item => item.cnID == njn);
+    if (frt.length > 0) {
+      oricnt = frt.filter(item => item.cnID == cno);
+      cpycnt = frt.filter(item => item.cnID == njn);
+    }
 
     /*console.log(`${cno} - ${njn}`);
     console.log(oricnt, cpycnt);
