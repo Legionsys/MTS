@@ -1112,12 +1112,14 @@ function frtload(cno) {
     frt.forEach(function (val) {
       if (val.cnID == cno) {
         oind = -1;
-        ofrt.forEach(function (oval, i) {
-          if (oval.itID == val.itID) {
-            oind = i;
-            return false;
-          }
-        });
+        if (ofrt.length > 0) {
+          ofrt.forEach(function (oval, i) {
+            if (oval.itID == val.itID) {
+              oind = i;
+              return false;
+            }
+          });
+        }
         var row = document.createElement('tr');
         row.setAttribute('data-id', val.itID);
         row.innerHTML = '<td contenteditable="true" id="senRef" data-col="senRef" class="senRef">' + (val.senRef !== null ? val.senRef : '') + '</td>' +
@@ -1381,8 +1383,8 @@ async function processConnote(njn, cno, ncnum) {
     await confrt(); // Call confrt without parameters
     clrcnt();
     ccntLoad(njn);
-    const oricnt = [];
-    const cpycnt = [];
+    var oricnt = [];
+    var cpycnt = [];
 
     if (frt.length > 0) {
       oricnt = frt.filter(item => item.cnID == cno);
