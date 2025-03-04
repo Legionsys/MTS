@@ -258,7 +258,7 @@ function toggleTagVisibility() {
 }
 function fetchTags() {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/jtags.php?action=flist&job=0', true); // Replace <jobNumber> with the actual job number variable
+  xhr.open('GET', '/inc/jtags.php?action=flist&job=0', true); // Replace <jobNumber> with the actual job number variable
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status == 200) {
