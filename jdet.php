@@ -26,7 +26,37 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
     </div>
 </div>
 <div id="boscr" class="hideme">
-    <div id="cn-frame">
+    <div id="Conlink" class="hideme">
+        <!-- Wrapper for the two lists -->
+        <div id="CNL-wrapper">
+            <div class="title">
+                <p>Link Con Notes to Suppliers</p>
+            </div>
+            <!-- First Selection -->
+            <div class="lnk-container">
+                <div class="cntitle">
+                    <p>Con Notes</p>
+                </div>
+                <div class="CNL-list" id="csl-con">
+
+                </div>
+            </div>
+
+            <!-- Second Selection -->
+            <div class="lnk-container">
+                <div class="cntitle">
+                    <p>Suppliers</p>
+                </div>
+                <div class="CNL-list" id="csl-sup">
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Button -->
+        <button id="CNL-Cancel" onclick="CNLCancel()">Cancel</button>
+        <button id="CNL-Button" onclick="CNLButton()">Link</button>
+    </div>
+    <div id="cn-frame" class="hideme">
         <div id="cn-close" class="close"></div>
         <div id="cn_ind" class="cnblock">
             <div class="cntitle">
@@ -164,9 +194,17 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
                         Remove
                     </div>
                 </div>
+                <div id="cnlnk" class="cnac">
+                    <div class="cnal">
+                        L
+                    </div>
+                    <div class="cnaw">
+                        Link
+                    </div>
+                </div>
             </div>
 
-        </div><!--
+        </div>
         <div id="cnhl" class="cnblock">
             <div class="cntitle">
                 <p>Con Note Highlights</p>
@@ -194,7 +232,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
                     </label>
                 </div>
             </div>
-        </div>-->
+        </div>
         <div id="frtdet" class="cnblock">
             <div id="frt_ctnr">
                 <table id="cnTbl" class="cnt_frt_tbl">
@@ -558,7 +596,10 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
 
 <div id="jdet-supp">
     <div class="title">
-        <p>Suppliers</p>
+        <div class="sup">
+            <span>Suppliers</span>
+        </div>
+        <div class="cnlnk"><img id="lcn" src="img/chain.png" alt="link Con Note & Supplier"></div>
     </div>
     <div class="cont">
         <div id="suplTbl">
