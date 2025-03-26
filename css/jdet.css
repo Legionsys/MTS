@@ -1,7 +1,7 @@
 /*Formatting for the full page*/
 .hideme {
-  display: none;
   visibility: hidden;
+  display: none !important;
 }
 :root{
   --title-height:3rem;
@@ -390,6 +390,7 @@
   grid-area: cns;
   position: relative;
 }
+#lcn,
 #acn,
 #rcn,
 #tga {
@@ -397,6 +398,7 @@
   width: 2.8rem;
   margin: 0.1rem;
 }
+.cnlnk,
 .cnadd,
 .cnrl {
   width: 4rem;
@@ -1562,4 +1564,138 @@ button.print-button:hover .print-icon::after {
 
 .rotate {
   animation: rotate 1.5s linear infinite;  /* Full rotation in 1.5 seconds */
+}
+#Conlink {
+  position: absolute;
+  width: 35%;
+  min-width: 400px;
+  height: 400px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc((95% - 400px) / 2);
+  /*top: calc((25% - 400px)/2);*/
+  background-color: blanchedalmond;
+  border-radius: 0.5rem;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+  align-content: space-between;
+  z-index: 2;
+}
+
+#CNL-wrapper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: auto;
+  flex-wrap: wrap;
+  margin-top: 0px;
+}
+#CNL-wrapper .title{
+  width: 100%;
+  justify-content: space-around;
+  margin-bottom: 10px;
+  margin-top: 0px;
+}
+
+.lnk-container {
+  width: 45%;
+  margin: 0rem 2.5%;
+}
+
+.CNL-list {
+  max-height: 600px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 5px;
+  background-color: #fff;
+}
+
+.CNL-list label {
+  font-size: 1.75rem;
+  /*line-height: 1.4;*/
+  display: block;
+  margin: 5px 0;
+  cursor: pointer;
+  padding: 5px;
+  /* Add padding for better appearance */
+  transition: background-color 0.3s;
+  /* Smooth color transition */
+}
+
+/* Hide the checkbox */
+.CNL-list input[type="checkbox"] {
+  display: none;
+}
+
+/* Change background color when checkbox is checked */
+.CNL-list input[type="checkbox"]:checked+label {
+  background-color: #CC5500;
+  /* Light blue when selected */
+}
+
+/* Optional: Hover effect for better UX */
+.CNL-list label:hover {
+  background-color: #fff;
+  /* Light gray on hover */
+}
+
+#Conlink button {
+  height: 40px;
+  width: 160px;
+  padding: 5px 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.tooltip-label {
+  position: relative;
+  cursor: help;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  position: fixed;
+  z-index: 1000;
+  padding: 10px;
+}
+
+.tooltip-text .supSu {
+  font-weight: bold;
+}
+.tooltip-text .lsup {
+  border-top: lightgray solid 1px;
+  
+  
+}
+.tooltip-text .supln {
+  background-color: whitesmoke;
+  grid-template-rows: 2.5rem 2.5rem 2.5rem 2.5rem 2.5rem auto;
+  grid-template-areas:
+      "supSu"
+      "supTy"
+      "supDe"
+      "supEc"
+      "supIr"
+      "supNo";  
+  
+  background-color: whitesmoke;
+  border-radius: 0.5rem;
+  border: lightgray solid 0.1rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.lnked {
+  border: #00cc5569 solid 1px;
+  box-shadow: 0 4px 8px 0 #00cc5569;
+}
+.notlnked {
+  border: #cc550062 solid 1px;
+  box-shadow: 0 4px 8px 0 #cc550062;
+}
+.lnkedUrg {
+  background-color: #00cc5569;
+}
+.notlnkedUrg {
+  background-color: #cc550062;
 }

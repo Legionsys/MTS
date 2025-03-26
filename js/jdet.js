@@ -7,6 +7,7 @@ var sups = [];
 var notes = [];
 var cnot = [];
 var frt = [];
+var cslnk = [];
 var ojdets = [];
 var osups = [];
 var onotes = [];
@@ -89,6 +90,7 @@ function firstpop() {
     jbnot();
     jbcon();
     confrt();
+    consup();
     fr = '';
     populateTags();
   } else {
@@ -241,6 +243,7 @@ function jconupd(data) {
   }
   contlst.innerHTML = '';  // Clear existing content if needed
   contlst.appendChild(fragment);  // Append the fragment once to the DOM
+  csl_upd();
 }
 
 /*
@@ -443,7 +446,93 @@ async function jbcon() {
     console.error("Error in making the request:", error);
   }
 }
+function csl_upd() {
+  // Get today's date and calculate the threshold (today - 4 days)
+    const today = new Date();
+    const thresholdDate = new Date(today);
+    thresholdDate.setDate(today.getDate() + 3);
 
+    // Get the puDate value and convert to Date object
+    const puDateInput = document.getElementById('puDate');
+    const puDateValue = puDateInput ? new Date(puDateInput.value) : null;
+
+    // Get all ccnt_card divs within contlst
+  const cards = document.querySelectorAll('#contlst .ccnt_card');
+  console.log(cslnk);
+  const isCslnkEmpty = !cslnk || cslnk.length === 0;
+    cards.forEach(card => {
+        // Remove all specified classes
+      card.classList.remove('lnked', 'notlnked', 'lnkedUrg', 'notlnkedUrg');
+        // Get the data-id value from the card
+      const cardId = card.getAttribute('data-id');
+      // Check if this card's ID exists in cslnk array
+      let isLinked;
+        if (isCslnkEmpty) {
+            isLinked = false; // If cslnk is empty, all cards are not linked
+        } else {
+            isLinked = cslnk.some(item => item.cnID == cardId);
+        }
+        // Determine if date is urgent (greater than threshold)
+      const isUrgent = puDateValue && puDateValue < thresholdDate;
+      // Apply appropriate class based on conditions
+      console.log(cardId);
+      if (isLinked) {
+        if (isUrgent) {
+          card.classList.add('lnkedUrg');
+        } else {
+          card.classList.add('lnked');
+        }
+      } else {
+        if (isUrgent) {
+          card.classList.add('notlnkedUrg');
+        } else {
+          card.classList.add('notlnked');
+        }
+      }
+    });
+}
+async function consup(upd) {
+  if (upd == '') {
+    upd = false;
+  }
+  var ind = "cslnk";
+  let newCslData = null;  // Declare a local variable for new data
+  try {
+    const response = await fetch("/inc/job-init.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      
+      body: new URLSearchParams({
+        jbn: jbn,  // Assuming jbn is a global or available in this scope
+        indi: ind,
+      }),
+    });
+    if (!response.ok) {
+      console.error(`Failure Con-note - ${jbn}`);
+      console.error(`Error: ${response.statusText}`);
+      return;
+    }
+
+    const data = await response.text();
+    if (data.startsWith('<')) {
+      document.getElementById('coll').insertAdjacentHTML('beforeend', data);
+    } else {
+      newCslData = JSON.parse(data);  // Parse the JSON into the local variable
+      try {
+        cslnk = JSON.parse(JSON.stringify(newCslData));
+      } catch (e) {
+        cslnk = [];
+      }
+      if (upd) {
+        csl_upd();
+      }
+    }
+  } catch (error) {
+    console.error("Error in making the request:", error);
+  }
+}
 /*
 function jbcon() {
   var ind = "con";
@@ -1224,6 +1313,7 @@ function ccntLoad(cno) {
 
   frtload(cno);
   document.getElementById('boscr').classList.remove('hideme');
+  document.getElementById('cn-frame').classList.remove('hideme');
 }
 function clich(client, msg) {
     return new Promise((resolve, reject) => {
@@ -1431,6 +1521,8 @@ function cn_close() {
   jbcon();
   confrt();
   document.getElementById('boscr').classList.add('hideme');
+  document.getElementById('Conlink').classList.add('hideme');
+  document.getElementById('cn-frame').classList.add('hideme');
   stopRotation();
   upd = upd2;
   
@@ -1790,7 +1882,214 @@ function stopRotation() {
       isRotating = false;
   }
 }
+//Supplier - con note linking. 
 
+//populate boxes
+function CS_Link(cons) {
+  document.getElementById('boscr').classList.remove('hideme');
+  document.getElementById('Conlink').classList.remove('hideme');
+  console.log(cons);
+  if (!cons || (Array.isArray(cons) && cons.length === 0)) {
+    cons = cnot;
+  } else if (Array.isArray(cons) && cons.length > 0) {
+    // If cons has values, filter cnot to include only rows where cnID is in cons
+    cons = cnot.filter(item => cons.includes(String(item.cnID)));
+  }
+  
+  if (cons == null || cons == []) {
+    alert("No con notes to link");
+    return;
+  }
+  if (sups == []) {
+    alert("No suppliers to link to");
+    return;
+  }
+  //Con note population
+  const conconts = document.getElementById('csl-con');
+  conconts.innerHTML = ''; // Clear existing
+
+  cons.forEach(option => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'conlinks';
+        checkbox.value = option.cnID;
+        checkbox.id = option.cnID;
+
+        const label = document.createElement('label');
+        label.htmlFor = option.cnID;
+        label.textContent = option.cnNum;
+        label.className = 'tooltip-label';
+
+        // Create tooltip element with HTML content
+        const tooltip = document.createElement('span');
+        tooltip.className = 'tooltip-text';
+        
+        // If you have an existing element to copy from
+        if (option.cnID) {
+            const sourceElement = document.querySelector(`.ccnt_card[data-id="${option.cnID}"]`);
+            if (sourceElement) {
+                // Clone the source element
+              const clonedContent = sourceElement.cloneNode(true);
+              clonedContent.className = 'ccnt_card';
+                // Remove the 'suprm' div
+                const removeItem = clonedContent.querySelector('.mcnprnt');
+                if (removeItem) {
+                    removeItem.remove();
+                }
+                tooltip.appendChild(clonedContent);
+            } else {
+                tooltip.textContent = 'Source element not found';
+            }
+        } else {
+            tooltip.textContent = option.cnID || '';
+        }
+
+        label.appendChild(tooltip);
+
+        // Add hover events with delay
+        let timeoutId;
+        label.addEventListener('mouseenter', () => {
+            timeoutId = setTimeout(() => {
+                tooltip.style.visibility = 'visible';
+            }, 500);
+        });
+        
+        label.addEventListener('mouseleave', () => {
+            clearTimeout(timeoutId);
+            tooltip.style.visibility = 'hidden';
+        });
+
+        conconts.appendChild(checkbox);
+        conconts.appendChild(label);
+  });
+  
+  //Supplier population
+  const supconts = document.getElementById('csl-sup');
+  supconts.innerHTML = ''; // Clear existing
+
+  sups.forEach(option => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'conlinks';
+        checkbox.value = option.jsID;
+        checkbox.id = option.jsID;
+
+        const label = document.createElement('label');
+        label.htmlFor = option.jsID;
+        label.textContent = option.jsName;
+        label.className = 'tooltip-label';
+
+        // Create tooltip element with HTML content
+        const tooltip = document.createElement('span');
+        tooltip.className = 'tooltip-text';
+        
+        // If you have an existing element to copy from
+        if (option.jsID) {
+            const sourceElement = document.querySelector(`.supln[data-id="${option.jsID}"]`);
+            if (sourceElement) {
+                // Clone the source element
+                const clonedContent = sourceElement.cloneNode(true);
+                // Remove the 'suprm' div
+                const removeItem = clonedContent.querySelector('.suprm');
+                if (removeItem) {
+                    removeItem.remove();
+                }
+                tooltip.appendChild(clonedContent);
+            } else {
+                tooltip.textContent = 'Source element not found';
+            }
+        } else {
+          console.log("No Source element found for " + option.jsID);
+            tooltip.textContent = option.jsID || '';
+        }
+
+        label.appendChild(tooltip);
+
+        // Add hover events with delay
+        let timeoutId;
+        label.addEventListener('mouseenter', () => {
+            timeoutId = setTimeout(() => {
+                tooltip.style.visibility = 'visible';
+            }, 500);
+        });
+        
+        label.addEventListener('mouseleave', () => {
+            clearTimeout(timeoutId);
+            tooltip.style.visibility = 'hidden';
+        });
+
+        supconts.appendChild(checkbox);
+        supconts.appendChild(label);
+  });
+
+
+
+
+
+}
+function CNLCancel() {
+  document.getElementById('Conlink').classList.add('hideme');
+  if (document.getElementById('cn-frame').classList.contains('hideme')) {
+    document.getElementById('boscr').classList.add('hideme');
+  }
+}
+function getSelectedCheckboxes(divId) {
+    const checkboxes = document.querySelectorAll(`#${divId} input[type="checkbox"][name="conlinks"]`);
+    return Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+}
+function uncheckCheckboxesInDiv(divId) {
+    const checkboxes = document.querySelectorAll(`#${divId} input[type="checkbox"]`);
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+    });
+}
+function CNLButton() {
+  //check the selected fields. 
+  const cns = getSelectedCheckboxes('csl-con');
+  const sps = getSelectedCheckboxes('csl-sup');
+  
+  if (cns == [] || sps == []) {
+    if (cns == [] && sps == []) {
+      alert("No con-notes or Suppliers selected");
+    } else if (cns == []) {
+      alert("No con-notes selected");
+    } else {
+      alert("No Suppliers selected this will clear all links for selected con-notes.");
+    }
+  }
+  // Create data object to send
+  const data = {
+      cns: cns,  // Array of cnid values
+      sps: sps   // Array of jsID values
+  };
+    // Send data to PHP using fetch
+    fetch('/inc/consuplnk.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('Success:', result);
+      // Optional: Update UI or show success message
+      alert("Link sucessful");
+      document.getElementById('Conlink').classList.add('hideme');
+      if (document.getElementById('cn-frame').classList.contains('hideme')) {
+        document.getElementById('boscr').classList.add('hideme');
+      }
+      consup(true);
+        //alert('Links updated successfully');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Optional: Show error message
+        alert('Error updating links');
+    });
+}
 
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
@@ -2141,6 +2440,7 @@ document.addEventListener('DOMContentLoaded', function () {
           document.getElementById(fldId).classList.remove("pending");
           document.getElementById(fldId).classList.add("updated");
           updchkr();
+          csl_upd();
         }
       }).catch(function (error) {
         console.error('Error:', error);
@@ -2512,7 +2812,10 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('img[id=rcn]').addEventListener('click', function () {
     cn_close();
   });
-
+  //linking Connote
+  document.querySelector('img[id=lcn]').addEventListener('click', function () {
+    CS_Link(mcnl);
+   });
   //adding a Connote
   document.querySelector('img[id=acn]').addEventListener('click', function () {
     if (jbn !== "" && jbn !== 0) {
@@ -2673,6 +2976,11 @@ document.getElementById('cndel').addEventListener('click', function () {
     xhr.send("cno=" + cno + "&dj=0");
   }
 });
+document.getElementById('cnlnk').addEventListener('click', function () {
+  var cno = document.getElementById('cnID').value;
+  console.log()
+  CS_Link([cno]);
+});
 //multi con-note select
 document.getElementById('contlst').addEventListener('click', function (event) {
   if (event.target.classList.contains('mcnprnt')) {
@@ -2706,7 +3014,10 @@ document.getElementById('contlst').addEventListener('click', function (event) {
     ccntLoad(nid);
   }
 });
-//connote functions
+  //connote functions
+document.getElementById('Conlink').addEventListener('click', function () {
+  event.stopPropagation();
+});  
 document.getElementById('boscr').addEventListener('click', function () {
   cn_close();
   actcn = null;

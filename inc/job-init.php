@@ -19,6 +19,8 @@ if ($indi == "job") {
     $sql = "SELECT a.*,b.titm,b.twgt,b.tcub FROM conNotes a LEFT JOIN (select cnID,sum(ifnull(noItem,0)) as titm,sum(ifnull(itWgt,0)) as twgt,sum(ifnull((itLen*itWid*itHei*itQty)/1000000,0)) as tcub from conDets WHERE frtDie is Null group by cnID) b on a.cnID = b.cnID WHERE a.jobID = ? order by cnID;";
 } elseif ($indi == "frt") {
     $sql = "SELECT * FROM conDets where cnID in (Select cnID from conNotes where jobID = ?) and frtDie is Null order by class desc,itID;";
+} elseif ($indi == "cslnk") {
+    $sql = "SELECT * FROM jobConSupLnk where cnID in (Select cnID from conNotes where jobID = ?) and deltime is Null order by cnid desc;";
 }
 
 
@@ -62,10 +64,12 @@ if (mysqli_num_rows($resultData) > 0) {
             echo $jsonData;
         }
     } else {
-        echo json_encode(array("error" => "No data found"));
+        echo json_encode([]);
+        //echo json_encode(array("error" => "No data found"));
     }
 } else {
-    echo json_encode(array("error" => "No results"));
+    echo json_encode([]);
+    //echo json_encode(array("error" => "No results"));
 }
 
 mysqli_stmt_close($stmt);

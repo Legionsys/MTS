@@ -408,3 +408,20 @@ a {
   visibility: hidden;
   height:0rem;
 }
+.lnked {
+  border: #00cc5569 solid 1px;
+  box-shadow: 0 4px 8px 0 #00cc5569;
+}
+
+.notlnked {
+  border: #cc550062 solid 1px;
+  box-shadow: 0 4px 8px 0 #cc550062;
+}
+
+.lnkedUrg {
+  background-color: #00cc5569;
+}
+
+.notlnkedUrg {
+  background-color: #cc550062;
+}
