@@ -130,17 +130,17 @@ if (mysqli_num_rows($resultData) > 0) {
 
         $crdhtml = '<a href="/jdet.php?job_no=' . $jnum . '"><div class="jcard ';
 
-        if (!$row['activeLinkRatio'] == 0 && !$row['activeLinkRatio'] == 1) {
-            if ($isUrgent) {
-                $crdhtml = $crdhtml . 'notlnkedUrg';
-            } else {
-                $crdhtml = $crdhtml . 'notlnked ';
-            }
-        } else {
+        if ($row['activeLinkRatio'] == 1) {
             if ($isUrgent) {
                 $crdhtml = $crdhtml . 'lnkedUrg';
             } else {
                 $crdhtml = $crdhtml . 'lnked';
+            }
+        } else {
+            if ($isUrgent) {
+                $crdhtml = $crdhtml . 'notlnkedUrg';
+            } else {
+                $crdhtml = $crdhtml . 'notlnked ';
             }
         }
 
