@@ -1,55 +1,56 @@
 <?php
-//set vars and checks    
-// Set vars and checks    
-if (isset($_POST["id"])) {
-    $jsid = trim($_POST["id"]);
-} else {
-    echo "ERROR";
+session_start();
+
+// Check for required POST data
+if (!isset($_POST["id"])) {
+    echo json_encode(["status" => "error", "message" => "Missing jsID"]);
     exit();
+}
+$jsid = intval(trim($_POST["id"])); // Cast to integer
+
+// Validate session user (optional, depending on requirements)
+$usr = isset($_SESSION['useruid']) ? $_SESSION['useruid'] : null;
+if (empty($usr)) {
+    $usr = "empty";
 }
 
 require_once 'dbh.inc.php';
 
-$sql = "DELETE FROM jobSup WHERE jsID = ?";
-$stmt = mysqli_stmt_init($conn);
-if (!mysqli_stmt_prepare($stmt, $sql)) {
-    echo "ERROR";
+// First query: DELETE from jobSup
+$sqlDelete = "DELETE FROM jobSup WHERE jsID = ?";
+$stmtDelete = mysqli_stmt_init($conn);
+if (!mysqli_stmt_prepare($stmtDelete, $sqlDelete)) {
+    echo json_encode(["status" => "error", "message" => "Prepare failed: " . mysqli_error($conn)]);
     exit();
 }
-mysqli_stmt_bind_param($stmt, "s", $jsid);
-mysqli_stmt_execute($stmt);
+mysqli_stmt_bind_param($stmtDelete, "i", $jsid); // Bind as integer
+mysqli_stmt_execute($stmtDelete);
+$deleteRows = mysqli_stmt_affected_rows($stmtDelete);
+mysqli_stmt_close($stmtDelete);
 
-if (mysqli_stmt_affected_rows($stmt) > 0) {
-    echo "success";
-} else {
-    echo "ERROR";
+// Second query: UPDATE jobConSupLnk
+$sqlUpdate = "UPDATE jobConSupLnk SET delusr = ?, deltime = NOW() WHERE deltime IS NULL AND jsID = ?";
+$stmtUpdate = mysqli_stmt_init($conn);
+if (!mysqli_stmt_prepare($stmtUpdate, $sqlUpdate)) {
+    echo json_encode(["status" => "error", "message" => "Prepare failed: " . mysqli_error($conn)]);
+    exit();
 }
+mysqli_stmt_bind_param($stmtUpdate, "si", $usr, $jsid);
+mysqli_stmt_execute($stmtUpdate);
+$updateRows = mysqli_stmt_affected_rows($stmtUpdate);
+mysqli_stmt_close($stmtUpdate);
 
-mysqli_stmt_close($stmt);
+// Close database connection
+mysqli_close($conn);
 
-/*if (isset($_POST["id"])) {
-    $jsid = trim($_POST["id"]);
-};
-
-require_once 'dbh.inc.php';
-
-$sql = "Delete from jobSup WHERE jsID = ?;";
-$stmt = mysqli_stmt_init($conn);
-    if (!mysqli_stmt_prepare($stmt,$sql)) {
-        return "ERROR";
-        exit();
-    }
-    mysqli_stmt_bind_param($stmt, "s", $jsid);
-    mysqli_stmt_execute($stmt);
-    //return 'instered';
-    $resultData = mysqli_insert_id($conn);
-
-    if ($resultData != null ) {
-        return $resultData;
-    } else {
-        return "ERROR";
-        exit();
-    }
-    mysqli_stmt_close($stmt);
-*/
-?>
+// Determine overall success
+if ($deleteRows > 0) {
+    echo json_encode(["status" => "success", "message" => "Record deleted and updated successfully"]);
+} else {
+    echo json_encode([
+        "status" => "error",
+        "message" => "Operation failed",
+        "delete_affected" => $deleteRows,
+        "update_affected" => $updateRows
+    ]);
+}

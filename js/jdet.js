@@ -458,7 +458,6 @@ function csl_upd() {
 
     // Get all ccnt_card divs within contlst
   const cards = document.querySelectorAll('#contlst .ccnt_card');
-  console.log(cslnk);
   const isCslnkEmpty = !cslnk || cslnk.length === 0;
     cards.forEach(card => {
         // Remove all specified classes
@@ -475,7 +474,6 @@ function csl_upd() {
         // Determine if date is urgent (greater than threshold)
       const isUrgent = puDateValue && puDateValue < thresholdDate;
       // Apply appropriate class based on conditions
-      console.log(cardId);
       if (isLinked) {
         if (isUrgent) {
           card.classList.add('lnkedUrg');
@@ -1888,7 +1886,6 @@ function stopRotation() {
 function CS_Link(cons) {
   document.getElementById('boscr').classList.remove('hideme');
   document.getElementById('Conlink').classList.remove('hideme');
-  console.log(cons);
   if (!cons || (Array.isArray(cons) && cons.length === 0)) {
     cons = cnot;
   } else if (Array.isArray(cons) && cons.length > 0) {
@@ -2074,7 +2071,6 @@ function CNLButton() {
     })
     .then(response => response.json())
     .then(result => {
-        console.log('Success:', result);
       // Optional: Update UI or show success message
       alert("Link sucessful");
       document.getElementById('Conlink').classList.add('hideme');
@@ -3492,38 +3488,63 @@ document.getElementById("addsup").addEventListener('click', function () {
 });
 
   //deleting a supplier
-  document.getElementById("supbody").addEventListener('click', function (event) {
-    if (event.target.classList.contains("suprm")) {
-        var nid = event.target.getAttribute("data-id");
-        fetch("/inc/job-sup-rem.php", {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: "id=" + encodeURIComponent(nid),
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Failed to remove supplier');
-          }
-          return response.text();
-      })
-      .then(function (data) {
-          if (data === "success") {
-              sups = sups.filter(val => val.jsID !== nid); // Filter out the removed supplier from sups array
-              var elementToRemove = document.querySelector(".supln[data-id='" + nid + "']");
-              if (elementToRemove) {
-                  elementToRemove.remove();
-              }
-          } else {
-              throw new Error('Failed to remove supplier');
-          }
-      })
-      .catch(function (error) {
-          console.log("Error: ", error.message);
-          alert("Error in removing supplier");
-      });
+document.getElementById("supbody").addEventListener('click', function (event) {
+  if (event.target.classList.contains("suprm")) {
+    const nid = event.target.getAttribute("data-id");
+    if (!nid) {
+      console.error("No data-id found on the clicked element");
+      alert("Error: Missing supplier ID");
+      return;
     }
+    fetch("/inc/job-sup-rem.php", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: "id=" + encodeURIComponent(nid),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network error: ${response.status} - ${response.statusText}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.status === "success") {
+          // Handle the sups array
+          if (typeof sups !== "undefined" && Array.isArray(sups)) {
+            sups = sups.filter(val => String(val.jsID) !== String(nid));
+          } else {
+            console.warn("sups array is not defined or not an array");
+          }
+          // Find the closest .supln relative to the clicked .suprm
+          const clickedElement = event.target; // The .suprm element that was clicked
+          const elementToRemove = clickedElement.closest('.supln') || 
+            clickedElement.parentElement.querySelector(`.supln[data-id="${nid}"]`) || 
+            document.querySelector(`.supln[data-id="${nid}"]`);
+          if (elementToRemove) {
+            try {
+              if (elementToRemove.parentNode) {
+                elementToRemove.remove();
+              } else {
+                console.warn(`Element with data-id="${nid}" is detached from the DOM`);
+              }
+            } catch (error) {
+              console.error(`Failed to remove element with data-id="${nid}":`, error);
+            }
+          } else {
+            console.warn(`No .supln element found for data-id="${nid}" near the clicked element`);
+          }
+          consup(true);
+        } else {
+          throw new Error(`Server error: ${data.message || 'Unknown error'}`);
+        }
+      })
+      .catch(error => {
+        console.error("Error: ", error.message);
+        alert("Error in removing supplier: " + error.message);
+      });
+  }
 });
 
   //updating a supplier
