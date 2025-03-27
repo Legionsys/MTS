@@ -48,13 +48,15 @@ if (!mysqli_stmt_prepare($stmtInsert, $sqlInsert)) {
 }
 
 // Bind parameters dynamically
-$types = "i" . str_repeat("s", count($data));
-$bindParams = array($stmtInsert, $types, $cnum);
-foreach ($data as &$value) { // Note the & here to pass by reference
-    $bindParams[] = $value;
+$types = "i" . str_repeat("s", count($data)); // cnID is integer, others are strings
+$params = array(); // Array to hold references
+$params[] = &$types; // Type string must also be passed by reference
+$params[] = &$cnum;  // cnID
+foreach ($data as $key => $value) {
+    $params[] = &$data[$key]; // Use reference to original array value
 }
 
-call_user_func_array('mysqli_stmt_bind_param', $bindParams);
+call_user_func_array(array($stmtInsert, 'bind_param'), $params);
 
 // Execute the query
 mysqli_stmt_execute($stmtInsert);
@@ -91,93 +93,3 @@ echo json_encode($updatedData);
 
 mysqli_stmt_close($stmtSelect);
 mysqli_close($conn);
-
-
-
-
-
-
-
-
-/*
-//set vars and checks    
-if (isset($_POST["cnum"])) {
-    $cnum = trim($_POST["cnum"]);
-};
-if (isset($_POST['sref'])) {
-    $sref = trim($_POST['sref']);
-};
-if (isset($_POST['nitm'])) {
-    $nitm = trim($_POST['nitm']);
-};
-if (isset($_POST['psn'])) {
-    $psn = trim($_POST['psn']);
-};
-if (isset($_POST['itWgt'])) {
-    $itWgt = trim($_POST['itWgt']);
-};
-if (isset($_POST['itLen'])) {
-    $itLen = trim($_POST['itLen']);
-};
-if (isset($_POST['itWid'])) {
-    $itWid = trim($_POST['itWid']);
-};
-if (isset($_POST['itHei'])) {
-    $itHei = trim($_POST['itHei']);
-};
-if (isset($_POST['itQty'])) {
-    $itQty = trim($_POST['itQty']);
-};
-if (isset($_POST['unNum'])) {
-    $unNum = trim($_POST['unNum']);
-};
-if (isset($_POST['dcls'])) {
-    $dcls = trim($_POST['dcls']);
-};
-if (isset($_POST['sRisk'])) {
-    $sRisk = trim($_POST['sRisk']);
-};
-if (isset($_POST['pkGr'])) {
-    $pkGr = trim($_POST['pkGr']);
-};
-if (isset($_POST['pkDes'])) {
-    $pkDes = trim($_POST['pkDes']);
-};
-
-
-require_once 'dbh.inc.php';
-
-//
-$sql = "INSERT INTO conDets (cnID,senRef,noItem,psn,itWgt,itLen,itWid,itHei,itQty,unNum,class,sRisk,pkGr,pkDes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-$stmt = mysqli_stmt_init($conn);
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-    return "ERROR";
-    exit();
-}
-mysqli_stmt_bind_param($stmt, "isisiiiiisssss", $cnum,$sref,$nitm,$psn,$itWgt,$itLen,$itWid,$itHei,$itQty,$unNum,$dcls,$sRisk,$pkGr,$pkDes);
-mysqli_stmt_execute($stmt);
-$resultData = mysqli_insert_id($conn);
-if ($resultData == null) {
-    echo "<script>alert('Error when trying to add row');</script>";
-    exit();
-}
-mysqli_stmt_close($stmt);
-
-//$sql = "SELECT * FROM conDets WHERE cnID = ? and frtDie is Null order by class desc;";
-$sql = "SELECT * FROM conDets WHERE itID =?;";
-$stmt = mysqli_stmt_init($conn);
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-    return "ERROR";
-    exit();
-}
-mysqli_stmt_bind_param($stmt, "i", $resultData);
-mysqli_stmt_execute($stmt);
-$resultData = mysqli_stmt_get_result($stmt);
-if (mysqli_num_rows($resultData) > 0){
-
-    while ($row = mysqli_fetch_assoc($resultData)) {
-        $emparray[] = $row;
-    }
-    echo json_encode($emparray); 
-}
-mysqli_stmt_close($stmt);*/

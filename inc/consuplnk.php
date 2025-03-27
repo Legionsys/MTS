@@ -29,11 +29,7 @@ try {
             $spCondition = "AND jsID NOT IN ($spValues)";
         }
 
-        $updateSql = "UPDATE jobConSupLnk 
-                     SET delusr = '" . mysqli_real_escape_string($conn, $usr) . "', 
-                         deltime = NOW()
-                     WHERE cnid IN ($cnValues)
-                     $spCondition";
+        $updateSql = "UPDATE jobConSupLnk SET delusr = '" . mysqli_real_escape_string($conn, $usr) . "', deltime = NOW() WHERE cnid IN ($cnValues) $spCondition";
 
         if (!mysqli_query($conn, $updateSql)) {
             throw new Exception("Update failed: " . mysqli_error($conn));
