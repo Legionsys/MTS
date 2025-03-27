@@ -1604,7 +1604,7 @@ button.print-button:hover .print-icon::after {
 }
 
 .CNL-list {
-  max-height: 600px;
+  max-height: 275px;
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 5px;
