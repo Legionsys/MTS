@@ -44,7 +44,7 @@ if (strlen($client) > 0) {
     }
 }
 
-$sql = "SELECT jobList.*, clientList.*, COALESCE(CASE WHEN totalConNotes is null THEN 1 WHEN totalConNotes = 0 THEN 1 ELSE COALESCE(activeLinks, 0) / totalConNotes END, 0) as activeLinkRatio FROM jobList LEFT JOIN clientList ON jobList.clientId = clientList.clientId LEFT JOIN (
+$sql = "SELECT jobList.*, clientList.*, COALESCE(CASE WHEN cnmrk = 1 then 1 WHEN totalConNotes is null THEN 0 WHEN totalConNotes = 0 THEN 0 ELSE COALESCE(activeLinks, 0) / totalConNotes END, 0) as activeLinkRatio FROM jobList LEFT JOIN clientList ON jobList.clientId = clientList.clientId LEFT JOIN (
 SELECT jobID, COUNT(*) as totalConNotes, SUM(CASE WHEN jcs.cnID IS NOT NULL AND jcs.deltime IS NULL THEN 1 ELSE 0 END) as activeLinks FROM conNotes cn LEFT JOIN jobConSupLnk jcs ON cn.cnID = jcs.cnID AND jcs.deltime IS NULL
 GROUP BY jobID) conStats ON jobList.jobID = conStats.jobID where ";
 

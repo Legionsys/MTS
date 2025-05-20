@@ -590,7 +590,13 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
         <div class="cnadd"><img id="acn" src="img/add-lines.png" alt="Add a Con Note"></div>
     </div>
     <div id="contlst" class="cont">
-
+        <div id="conswtch">
+            <div>
+                Click me to turn<br>
+                <span class="bold">OFF</span> con-notes<br>
+                for this job
+            </div>
+        </div>
     </div>
 </div>
 
