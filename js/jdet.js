@@ -32,7 +32,6 @@ function urldecoder(str){
   .replace(/&quot;/g, '"')
   .replace(/&#39;/g, "'");
 }
-
 function numberFormat(number, decimals, decPoint, thousandsSep) {
   number = Number(number).toFixed(decimals);
 
@@ -104,6 +103,13 @@ function jsupd() {
       if (k === "ac_cb" || k === "inv_c") {
         if (v !== null) {
           document.getElementById(k).checked = true;
+        }
+      } else if (k === "cnmrk") {
+        //update connote disable mark
+        if (v === 1) {
+          cn_marking('disable');
+        } else {
+          cn_marking('enable');
         }
       } else {
         document.getElementById(k).value = v;
@@ -234,35 +240,17 @@ function jconupd(data) {
       <div class="cnrcomp">${chknull(val.rnam)}</div>
       <div class="cnitm">${chknull(val.titm)} itms</div>
       <div class="cnwgt">${chknull(val.twgt)} kg</div>
-      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3
-      </div>
-    `;
-    
+      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3</div>`;
       fragment.appendChild(div);  // Append each card to the fragment
     });
+    
+    document.querySelectorAll('#contlst .ccnt_card').forEach(div => div.remove());
+    //contlst.innerHTML = '';  // Clear existing content if needed
+    contlst.appendChild(fragment);  // Append the fragment once to the DOM
+    csl_upd();
+    cn_check()
   }
-  contlst.innerHTML = '';  // Clear existing content if needed
-  contlst.appendChild(fragment);  // Append the fragment once to the DOM
-  csl_upd();
 }
-
-/*
-function jconupd() {
-  var contlst = document.getElementById('contlst');
-  cnot.forEach(function (val) {
-    var txt = '';
-    txt += '<div data-id="' + chknull(val.cnID) + '" class="ccnt_card">';
-    txt += '<div class="cnnum">' + chknull(val.cnNum) + '</div>';
-    txt += '<input type="checkbox" class="mcnprnt" name="mprint" value="' + chknull(val.cnID) + '">';
-    txt += '<div class="cnscomp">' + chknull(val.snam) + '</div>';
-    txt += '<div class="cnrcomp">' + chknull(val.rnam) + '</div>';
-    txt += '<div class="cnitm">' + chknull(val.titm) + ' itms</div>';
-    txt += '<div class="cnwgt">' + chknull(val.twgt) + ' kg</div>';
-    txt += '<div class="cnm3">' + Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(chknull(val.tcub)) + ' m3</div>';
-    txt += '</div>';
-    contlst.insertAdjacentHTML('beforeend', txt);
-  });
-}*/
 function jbdu() {
   var frdu = fr;
   var ind = "job";
@@ -531,43 +519,6 @@ async function consup(upd) {
     console.error("Error in making the request:", error);
   }
 }
-/*
-function jbcon() {
-  var ind = "con";
-  var frcon = fr;
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", "/inc/job-init.php", true);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4) {
-      if (xhr.status == 200) {
-        var data = xhr.responseText;
-        if (data.substring(0, 1) == '<') {
-          document.getElementById('coll').insertAdjacentHTML('beforeend', data);
-        } else {
-          cnot = JSON.parse(data);
-          if (frcon == 'Y') {
-            ocnot = JSON.parse(JSON.stringify(cnot));
-          }
-          if (upd === "y") {
-            jconupd();
-          }
-        }
-      } else {
-        console.log("Failure Con-note - " + jbn);
-        console.log("Error: " + xhr.responseText);
-        console.log(xhr);
-      }
-    }
-  };
-
-  xhr.onerror = function () {
-    console.log("Error in making the request.");
-  };
-
-  xhr.send("jbn=" + jbn + "&indi=" + ind);
-}*/
 function confrt(callback) {
   return new Promise((resolve, reject) => {
     var frfr = fr;
@@ -655,7 +606,6 @@ function parseCell(row, dataCol) {
   var cellValue = cell ? parseFloat(cell.innerHTML.replace(/,/g, '')) : NaN;
   return isNaN(cellValue) ? 0 : cellValue;
 }
-
 function cnotCHK() {
   var checkboxes = document.querySelectorAll('input:checkbox.mcnprnt');
   
@@ -1511,6 +1461,42 @@ function clrcnt() {
     }
   });
 }
+function cn_marking(action) {
+  let isOff = false;
+  switch (action) {
+    case 'enable':
+      isOff = true;
+      break;
+    case 'disable':
+      isOff = false;
+      break;
+  }
+  const titleDivs = document.querySelectorAll('#jdet-cns .title div');
+  const conswtcDiv = document.querySelector('#conswtch div span');
+
+  // Loop through all title divs and toggle the 'hideme' class
+  titleDivs.forEach(div => {
+    if (isOff) {
+      div.classList.remove('hideme');
+    } else {
+      div.classList.add('hideme');
+    }
+  });
+
+  // Set conswtcDiv text based on isOff
+  conswtcDiv.textContent = isOff ? 'OFF' : 'ON';
+}
+function cn_check() {
+  //see how many con-notes are on the job
+  const count = document.querySelectorAll('#contlst .ccnt_card').length;
+  if (count > 0) {
+    document.querySelector('#conswtch').classList.add('hideme');
+    cn_marking('enable');
+  } else {
+    document.querySelector('#conswtch').classList.remove('hideme');
+  }
+
+}
 function cn_close() {
   var upd2 = upd;
   startRotation();
@@ -1523,7 +1509,7 @@ function cn_close() {
   document.getElementById('cn-frame').classList.add('hideme');
   stopRotation();
   upd = upd2;
-  
+  cn_check();
 }
 // Function to display the input form
 function showTagInput() {
@@ -1537,7 +1523,6 @@ function showTagInput() {
       ddTagPop("");
   } 
 }
-
 // Function to position the dd element below the focused input field
 function positionDropdown() {
   const ddElement = document.getElementById('dd');
@@ -1871,7 +1856,6 @@ function startRotation() {
       isRotating = true;
   }
 }
-
 function stopRotation() {
   const rcn = document.getElementById('rcn');
   if (isRotating) {
@@ -1881,7 +1865,6 @@ function stopRotation() {
   }
 }
 //Supplier - con note linking. 
-
 //populate boxes
 function CS_Link(cons) {
   document.getElementById('boscr').classList.remove('hideme');
@@ -3706,7 +3689,38 @@ document.getElementById('add-tag-button').addEventListener('click', function() {
     document.getElementById('tag-input').value = '';
   }
 });
-
+document.getElementById('conswtch').addEventListener('click', function() {
+  // Check the current setting
+  const conswtcDiv = document.querySelector('#conswtch div span');
+  const isOff = conswtcDiv && conswtcDiv.textContent.trim() === 'OFF';
+  const stat = isOff ? 'disable' : 'enable';
+  const jobNumber = jbn;
+  // Send AJAX request to PHP
+  fetch(`/inc/cnmrk.php?job=${encodeURIComponent(jobNumber)}&action=${encodeURIComponent(stat)}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        // On success, update the interface
+        cn_marking(stat);
+        //console.log(data.success); 
+      } else {
+        console.error(data.error); 
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+});
 document.getElementById('client').addEventListener('input', positionDropdown);
 document.getElementById('client').addEventListener('focus', positionDropdown);
 
@@ -3715,6 +3729,7 @@ window.addEventListener('resize', realignDropdown);
 window.addEventListener('scroll', realignDropdown);
 
 });
+
 //suggestion list moving and activating
 document.addEventListener('focus', function(event) {
   if (event.target.classList.contains('ddv')) {
