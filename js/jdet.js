@@ -439,48 +439,76 @@ async function jbcon() {
     console.error("Error in making the request:", error);
   }
 }
+function consupupd(cnIDs) {
+    cnIDs.forEach(cnID => {
+        // Find the ccnt_card with matching data-id
+        const card = document.querySelector(`.ccnt_card[data-id="${cnID}"]`);
+        if (!card) return; // Skip if no matching card found
+
+        // Find the matching cnot row
+        const cnotRow = cnot.find(row => String(row.cnID) === String(cnID));
+        if (!cnotRow) return; // Skip if no matching cnot row found
+
+        // Get or create lsn div
+        let lsnDiv = card.querySelector('.lsn');
+        if (!lsnDiv) {
+            lsnDiv = document.createElement('div');
+            lsnDiv.className = 'lsn';
+            card.appendChild(lsnDiv);
+        }
+        lsnDiv.textContent = chknull(cnotRow.jsname);
+
+        // Get or create lsq div
+        let lsqDiv = card.querySelector('.lsq');
+        if (!lsqDiv) {
+            lsqDiv = document.createElement('div');
+            lsqDiv.className = 'lsq';
+            card.appendChild(lsqDiv);
+        }
+        lsqDiv.textContent = chknull(cnotRow.supplier_count);
+    });}
 function csl_upd() {
   // Get today's date and calculate the threshold (today - 4 days)
-    const today = new Date();
-    const thresholdDate = new Date(today);
-    thresholdDate.setDate(today.getDate() + 3);
+  const today = new Date();
+  const thresholdDate = new Date(today);
+  thresholdDate.setDate(today.getDate() + 3);
 
-    // Get the puDate value and convert to Date object
-    const puDateInput = document.getElementById('puDate');
-    const puDateValue = puDateInput ? new Date(puDateInput.value) : null;
+  // Get the puDate value and convert to Date object
+  const puDateInput = document.getElementById('puDate');
+  const puDateValue = puDateInput ? new Date(puDateInput.value) : null;
 
-    // Get all ccnt_card divs within contlst
+  // Get all ccnt_card divs within contlst
   const cards = document.querySelectorAll('#contlst .ccnt_card');
   const isCslnkEmpty = !cslnk || cslnk.length === 0;
-    cards.forEach(card => {
-        // Remove all specified classes
-      card.classList.remove('lnked', 'notlnked', 'lnkedUrg', 'notlnkedUrg');
-        // Get the data-id value from the card
-      const cardId = card.getAttribute('data-id');
-      // Check if this card's ID exists in cslnk array
-      let isLinked;
-        if (isCslnkEmpty) {
-            isLinked = false; // If cslnk is empty, all cards are not linked
-        } else {
-            isLinked = cslnk.some(item => item.cnID == cardId);
-        }
-        // Determine if date is urgent (greater than threshold)
-      const isUrgent = puDateValue && puDateValue < thresholdDate;
-      // Apply appropriate class based on conditions
-      if (isLinked) {
-        if (isUrgent) {
-          card.classList.add('lnkedUrg');
-        } else {
-          card.classList.add('lnked');
-        }
+  cards.forEach(card => {
+      // Remove all specified classes
+    card.classList.remove('lnked', 'notlnked', 'lnkedUrg', 'notlnkedUrg');
+      // Get the data-id value from the card
+    const cardId = card.getAttribute('data-id');
+    // Check if this card's ID exists in cslnk array
+    let isLinked;
+      if (isCslnkEmpty) {
+          isLinked = false; // If cslnk is empty, all cards are not linked
       } else {
-        if (isUrgent) {
-          card.classList.add('notlnkedUrg');
-        } else {
-          card.classList.add('notlnked');
-        }
+          isLinked = cslnk.some(item => item.cnID == cardId);
       }
-    });
+      // Determine if date is urgent (greater than threshold)
+    const isUrgent = puDateValue && puDateValue < thresholdDate;
+    // Apply appropriate class based on conditions
+    if (isLinked) {
+      if (isUrgent) {
+        card.classList.add('lnkedUrg');
+      } else {
+        card.classList.add('lnked');
+      }
+    } else {
+      if (isUrgent) {
+        card.classList.add('notlnkedUrg');
+      } else {
+        card.classList.add('notlnked');
+      }
+    }
+  });
 }
 async function consup(upd) {
   if (upd == '') {
@@ -2093,6 +2121,10 @@ function CNLButton() {
         document.getElementById('boscr').classList.add('hideme');
       }
       consup(true);
+      jbcon()
+    .then(() => consupupd(cns))
+    .catch(error => console.error("Error in executing jbcon or consupupd:", error));
+
         //alert('Links updated successfully');
     })
     .catch(error => {
