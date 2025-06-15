@@ -16,17 +16,19 @@
   margin-top: 0.75rem;
 }
 .jsum-head div {
-  width: 30%;
+  width: 45%;
   align-items: center;
-  font-size: 2.5rem;
+  font-size: 2rem;
   padding: 1rem 0.5rem;
   vertical-align: middle;
   border-radius: 1.5rem;
   margin: 1rem;
   text-justify: distribute;
+  display: flex;
+  flex-flow: row wrap;
 }
 .jsum-head div div{
-  width: 90%;
+  width: 46%;
   padding: 1rem;
   margin: 1.5rem;
 }
@@ -419,8 +421,8 @@ a {
 }
 
 .notlnked {
-  border: #cc550062 solid 1px;
-  box-shadow: 0 4px 8px 0 #cc550062;
+  border: #ff000085 solid 1px;
+  box-shadow: 0 4px 8px 0 #ff000085;
 }
 
 .lnkedUrg {
@@ -428,5 +430,8 @@ a {
 }
 
 .notlnkedUrg {
-  background-color: #cc550062;
+  background-color: #ff000085;
+}
+.compl{
+  background-color: #1316e6a8;
 }

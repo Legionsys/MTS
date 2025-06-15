@@ -240,15 +240,18 @@ function jconupd(data) {
       <div class="cnrcomp">${chknull(val.rnam)}</div>
       <div class="cnitm">${chknull(val.titm)} itms</div>
       <div class="cnwgt">${chknull(val.twgt)} kg</div>
-      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3</div>`;
+      <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3</div>
+      <div class="lsn">${chknull(val.jsname)}</div>
+      <div class="lsq">${chknull(val.supplier_count)}</div>`;
+      
       fragment.appendChild(div);  // Append each card to the fragment
     });
     
-    document.querySelectorAll('#contlst .ccnt_card').forEach(div => div.remove());
+    //document.querySelectorAll('#contlst .ccnt_card').forEach(div => div.remove()); --remove all cards in list
     //contlst.innerHTML = '';  // Clear existing content if needed
     contlst.appendChild(fragment);  // Append the fragment once to the DOM
     csl_upd();
-    cn_check()
+    cn_check();
   }
 }
 function jbdu() {
@@ -427,6 +430,8 @@ async function jbcon() {
       }
       // Call jconupd with the locally stored new data
       if (localUpd === "y") {
+        document.querySelectorAll('#contlst .ccnt_card').forEach(div => div.remove());
+        //document.getElementById("contlst").innerHTML = "";
         jconupd(newCnotData);  // Pass only the new data to jconupd
       }
     }
@@ -587,7 +592,7 @@ function conDetUpd() {
           tQty += parseFloat(noItemValue);
         }
         if (!isNaN(itWgtValue)) {
-          tWgt += parseFloat(itWgtValue);
+          tWgt += (parseFloat(itWgtValue)* qty);
         }
   
         // Check if all dimension values are numeric before adding
@@ -1460,6 +1465,7 @@ function clrcnt() {
       input.classList.remove('pending');
     }
   });
+  actcn = null;
 }
 function cn_marking(action) {
   let isOff = false;
@@ -1497,19 +1503,45 @@ function cn_check() {
   }
 
 }
+function removeCN(dataId) {
+    const card = document.querySelector(`.ccnt_card[data-id="${dataId}"]`);
+    if (card) {
+        card.remove();
+    }
+}
+function syncCards() {
+    // Get all current card data-ids
+    const existingIds = new Set(
+        Array.from(document.querySelectorAll('.ccnt_card')).map(card => card.getAttribute('data-id'))
+    );
+
+    // Check for new items in cnot that aren't in the DOM
+    cnot.forEach(item => {
+        if (!existingIds.has(String(item.cnID))) {
+            jconupd([item]); // Pass single item as array to jconupd
+        }
+    });
+
+    // Check for cards in DOM that aren't in cnot
+    existingIds.forEach(id => {
+        if (!cnot.some(item => String(item.cnID) === id)) {
+            removeCN(id);
+        }
+    });
+}
 function cn_close() {
-  var upd2 = upd;
+  document.getElementById('boscr').classList.add('hideme');
+  document.getElementById('Conlink').classList.add('hideme');
+  document.getElementById('cn-frame').classList.add('hideme');
+  /*var upd2 = upd;
   startRotation();
   upd = "y";
   document.getElementById("contlst").innerHTML = "";
   jbcon();
   confrt();
-  document.getElementById('boscr').classList.add('hideme');
-  document.getElementById('Conlink').classList.add('hideme');
-  document.getElementById('cn-frame').classList.add('hideme');
-  stopRotation();
   upd = upd2;
-  cn_check();
+  stopRotation();
+  cn_check();*/
 }
 // Function to display the input form
 function showTagInput() {
@@ -2789,7 +2821,16 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   // reloading Connotes
   document.querySelector('img[id=rcn]').addEventListener('click', function () {
-    cn_close();
+    var upd2 = upd;
+    startRotation();
+    upd = "n";
+    jbcon();
+    confrt();
+    syncCards();
+    upd = upd2;
+    stopRotation();
+    cn_check();
+    //cn_close();
   });
   //linking Connote
   document.querySelector('img[id=lcn]').addEventListener('click', function () {
@@ -2876,7 +2917,7 @@ document.getElementById('cncopy').addEventListener('click', function () {
           // Update the frt array to include new rows
           
           processConnote(njn, cno, ncnum);
-
+          syncCards();
         } else {
           alert("There was an error copying this connote,\n" + data);
         }
@@ -2912,9 +2953,8 @@ document.getElementById('cnmove').addEventListener('click', function () {
             if (confirm("Move was successful, would you like to go to job " + ej + "?")) {
               window.location.href = "/jdet.php?job_no=" + dj;
             } else {
+              removeCN(cno);
               cn_close();
-              
-              actcn = null;
               clrcnt();
             }
           } else {
@@ -2941,8 +2981,8 @@ document.getElementById('cndel').addEventListener('click', function () {
           var data = xhr.responseText;
           if (!isNaN(Number(data))) {
             cnot.splice(actcn, 1);
+            removeCN(cno);
             cn_close();
-            
             clrcnt();
           } else {
             alert("There was an error deleting this connote,\n" + data);
@@ -2999,7 +3039,6 @@ document.getElementById('Conlink').addEventListener('click', function () {
 });  
 document.getElementById('boscr').addEventListener('click', function () {
   cn_close();
-  actcn = null;
   clrcnt();
 });
 document.querySelector('.wrapper').addEventListener('click', function (event) {
@@ -3280,7 +3319,7 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
               mrkr.classList.remove("pending");
           }
       } else {
-          if (ofrt[oid][col].toString() === cval.toString()) {
+          if (cval.length === 0 || ofrt[oid][col].toString() === cval.toString()) {
               mrkr.classList.remove("updated");
               mrkr.classList.remove("pending");
           } else {
@@ -3637,6 +3676,7 @@ jDetInfo.forEach(function (element) {
 
 document.getElementById('cn-close').addEventListener('click', function () {
   cn_close();
+  clrcnt();
 });
 
 document.getElementById("cnam").addEventListener("focusin", function() {

@@ -16,7 +16,7 @@ if ($indi == "job") {
 } elseif ($indi == "not") {
     $sql = "SELECT * FROM jobNote WHERE jobID = ? and jnDie is null order by jnOrd;";
 } elseif ($indi == "con") {
-    $sql = "SELECT a.*,b.titm,b.twgt,b.tcub FROM conNotes a LEFT JOIN (select cnID,sum(ifnull(noItem,0)) as titm,sum(ifnull(itWgt,0)) as twgt,sum(ifnull((itLen*itWid*itHei*itQty)/1000000,0)) as tcub from conDets WHERE frtDie is Null group by cnID) b on a.cnID = b.cnID WHERE a.jobID = ? order by cnID;";
+    $sql = "SELECT a.*,b.titm,b.twgt,b.tcub,su.jsname,COALESCE(c.supplier_count, 0) AS supplier_count FROM conNotes a LEFT JOIN (select cnID,sum(ifnull(noItem,0)) as titm,sum(ifnull(itWgt,0)) as twgt,sum(ifnull((itLen*itWid*itHei*itQty)/1000000,0)) as tcub from conDets WHERE frtDie is Null group by cnID) b on a.cnID = b.cnID LEFT JOIN (SELECT cnID, jsID FROM (SELECT cnID, jsID, ROW_NUMBER() OVER (PARTITION BY cnID ORDER BY lnktime ASC, jsID ASC) AS rn FROM jobConSupLnk WHERE deltime IS NULL) t WHERE rn = 1) sl ON a.cnID = sl.cnID LEFT JOIN jobSup su on sl.jsID = su.jsID LEFT JOIN (SELECT cnID,COUNT(jsID) AS supplier_count FROM jobConSupLnk WHERE deltime IS NULL GROUP BY cnID) c ON a.cnID = c.cnID WHERE a.jobID = ? order by cnID;";
 } elseif ($indi == "frt") {
     $sql = "SELECT * FROM conDets where cnID in (Select cnID from conNotes where jobID = ?) and frtDie is Null order by class desc,itID;";
 } elseif ($indi == "cslnk") {
