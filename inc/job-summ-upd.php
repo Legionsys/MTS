@@ -44,8 +44,7 @@ if (strlen($client) > 0) {
     }
 }
 
-$sql = "SELECT jobList.*, clientList.*, COALESCE(CASE WHEN cnmrk = 1 then 1 WHEN totalConNotes is null THEN 0 WHEN totalConNotes = 0 THEN 0 ELSE COALESCE(activeLinks, 0) / totalConNotes END, 0) as activeLinkRatio FROM jobList LEFT JOIN clientList ON jobList.clientId = clientList.clientId LEFT JOIN (
-SELECT jobID, COUNT(*) as totalConNotes, SUM(CASE WHEN jcs.cnID IS NOT NULL AND jcs.deltime IS NULL THEN 1 ELSE 0 END) as activeLinks FROM conNotes cn LEFT JOIN jobConSupLnk jcs ON cn.cnID = jcs.cnID AND jcs.deltime IS NULL
+$sql = "SELECT jobList.*, clientList.*, COALESCE(CASE WHEN cnmrk = 1 then 1 WHEN totalConNotes is null THEN 0 WHEN totalConNotes = 0 THEN 0 ELSE COALESCE(activeLinks, 0) / totalConNotes END, 0) as activeLinkRatio FROM jobList LEFT JOIN clientList ON jobList.clientId = clientList.clientId LEFT JOIN (SELECT jobID, COUNT(*) as totalConNotes, SUM(CASE WHEN jcs.cnID IS NOT NULL AND jcs.deltime IS NULL THEN 1 ELSE 0 END) as activeLinks FROM conNotes cn LEFT JOIN jobConSupLnk jcs ON cn.cnID = jcs.cnID AND jcs.deltime IS NULL
 GROUP BY jobID) conStats ON jobList.jobID = conStats.jobID where ";
 
 if (strlen($clientId) > 0) {
@@ -66,6 +65,8 @@ if ($job == "Act") {
 if ($job == "Com") {
     $sql = $sql . "jobList.jobComp IS NOT NULL AND ";
 };
+if ($job == "All") {
+};
 if ($inv == "Pend") {
     $sql = $sql . "jobList.jobInv IS NULL AND ";
 }
@@ -82,13 +83,13 @@ if ($tags && $tags != null && $tags != 'null') {
     }, $tagsArray)) . "))";
 };
 
-if (substr($sql, -5) == " AND ") {
+if (strtoupper(substr($sql, -5)) == " AND ") {
     $sql = substr($sql, 0, strlen($sql) - 4);
 };
-if (substr($sql, -5) == "HERE ") {
+if (strtoupper(substr($sql, -5)) == "HERE ") {
     $sql = substr($sql, 0, strlen($sql) - 6);
 };
-
+echo '<script>console.log("SQL Query: ' . $sql . '");</script>';
 $sql = $sql . "order by jobDate is Null, jobDate ASC;";/*
 if (strlen($clientId) > 0 and strlen($wild) > 0) {
     $sql = "SELECT * FROM jobList LEFT JOIN clientList on jobList.clientId = clientList.clientId WHERE jobRef like '%$wild%' AND clientId = $clientId order by jobID;";
@@ -101,7 +102,7 @@ if (strlen($clientId) > 0 and strlen($wild) > 0) {
 }    */
 
 
-//echo '<script>console.log("SQL Query: ' . addslashes($sql) . '");</script>';
+//echo '<script>console.log("SQL Query: ' . $sql . '");</script>';
 $resultData = mysqli_query($conn, $sql);
 
 if (mysqli_num_rows($resultData) > 0) {
@@ -129,21 +130,23 @@ if (mysqli_num_rows($resultData) > 0) {
 
 
         $crdhtml = '<a href="/jdet.php?job_no=' . $jnum . '"><div class="jcard ';
-
-        if ($row['activeLinkRatio'] == 1) {
-            if ($isUrgent) {
-                $crdhtml = $crdhtml . 'lnkedUrg';
-            } else {
-                $crdhtml = $crdhtml . 'lnked';
-            }
+        if ($row['jobComp'] !== null) {
+            $crdhtml = $crdhtml . 'compl';
         } else {
-            if ($isUrgent) {
-                $crdhtml = $crdhtml . 'notlnkedUrg';
+            if ($row['activeLinkRatio'] == 1) {
+                if ($isUrgent) {
+                    $crdhtml = $crdhtml . 'lnkedUrg';
+                } else {
+                    $crdhtml = $crdhtml . 'lnked';
+                }
             } else {
-                $crdhtml = $crdhtml . 'notlnked ';
+                if ($isUrgent) {
+                    $crdhtml = $crdhtml . 'notlnkedUrg';
+                } else {
+                    $crdhtml = $crdhtml . 'notlnked ';
+                }
             }
         }
-
         $crdhtml = $crdhtml . '" id="' . $jnum . '"><div class="jnum">' . $fjobno . '</div>';
         if (isset($row['jobDate']) && $row['jobDate'] !== null) {
             $crdhtml = $crdhtml .  '<div class="pud">' . date_format(date_create($row['jobDate']), "d-m-Y") . '</div>';

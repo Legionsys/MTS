@@ -478,7 +478,7 @@
 .ccnt_card {
   position: relative;
   width: 30rem;
-  height: 10.4rem;
+  /*height: 10.4rem;*/
   margin: 0.5rem;
   padding: 1rem;
   background-color: whitesmoke;
@@ -521,6 +521,21 @@
   font-size: 1.25rem;
   position: relative;
   margin: 0.5rem;
+}
+.lsn,
+.lsq {
+  font-size: 1.5rem;
+  position: relative;
+  margin-top: 0.25rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #5d5d5d;
+}
+.lsn {
+  left: 2.5%;
+  width: 85%;
+}
+.lsq {
+  width: 15%;
 }
 /*Formatting for the notes*/
 #jd-notes {
@@ -1705,12 +1720,12 @@ button.print-button:hover .print-icon::after {
   box-shadow: 0 4px 8px 0 #00cc5569;
 }
 .notlnked {
-  border: #cc550062 solid 1px;
-  box-shadow: 0 4px 8px 0 #cc550062;
+  border: #ff000085 solid 1px;
+  box-shadow: 0 4px 8px 0 #ff000085;
 }
 .lnkedUrg {
   background-color: #00cc5569;
 }
 .notlnkedUrg {
-  background-color: #cc550062;
+  background-color: #ff000085;
 }
