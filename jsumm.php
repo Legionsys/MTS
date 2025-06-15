@@ -26,19 +26,19 @@ $pName = "";
         </div>-->
         <div>
             <div class=lnkedUrg>
-                All con notes linked or turned off and are less than 3 days into the future.
+                All links are complete and is less than 3 days into the future.
             </div>
             <div class=notlnkedUrg>
-                All con notes NOT linked and are less than 3 days into the future.
+                Links required and is less than 3 days into the future.
             </div>
 
         </div>
         <div>
             <div class=lnked>
-                All con notes linked or turned off and are more than 3 days into the future.
+                All links are complete and is more than 3 days into the future.
             </div>
             <div class=notlnked>
-                All con notes NOT linked and are more than 3 days into the future.
+                Links required and is are more than 3 days into the future.
             </div>
         </div>
     </div>
