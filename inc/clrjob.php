@@ -17,12 +17,12 @@ if (isset($_POST['jobno'])) {
     echo "Error: job number not set";
     exit();
 }
-echo "uid - ".$uid;
-echo "usr - ".$usr;
+/*echo "uid - ".$uid;
+echo "usr - ".$usr;*/
 //ensure job number is not blank or null
 
 
-if ($jb == '' || $jb == null ) {
+if ($jb == '' || $jb == null) {
     if ($jb == '') {
         echo ("jb is blank");
     } else if ($jb == null) {
@@ -65,21 +65,20 @@ mysqli_stmt_close($stmt);
 
 $sql = "INSERT INTO delJobList (d_del, usersId, $columns)
         SELECT ?, ?, $columns FROM jobList WHERE jobID = ?";
-
+echo $sql;
 $stmt = mysqli_stmt_init($conn);
 
-if (!mysqli_stmt_prepare($stmt,$sql)) {
-    
+if (!mysqli_stmt_prepare($stmt, $sql)) {
+
     echo "Error prepare failure";
     exit();
 }
 
 mysqli_stmt_bind_param($stmt, "sii", $mrkr, $usr, $jb);
 
-if(!$stmt->execute())
-{
+if (!$stmt->execute()) {
     // There was an error
-    echo 'Error : '.$stmt->error;
+    echo 'Error : ' . $stmt->error;
 }
 
 mysqli_stmt_close($stmt);
@@ -114,7 +113,7 @@ foreach ($tables as $table) {
 
 // Remove jobID from the columns list
 $columnsArray = explode(',', $columns);
-$columnsArray = array_filter($columnsArray, function($col) {
+$columnsArray = array_filter($columnsArray, function ($col) {
     $trimmedCol = trim($col);
     return $trimmedCol !== 'jobID' && $trimmedCol !== 'clientId';
 });
@@ -129,20 +128,16 @@ $updateSql = "UPDATE jobList SET clientId=0,$setClause where jobID = ?";
 //echo " ----- " . $jb;
 $stmt = mysqli_stmt_init($conn);
 
-    if (!mysqli_stmt_prepare($stmt, $updateSql)) {
-        echo "Error: prepare statement failed for clearing joblist data - " . mysqli_error($conn);
-        exit();
-    }
+if (!mysqli_stmt_prepare($stmt, $updateSql)) {
+    echo "Error: prepare statement failed for clearing joblist data - " . mysqli_error($conn);
+    exit();
+}
 
-    mysqli_stmt_bind_param($stmt, "i", $jb);
+mysqli_stmt_bind_param($stmt, "i", $jb);
 
-    if (!mysqli_stmt_execute($stmt)) {
-        echo "Error: execution failed for clearing joblist data - " . mysqli_stmt_error($stmt);
-        exit();
-    }
+if (!mysqli_stmt_execute($stmt)) {
+    echo "Error: execution failed for clearing joblist data - " . mysqli_stmt_error($stmt);
+    exit();
+}
 
-    mysqli_stmt_close($stmt);
-
-
-
-?>
+mysqli_stmt_close($stmt);

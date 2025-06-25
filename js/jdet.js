@@ -25,6 +25,39 @@ var fr = '';
 var isRotating = false;
 var clrhld;
 
+function formatDate(dateString) {
+  if (!dateString) return '';
+
+  // Split the input string by '-'
+  dateString = dateString.replaceAll('/', '-');
+  const parts = dateString.split('-');
+  console.log(parts);
+  // Validate input has 3 parts
+  if (parts.length !== 3) return '';
+
+  let year, month, day, date;
+
+  // Detect input format based on length of first part
+  if (parts[0].length === 4) {
+    // Input is yyyy-mm-dd, convert to dd-mm-yyyy
+    [year, month, day] = parts;
+    date = new Date(year, month - 1, day);
+    if (isNaN(date)) return '';
+    return date.toLocaleDateString('en-GB').split('/').join('-');
+  } else if (parts[2].length === 4) {
+    // Input is dd-mm-yyyy, convert to yyyy-mm-dd
+    [day, month, year] = parts;
+    date = new Date(year, month - 1, day);
+    if (isNaN(date)) return '';
+    // Use local date components to avoid UTC shift
+    const formattedYear = date.getFullYear();
+    const formattedMonth = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const formattedDay = String(date.getDate()).padStart(2, '0');
+    return `${formattedYear}-${formattedMonth}-${formattedDay}`;
+  } else {
+    return ''; // Invalid format
+  }
+}
 function urldecoder(str){
   return str.replace(/&amp;/g, '&')
   .replace(/&lt;/g, '<')
@@ -241,6 +274,7 @@ function jconupd(data) {
       <div class="cnitm">${chknull(val.titm)} itms</div>
       <div class="cnwgt">${chknull(val.twgt)} kg</div>
       <div class="cnm3">${Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(chknull(val.tcub))} m3</div>
+      <div class="cnrec">${formatDate(chknull(val.rec))}</div>
       <div class="lsn">${chknull(val.jsname)}</div>
       <div class="lsq">${chknull(val.supplier_count)}</div>`;
       
@@ -988,7 +1022,7 @@ function sendUpdate(id,ori,upd) {
   sndata.set('id', id);
   sndata.set('ori', ori);
   sndata.set('Data', convertToObject(upd));
-
+  console.log(sndata);
   fetch("/inc/blkupd.php", {
     method: 'POST',
     headers: {
@@ -1007,7 +1041,7 @@ function sendUpdate(id,ori,upd) {
       let actref = [];
       let oactref = [];
       var idvar;
-      const nonkeys = ['hl'];
+      const nonkeys = ['hl','rec'];
       //determine reference array from ori
       if (ori === 'jobDetails') {
         actref = jdets;
@@ -1041,12 +1075,15 @@ function sendUpdate(id,ori,upd) {
           return false;
         }
       });
+
       //check key value pairs within form and adjust depending on match to reference array
       for (const [key, value] of Object.entries(convertToObject(upd))) {
         if (key === idvar) {
         } else if (nonkeys.includes(key)) {
           //special key operations
+          
         } else {
+          
         let element = document.getElementById(key);
 
         element.classList.remove('pending');
@@ -1059,9 +1096,11 @@ function sendUpdate(id,ori,upd) {
         }
 
         updchkr();
-      }
-      actref[actcn][key] = value;
-      }
+        }
+        
+        const index = actref.findIndex(item => item.cnID == id);
+        actref[index][key] = value;
+       }
     } else {
       alert('Error in updating');
       console.log('Variables - ' + id +' - ' + ori + ' - ' + upd);
@@ -1252,6 +1291,13 @@ function ccntLoad(cno) {
             document.getElementById(val[k]).checked = true;
           }
         } else if (k == "jobID") {
+
+        } else if (k == "rec") {
+          var element = document.getElementById(k);
+          if (element) {
+            if (val[k] != '') { }
+            element.innerHTML = formatDate(val[k]);
+          }
 
         } else if (k == "hl") {
           if (val[k] != null) {
@@ -2133,7 +2179,21 @@ function CNLButton() {
         alert('Error updating links');
     });
 }
+function CNRecUpd(id, date) {
+  var cnupd = new Map();
 
+  cnupd.set('rec', formatDate(date));
+  sendUpdate(id, 'conNote', cnupd);
+  // Locate the div with class 'ccnt_card' and matching data-id
+  const cardDiv = document.querySelector(`.ccnt_card[data-id="${id}"]`);
+  if (cardDiv) {
+    // Find the nested div with class 'cnrec' and update its innerHTML
+    const cnrecDiv = cardDiv.querySelector('.cnrec');
+    if (cnrecDiv) {
+      cnrecDiv.innerHTML = date;
+    }
+  }
+}
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -3043,10 +3103,34 @@ document.getElementById('contlst').addEventListener('click', function (event) {
       mcnl.push(event.target.value);
     } else {
       var remItem = event.target.value;
-      mcnl = mcnl.filter(function(value) {
+      mcnl = mcnl.filter(function (value) {
         return value !== remItem;
       });
     }
+  }
+  if (event.target.classList.contains('cnrec')) {
+    event.stopPropagation();
+    mcnf = "Y";
+    const cnrec = event.target.closest('.cnrec');
+      
+    // Get the parent .ccnt_card element
+    const ccntCard = cnrec.closest('.ccnt_card');
+      
+    if (ccntCard) {
+      // Get the data-id from .ccnt_card
+      const id = ccntCard.getAttribute('data-id');
+          
+      // Get today's date in dd-mm-yyyy format
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      const formattedDate = `${day}-${month}-${year}`;
+          
+      // Call CNRecUpd with id and date
+      CNRecUpd(id, formattedDate);
+    }
+  
   }
 });
 //Opening a Connote
@@ -3140,6 +3224,64 @@ document.querySelectorAll('.cndd').forEach(function (element) {
 
     sendUpdate(cno,'conNote', cnupd);
   });
+});
+document.getElementById('rec').addEventListener('click', function (event) {
+  event.stopPropagation();
+  const id = document.getElementById('cnID').value;
+
+  // Get today's date in dd/mm/yyyy format
+  const today = new Date();
+  const defaultDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+
+  let isValidInput = false;
+  let formattedDate;
+
+  while (!isValidInput) {
+      const userInput = prompt("Please enter the date received? (dd/mm/yyyy) \n or make blank to clear", defaultDate);
+
+      // Check if user clicked Cancel
+      if (userInput === null) {
+          alert("Request cancelled.");
+          return;
+      }
+
+      // Validate date format (dd/mm/yyyy) using regex
+      const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      const match = userInput.match(dateRegex);
+
+      if (!match && userInput != '') {
+          alert("Invalid date format! Please use dd/mm/yyyy.");
+          continue;
+      }
+
+    // Extract day, month, year
+    if (match) {
+      const day = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1; // JavaScript months are 0-based
+      const year = parseInt(match[3], 10);
+
+      // Validate date
+      const inputDate = new Date(year, month, day);
+      if (
+        inputDate.getDate() !== day ||
+        inputDate.getMonth() !== month ||
+        inputDate.getFullYear() !== year
+      ) {
+        alert("Invalid date! Please enter a valid date.");
+        continue;
+      }
+
+      // Format date to dd/mm/yyyy
+      formattedDate = `${String(day).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+    } else {
+      formattedDate = ''
+    }  
+      isValidInput = true;
+  }
+
+  // Call CNRecUpd with validated and formatted date
+  CNRecUpd(id, formattedDate);
+  document.getElementById('rec').innerHTML = formattedDate;
 });
 
   //add con note line
@@ -3853,4 +3995,86 @@ window.addEventListener('beforeunload', (event) => {
       // Show a confirmation dialog
       event.returnValue = 'Pending Changes detected, attempting to update server. Are you sure you want to leave?';
   }
+});
+document.addEventListener('DOMContentLoaded', () => {
+  // Create a single tooltip element
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tooltip';
+  document.body.appendChild(tooltip);
+
+  // Track timeout for hover delay and current cursor position
+  let timeout;
+  let cursorX = 0;
+  let cursorY = 0;
+
+  // Function to position tooltip within viewport
+  function positionTooltip() {
+    // Get tooltip dimensions after setting text (for accurate width/height)
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const offset = 10; // Default offset from cursor
+    let left = cursorX + offset;
+    let top = cursorY + offset;
+
+    // Check if tooltip would overflow right edge
+    if (left + tooltipRect.width > window.innerWidth) {
+      console.log(window.innerWidth);
+      console.log(left + tooltipRect.width);
+      console.log((left + tooltipRect.width) - window.innerWidth);
+      left = cursorX - ((left + tooltipRect.width) - window.innerWidth);
+        //left = cursorX - tooltipRect.width - offset; // Place to the left of cursor
+    }
+
+    // Check if tooltip would overflow bottom edge
+    if (top + tooltipRect.height > window.innerHeight) {
+        top = cursorY - tooltipRect.height - offset; // Place above cursor
+    }
+
+    // Ensure tooltip doesn't go off the left or top edge
+    
+    left = Math.max(offset, left);
+    top = Math.max(offset, top);
+    
+    // Apply position
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+}
+
+  // Select all elements with data-tt attribute
+  const elements = document.querySelectorAll('[data-tt]');
+
+  elements.forEach(element => {
+      element.addEventListener('mouseover', (e) => {
+          // Get tooltip text from data-tt
+          const tooltipText = element.getAttribute('data-tt');
+          if (tooltipText) {
+              // Update cursor position
+              cursorX = e.clientX;
+              cursorY = e.clientY;
+              // Set 2-second delay before showing tooltip
+              timeout = setTimeout(() => {
+                  tooltip.textContent = tooltipText;
+                  tooltip.classList.add('show');
+                  // Position tooltip at cursor position at time of display
+                  positionTooltip();
+              }, 500);
+          }
+      });
+
+      element.addEventListener('mousemove', (e) => {
+          // Update cursor position
+          cursorX = e.clientX;
+          cursorY = e.clientY;
+          // Update tooltip position to follow cursor
+          if (tooltip.classList.contains('show')) {
+            positionTooltip();
+          }
+      });
+
+      element.addEventListener('mouseout', () => {
+          // Clear timeout and hide tooltip
+          clearTimeout(timeout);
+          tooltip.classList.remove('show');
+          tooltip.textContent = ''; // Clear content
+      });
+  });
 });
