@@ -149,7 +149,7 @@ a {
   width: 95%;
   margin-top: 0.5rem;
   cursor: pointer;
-  color: green;
+  color: darkgreen;
 }
 .jcard:hover {
   box-shadow: 0 6px 20px 0 rgba(245, 202, 123, 0.75);
@@ -433,5 +433,5 @@ a {
   background-color: #ff000085;
 }
 .compl{
-  background-color: #1316e6a8;
+  background-color: lightblue;
 }

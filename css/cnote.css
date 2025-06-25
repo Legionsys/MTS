@@ -133,10 +133,14 @@
     padding: 0.25rem;
     height: 12.25rem;
   }
+  #delivery{
+    width: 15%;
+    height: 15rem;
+  }
   #cnadmin,
   #onspco,
   #cnhl {
-    width: 30%;
+    width: 27%;
     height: 15rem;
   }
   .bg_box {
@@ -203,6 +207,16 @@
     padding: 0.4rem;
     border: 1px solid rgb(192, 192, 192);
     line-height: 1;
+  }
+  .rec_labs {
+    width: 45%;
+    background-color: #fff;
+    font-size: 1.5rem;
+    padding: 0.4rem;
+    border: 1px solid rgb(192, 192, 192);
+    line-height: 1;
+    cursor: pointer;
+    text-align: right;
   }
   .cn_cname,
   .cn_add1,

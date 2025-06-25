@@ -147,7 +147,24 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
             <div class="cn_scph"><input class="cndd" id="oPh" type="text" placeholder="Phone#"></div>
 
         </div>
-
+        <div id="delivery" class="cnblock">
+            <div class="cntitle">
+                <p>Milestone Details</p>
+            </div>
+            <div class='bg_box'>
+                <div class="ind_r">
+                    <div class="ind_labs">Received</div>
+                    <div id='rec' class='rec_labs'></div>
+                </div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+                <div class="ind_r"></div>
+            </div>
+        </div>
         <div id="onspco" class="cnblock">
             <div class="cntitle">
                 <p>Onforwarding / Special Instructions / Comments (Delay)</p>
@@ -348,7 +365,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
                     <div data-id="new" id="nnote">
                         <div contenteditable="true" data-col="jnot" class="ncol addtd" id="nnt"></div>
                         <div contenteditable="true" data-col="jamt" class="namt addtd" id="nna"></div>
-                        <div id="nnb" class="ntra addtd">
+                        <div id="nnb" class="ntra addtd" data-tt="Add the new note to the job">
                             <div class="cmd_img"><img id="newn" class="nbut" alt="New Note" src="/img/addnew.png">
                             </div>
                         </div>
@@ -367,7 +384,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
     <div class="title">
         <span id="jobnum">New Job</span>
         <div id="cl-job" class="cl-job">
-            <img id="clj" src="img/clean.png" alt="Clean Job of Data">
+            <img id="clj" src="img/clean.png" alt="Clean Job of Data" data-tt="Clear Job Information">
         </div>
     </div>
 
@@ -556,7 +573,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
         </div>
         <!-- When clicked, the input form will be displayed -->
         <div class="tgadd">
-            <img id="tga" src="img/add-lines.png" alt="Add a Tag"><!-- onclick="showTagInput()">-->
+            <img id="tga" src="img/add-lines.png" alt="Add a Tag" data-tt="Add a job tag"><!-- onclick="showTagInput()">-->
         </div>
         <div id="tag-input-form" style="display: none;">
             <input type="text" id="tag-input" class="ddv" placeholder="Add a tag" />
@@ -582,12 +599,12 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
 </div>
 <div id="jdet-cns">
     <div class="title">
-        <div class="cnmulti"><img id="mcn" src="img/book-2.svg" alt="Con Note Book"></div>
+        <div class="cnmulti"><img id="mcn" src="img/book-2.svg" alt="Con Note Book" data-tt="Combine selected ConNotes into 1 PDF"></div>
         <div class="cnt">
             <span>Con Notes</span>
         </div>
-        <div class="cnrl"><img id="rcn" src="img/reload-arrow-svgrepo-com.svg" alt="reload Con Notes"></div>
-        <div class="cnadd"><img id="acn" src="img/add-lines.png" alt="Add a Con Note"></div>
+        <div class="cnrl"><img id="rcn" src="img/reload-arrow-svgrepo-com.svg" alt="reload Con Notes" data-tt="Refresh ConNotes"></div>
+        <div class="cnadd"><img id="acn" src="img/add-lines.png" alt="Add a Con Note" data-tt="Create a new ConNote"></div>
     </div>
     <div id="contlst" class="cont">
         <div id="conswtch">
@@ -605,7 +622,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
         <div class="sup">
             <span>Suppliers</span>
         </div>
-        <div class="cnlnk"><img id="lcn" src="img/chain.png" alt="link Con Note & Supplier"></div>
+        <div class="cnlnk"><img id="lcn" src="img/chain.png" alt="link Con Note & Supplier" data-tt="Link ConNotes to Suppliers"></div>
     </div>
     <div class="cont">
         <div id="suplTbl">
