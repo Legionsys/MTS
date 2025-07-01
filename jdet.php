@@ -383,8 +383,13 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
 <div id="jdet-prim">
     <div class="title">
         <span id="jobnum">New Job</span>
+        <div id="primspace">
+        </div>
         <div id="cl-job" class="cl-job">
             <img id="clj" src="img/clean.png" alt="Clean Job of Data" data-tt="Clear Job Information">
+        </div>
+        <div id="du-job" class="du-job">
+            <img id="duj" src="img/duplicate.png" alt="Duplicate job including notes only" data-tt="Duplicate job & notes">
         </div>
     </div>
 
@@ -439,18 +444,34 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
         </div>
         <div class="div_puDate pdd">
             <div class="group">
+                <input id="puDate" class="inputMaterial j_det_info" name="jobDate" type="datetime-local" required autocomplete="off" />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab">Pick Up Date and Time</label>
+            </div>
+        </div>
+        <!--        <div class="div_puDate pdd">
+            <div class="group">
                 <input id="puDate" class="inputMaterial  j_det_info" name="jobDate" type="date" required autocomplete="off" />
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab">Pick Up Date</label>
             </div>
-        </div>
+    </div>-->
         <div class="div_doDate pdd">
             <div class="group">
                 <input id="doDate" class="inputMaterial  j_det_info" name="jobFin" type="date" required autocomplete="off" />
                 <span class="highlight"></span>
                 <span class="bar"></span>
                 <label class="pri_lab">Drop Off Date</label>
+            </div>
+        </div>
+        <div class="div_invNum pdd">
+            <div class="group">
+                <input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required autocomplete="off" />
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label class="pri_lab"> Invoice Number </label>
             </div>
         </div>
         <div id="j_c_cont">
@@ -467,14 +488,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
                 </label>
             </div>
         </div>
-        <div class="div_invNum pdd">
-            <div class="group">
-                <input id="InvNum" class="inputMaterial  j_det_info" name="invNum" type="text" required autocomplete="off" />
-                <span class="highlight"></span>
-                <span class="bar"></span>
-                <label class="pri_lab"> Invoice Number </label>
-            </div>
-        </div>
+
     </div>
 </div>
 <div id="jd-adds">
