@@ -2232,13 +2232,46 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.open("POST", "/inc/clrjob.php", true);
         xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
         xhr.send("jobno=" + encodeURIComponent(jbn));
-    } else {
+      } else {
         alert("You cannot clear a job without a job number");
-    }
-} else {
+      }
+    } else {
     alert("No Changes made");
-}
+    }
   });
+  document.getElementById("du-job").addEventListener('click', function (event) {
+    // Ensure jbn is defined and not zero
+    if (typeof jbn !== 'undefined' && jbn != 0) {
+        var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function () {
+        console.log(xhr.responseText);
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                try {
+                    var response = JSON.parse(xhr.responseText);
+                    if (response.status === 'error') {
+                        alert('Job Copy Error: ' + response.details);
+                    } else if (response.status === 'success') {
+                        console.log('Success');
+                        var userResponse = confirm("Job copied successfully, would you like to go to the new job?");
+                        if (userResponse) {
+                            // Redirect to jdet.php with the new jobID
+                            window.location.href = "/jdet.php?job_no=" + encodeURIComponent(response.details);
+                        } else {
+                            alert("Job details copied to new job " + response.details);
+                        }
+                    }
+                } catch (e) {
+                    alert('Error parsing response: ' + e.message);
+                }
+            }
+        };
+        xhr.open("POST", "/inc/dupjob.php", true);
+        xhr.setRequestHeader("Content-Type", 'application/x-www-form-urlencoded');
+        xhr.send("jobno=" + encodeURIComponent(jbn));
+    } else {
+        alert("You cannot copy a job without a job number");
+    }
+});
   document.getElementById("slist").addEventListener('mouseover', function (event) {
     if (event.target.closest('.clicard')) {
       climkr = 1; // Set climkr to 1 when hovering over a clicard
