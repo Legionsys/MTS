@@ -383,8 +383,13 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
 <div id="jdet-prim">
     <div class="title">
         <span id="jobnum">New Job</span>
+        <div id="primspace">
+        </div>
         <div id="cl-job" class="cl-job">
             <img id="clj" src="img/clean.png" alt="Clean Job of Data" data-tt="Clear Job Information">
+        </div>
+        <div id="du-job" class="du-job">
+            <img id="duj" src="img/duplicate.png" alt="Duplicate job including notes only" data-tt="Duplicate job & notes">
         </div>
     </div>
 

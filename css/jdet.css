@@ -423,15 +423,18 @@
   margin-right: 2.5rem;
 
 }
-.cl-job{
-  width: 4rem;
+.cl-job,
+.du-job {
+  width: 2rem;
   vertical-align: middle;
   text-align: center;
   cursor: pointer;
   margin-right: 2.5rem;
   cursor: pointer;
 }
-#clj {
+#clj,
+#duj,
+#primspace {
   height: 2.5rem;
   width: 2.5rem;
   vertical-align: middle;
@@ -440,6 +443,9 @@
   margin: 0.1rem;
   margin-left: 1.5rem;
   margin-top: 0.25rem;
+}
+#primspace {
+  width: 12rem;
 }
 #mcn {
   height: 2.5rem;
