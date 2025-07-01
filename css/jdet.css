@@ -11,7 +11,7 @@
   grid-template-columns: 0.1fr 35rem 12.5rem 40rem 1.75fr 32.5rem 0.1fr;
   /*grid-template-columns: 0.25fr 45rem 2fr 32.5rem 0.25fr;*/
 
-  grid-template-rows: 35rem calc(100vh - 43rem) 1rem; 
+  grid-template-rows: 36rem calc(100vh - 44rem) 1rem; 
   grid-template-areas: 
   ". prim tags addy supp cns ."
   ". notes notes notes notes cns ."
@@ -307,8 +307,10 @@
 .div_jobRef{
   width: 100%;
 }
-
-.div_puDate,
+#InvNum{
+  height: 22px;
+}
+.div_invNum,
 .div_doDate {
   width: 45%;
 }
@@ -318,7 +320,7 @@
 .div_cliContPh{
   width: 45%;
 }
-.div_cliContEm, .div_cliContEm2, .div_invNum{
+.div_cliContEm, .div_cliContEm2, .div_puDate {
   width: 100%;
 }
 
