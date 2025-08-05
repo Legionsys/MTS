@@ -126,6 +126,9 @@ function loginUser($conn,$username,$pwd,$rm) {
         header("location: ../index.php?error=wronglogin");
         exit();          
     } else if ($checkPwd === true) {
+        ini_set('session.gc_maxlifetime', 36000); // 10 hours
+        //session_set_cookie_params(36000, '/', 'mts.legionsystems.com.au', true, true); // Match cookie lifetime, secure settings
+        session_set_cookie_params(36000, '/', null, false, true); // Use null domain for localhost
         session_start();
         $_SESSION["userid"] = $uidExists["usersId"];
         $_SESSION["useruid"] = $uidExists["usersUid"];

@@ -13,6 +13,8 @@ var osups = [];
 var onotes = [];
 var ocnot = [];
 var ofrt = [];
+var uFiles = [];
+var ouFiles = [];
 var jbn;
 var upd;
 var actcn;
@@ -24,6 +26,23 @@ var sncrd = new Map()
 var fr = '';
 var isRotating = false;
 var clrhld;
+var nodta = "";
+const notebody = document.getElementById('notebody');
+var cndta = "";
+var cndu = "";
+var cnAddTds = document.querySelectorAll("#cn_add tr td");
+const sumColumns = ['noItem', 'itWgt', 'itLen', 'itWid', 'itHei', 'itQty']; // Columns triggering conDetUpd
+const podInd = document.getElementById('pod_ind');
+
+
+
+
+
+
+
+
+
+
 
 function formatDate(dateString) {
   if (!dateString) return '';
@@ -31,7 +50,7 @@ function formatDate(dateString) {
   // Split the input string by '-'
   dateString = dateString.replaceAll('/', '-');
   const parts = dateString.split('-');
-  console.log(parts);
+  //console.log(parts);
   // Validate input has 3 parts
   if (parts.length !== 3) return '';
 
@@ -110,6 +129,7 @@ function getSearchParams(k) {
   });
   return k ? p[k] : p;
 }
+
 function firstpop() {
   if (typeof jbn === 'number' && jbn !== 0) {   
     var jobn = "000000" + jbn;
@@ -119,6 +139,7 @@ function firstpop() {
     fr = 'Y';
     jbdu();
     jbsu();
+    jbfu()
     jbnot();
     jbcon();
     confrt();
@@ -331,6 +352,54 @@ function jbdu() {
   };
 
   xhr.send("jbn=" + jbn + "&indi=" + ind);
+}
+function jbfu() {
+  var frdu = fr;
+  var ind = "files";
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/inc/job-init.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4) {
+      if (xhr.status == 200) {
+        var data = xhr.responseText;
+        try {
+          uFiles = JSON.parse(data);
+        } catch (e) { 
+          uFiles = [];
+        }
+        if (frdu == 'Y') {
+          try {
+            ouFiles = JSON.parse(JSON.stringify(jdets));
+          } catch (e) { 
+            ouFiles = [];
+        }
+        }
+        if (data.substring(0, 1) == '<') {
+          document.getElementById('coll').insertAdjacentHTML('beforeend', data);
+        } else {
+          if (upd === "y") {
+            jsfupd();
+          }
+        }
+
+      } else {
+        console.log("Failure Job Details - " + jbn);
+        console.log("Error: " + xhr.responseText);
+        console.log(xhr);
+      }
+    }
+  };
+
+  xhr.onerror = function () {
+    console.log("Error in making the request.");
+  };
+
+  xhr.send("jbn=" + jbn + "&indi=" + ind);
+}
+function jsfupd() {
+  console.log('Job files update protocol');
 }
 function jbsu() {
   var frsu = fr;
@@ -1336,6 +1405,33 @@ function ccntLoad(cno) {
       }
     }
     }
+    // Filter the array to find matching rows
+    
+    const pod_File = uFiles.filter(item => 
+      item.entity_type === "con-note" && 
+      item.file_class === "POD" && 
+      item.entity_id == cno
+    );
+
+    // Find the row with the latest upload_date
+    const podMatch = pod_File.length > 0 ? pod_File.reduce((latest, current) => {
+      const latestDate = new Date(latest.upload_date);
+      const currentDate = new Date(current.upload_date);
+      return currentDate > latestDate ? current : latest;
+    }, pod_File[0]) : null;
+
+    // Update the podInd element if it exists and a match is found
+
+    if (podInd && podMatch) {
+      // Format the upload_date (e.g., "2025-08-04 11:52:42" to "04-08-2025")
+      const uploadDate = new Date(podMatch.upload_date);
+      const formattedDate = `${String(uploadDate.getDate()).padStart(2, '0')}-${String(uploadDate.getMonth() + 1).padStart(2, '0')}-${uploadDate.getFullYear()}`;
+      
+      podInd.textContent = formattedDate;
+      podInd.dataset.fileId = podMatch.id; // Use podMatch.id
+      podInd.dataset.downloadToken = podMatch.download_token; // Use podMatch.download_token
+      podInd.classList.add('dl');
+    }
   });
 
   frtload(cno);
@@ -1539,6 +1635,11 @@ function clrcnt() {
       input.classList.remove('pending');
     }
   });
+  const podInd = document.querySelector('#pod_ind.dl');
+  if (podInd) {
+    podInd.classList.remove('dl');
+    podInd.textContent = '';
+  }
   actcn = null;
 }
 function cn_marking(action) {
@@ -2194,23 +2295,206 @@ function CNRecUpd(id, date) {
     }
   }
 }
+//document functions
+function uploadDocument(inputFiles, entityType, entityId, fileClass, notes) {
+  return new Promise((resolve, reject) => {
+    const maxSize = 20 * 1024 * 1024;
+    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+    // Ensure inputFiles is an array
+    const filesArray = Array.isArray(inputFiles) ? inputFiles : Array.from(inputFiles);
+    const invalidFiles = filesArray.filter(file => 
+      !allowedTypes.includes(file.type) || file.size > maxSize
+    );
+    if (invalidFiles.length > 0) {
+      const errorMessages = invalidFiles.map(file => 
+        !allowedTypes.includes(file.type)
+          ? `File ${file.name} is not an allowed type. Only JPEG, PNG, PDF, plain text, and Word documents are permitted.`
+          : `File ${file.name} exceeds the maximum size of 20MB.`
+      );
+      reject(new Error(errorMessages.join('\n')));
+      return;
+    }
+
+    const uploadPromises = filesArray.map(file => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('entity_type', entityType);
+      formData.append('entity_id', entityId);
+      formData.append('file_class', fileClass);
+      formData.append('notes', notes);
+      formData.append('jbn', jbn);
+
+      return fetch('/inc/upload.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        console.log(`Upload response for ${file.name}:`, response.status, response.statusText);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(`Upload data for ${file.name}:`, data);
+        if (data.success) {
+          uFiles.push({
+            id: data.id,
+            filename: data.filename,
+            entity_type: data.entity_type,
+            entity_id: data.entity_id,
+            uplusr: data.uplusr,
+            upload_date: data.upload_date,
+            file_class: data.file_class,
+            notes: data.notes,
+            download_token: data.download_token
+          });
+          console.log(data);
+          console.log(data.id);
+          return data.id;
+        } else {
+          throw new Error(`Error uploading ${file.name}: ${data.message || 'Unknown error'}`);
+        }
+      });
+    });
+
+    Promise.all(uploadPromises)
+      .then(ids => resolve(ids))
+      .catch(error => {
+        console.error('Upload error:', error);
+        reject(error);
+      });
+  });
+}
+function handlePodUpload(inputFiles) {
+  // Convert inputFiles to an array if it’s a single File or FileList
+  const inputFilesArray = inputFiles instanceof File ? [inputFiles] : Array.from(inputFiles);
+  const entityType = 'con-note';
+  const entityId = document.getElementById('cnID')?.value;
+  const fileClass = 'POD';
+  const notes = '';
+
+  if (!entityId) {
+    console.error('cnID element not found or has no value');
+    alert('Error: cnID is missing or empty');
+    return;
+  }
+
+  uploadDocument(inputFilesArray, entityType, entityId, fileClass, notes)
+    .then(ids => {
+      console.log(ids);
+      ids.forEach(id => {
+        console.log(id);
+        const file = uFiles.find(f => f.id === id);
+        if (!file) {
+          console.warn(`File metadata not found for ID: ${id}`);
+          alert('File upload successful, but file details not found. Please refresh and confirm.');
+          return;
+        }
+
+        const podInd = document.getElementById('pod_ind');
+        if (podInd) {
+          const today = new Date();
+          const formattedDate = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+          podInd.textContent = formattedDate;
+          podInd.dataset.fileId = id;
+          podInd.dataset.downloadToken = file.download_token;
+          podInd.classList.add('dl');
+        } else {
+          console.warn('pod_ind element not found');
+        }
+        /*
+        let fileList = document.getElementById('fileList');
+        if (!fileList) {
+          console.warn('fileList element not found, creating one dynamically');
+          fileList = document.createElement('div');
+          fileList.id = 'fileList';
+          const container = document.getElementById('fileUploadContainer') || document.body;
+          container.appendChild(fileList);
+        }
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <a href="#" data-file-id="${id}" data-token="${file.download_token}" class="download-link">${file.filename}</a>
+          <span>${file.notes ? ' - ' + file.notes : ''}</span>
+        `;
+        fileList.appendChild(fileItem);
+
+        alert(`File ${file.filename} uploaded successfully with ID: ${id}`);*/
+      });
+    })
+    .catch(error => {
+      console.error('POD upload error:', error);
+      alert(error.message);
+    });
+}
+function findParentRow(element) {
+  while (element && element.tagName !== "TR") {
+      element = element.parentElement;
+  }
+  return element;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //----------------------------------------------------------------Clean up whole function to create card of required changes then one send run.
 document.addEventListener('DOMContentLoaded', function () {
-
-  //console.log(window.location.href);
-  window.addEventListener('popstate', function(event) {
-    console.log('pop');
-  });
-  const notebody = document.getElementById('notebody');
   actcn = null;
   climkr = 0;
   clrhld = 0;
-  //jbn = 0;
   jbn = Number(getSearchParams("job_no")) || 0;
   firstpop();
   namtTot();
   updchkr();
   displayAllVersions();
+  
 
   document.getElementById("cl-job").addEventListener('click', function (event) {
     var userResponse = confirm("This will clean all data from the job. All data will be removed and a clean job sheet will remain.\n \n Would you like to continue?");
@@ -2271,7 +2555,7 @@ document.addEventListener('DOMContentLoaded', function () {
     } else {
         alert("You cannot copy a job without a job number");
     }
-});
+  });
   document.getElementById("slist").addEventListener('mouseover', function (event) {
     if (event.target.closest('.clicard')) {
       climkr = 1; // Set climkr to 1 when hovering over a clicard
@@ -2283,7 +2567,6 @@ document.addEventListener('DOMContentLoaded', function () {
       climkr = 0; // Reset climkr to 0 when leaving a clicard
     }
   }, true); // Use capture phase for consistency
-
 
   document.getElementById("slist").addEventListener('click', function (event) {
     event.stopPropagation;
@@ -2804,7 +3087,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
   //updating a note
-  var nodta = "";
+  
   document.getElementById('notebody').addEventListener('focusout', function (event) {
     var target = event.target;
   
@@ -3127,58 +3410,46 @@ document.getElementById('cnlnk').addEventListener('click', function () {
 });
 //multi con-note select
 document.getElementById('contlst').addEventListener('click', function (event) {
+  // Handle checkbox with class 'mcnprnt'
   if (event.target.classList.contains('mcnprnt')) {
     mcnf = "Y";
     if (event.target.checked) {
       if (!Array.isArray(mcnl)) {
-        mcnl = [];  // Initialize as an array if it's not one
+        mcnl = []; // Initialize as an array if it's not one
       }
       mcnl.push(event.target.value);
     } else {
-      var remItem = event.target.value;
-      mcnl = mcnl.filter(function (value) {
-        return value !== remItem;
-      });
+      const remItem = event.target.value;
+      mcnl = mcnl.filter(value => value !== remItem);
     }
   }
+  // Handle element with class 'cnrec'
   if (event.target.classList.contains('cnrec')) {
-    event.stopPropagation();
+    event.stopPropagation(); // Prevent event from bubbling up
     mcnf = "Y";
     const cnrec = event.target.closest('.cnrec');
-      
-    // Get the parent .ccnt_card element
     const ccntCard = cnrec.closest('.ccnt_card');
-      
+
     if (ccntCard) {
-      // Get the data-id from .ccnt_card
       const id = ccntCard.getAttribute('data-id');
-          
       // Get today's date in dd-mm-yyyy format
       const today = new Date();
       const day = String(today.getDate()).padStart(2, '0');
       const month = String(today.getMonth() + 1).padStart(2, '0');
       const year = today.getFullYear();
       const formattedDate = `${day}-${month}-${year}`;
-          
       // Call CNRecUpd with id and date
       CNRecUpd(id, formattedDate);
     }
-  
   }
-});
-//Opening a Connote
-document.getElementById('contlst').addEventListener('click', function (event) {
-  var nid = null;
+  // Handle opening a connote (ccnt_card click)
+  let nid = null;
   if (event.target.classList.contains('ccnt_card')) {
     nid = event.target.getAttribute('data-id');
   } else if (event.target.parentNode.classList.contains('ccnt_card')) {
     nid = event.target.parentNode.getAttribute('data-id');
   }
-  if (nid != null) {
-    if (mcnf === "Y") {
-      mcnf = "";
-      return;
-    }
+  if (nid != null && mcnf !== "Y") {
     ccntLoad(nid);
   }
 });
@@ -3389,12 +3660,7 @@ document.querySelector("img[id=ncl]").addEventListener('click', function () {
   var data = "cnum=" + encodeURIComponent(cnum) + "&kv=" + encodeURIComponent(JSON.stringify(kv));
   xhr.send(data);
 });
-function findParentRow(element) {
-  while (element && element.tagName !== "TR") {
-      element = element.parentElement;
-  }
-  return element;
-}
+
 //delete con note line
 document.getElementById("cnt_body").addEventListener('click', function (event) {
   var target = event.target;
@@ -3425,8 +3691,7 @@ document.getElementById("cnt_body").addEventListener('click', function (event) {
   }
 });
 //update con note line
-  var cndta = "";
-  var cndu = "";
+
 document.getElementById("cnt_body").addEventListener("focusout", function (event) {
   var target = event.target;
   if (target.tagName === "TD") {
@@ -3543,24 +3808,22 @@ document.getElementById("cnt_body").addEventListener("keyup", function (event) {
   }
 });
 
-  //dropdown add frt line
-  var cnAddTds = document.querySelectorAll("#cn_add tr td");
-
+//dropdown add frt line
   cnAddTds.forEach(function (td) {
-      td.addEventListener("focusin", function () {
-          /*this.parentNode.parentNode.appendChild(document.querySelector('#dd'));
-          document.getElementById("dd").classList.remove("hideme");
-          
-          document.getElementById("dd").dataset.marker = "NCN";*/
-          positionDropdown();
-          ddFrtPop(td.innerHTML);
-          event.stopPropagation();
-      });
-  
-      td.addEventListener("keyup", function () {
-          ddFrtPop(td.innerHTML);
-      });
-  });
+    td.addEventListener("focusin", function () {
+        /*this.parentNode.parentNode.appendChild(document.querySelector('#dd'));
+        document.getElementById("dd").classList.remove("hideme");
+        
+        document.getElementById("dd").dataset.marker = "NCN";*/
+        positionDropdown();
+        ddFrtPop(td.innerHTML);
+        event.stopPropagation();
+    });
+
+    td.addEventListener("keyup", function () {
+        ddFrtPop(td.innerHTML);
+    });
+});
   //dropdown address book
 document.getElementById("snam").addEventListener("focusin", function (event) {
     /*this.parentNode.appendChild(document.querySelector('#dd'));
@@ -3977,6 +4240,52 @@ window.addEventListener('scroll', realignDropdown);
 
 });
 
+const fileInput = document.getElementById('fileInput');
+if (fileInput) {
+  fileInput.addEventListener('change', function(event) {
+    const inputFiles = event.target.files;
+    handlePodUpload(inputFiles);
+  });
+} else {
+  console.warn('fileInput element not found');
+}
+
+// Drag and drop events
+const dropZone = document.getElementById('dropZone');
+if (dropZone) {
+  dropZone.addEventListener('dragover', function(event) {
+    event.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', function() {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', function(event) {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = event.dataTransfer.files;
+    handlePodUpload(files);
+  });
+
+  // Trigger file input click when dropZone is clicked
+  dropZone.addEventListener('click', function() {
+    if (fileInput) {
+      fileInput.click();
+    } else {
+      console.error('fileInput element not found');
+    }
+  });
+} else {
+  console.warn('dropZone element not found');
+}
+
+
+
+
+
+
 //suggestion list moving and activating
 document.addEventListener('focus', function(event) {
   if (event.target.classList.contains('ddv')) {
@@ -4110,4 +4419,24 @@ document.addEventListener('DOMContentLoaded', () => {
           tooltip.textContent = ''; // Clear content
       });
   });
+  if (podInd) {
+    podInd.addEventListener('click', function() {
+      if (!podInd.classList.contains('dl')) {
+        console.log('pod_ind clicked but lacks dl class; download not triggered');
+        return;
+      }
+      const fileId = podInd.getAttribute('data-file-id');//.dataset.id;
+      const downloadToken = podInd.getAttribute('data-download-token');//.dataset.token;
+
+      if (fileId && downloadToken) {
+        const downloadUrl = `/inc/download.php?id=${fileId}&token=${downloadToken}`;
+        window.open(downloadUrl, '_blank');
+      } else {
+        console.warn('No POD file ID or token available for download');
+        alert('No POD file available to download.');
+      }
+    });
+  } else {
+    console.warn('pod_ind element not found on page load');
+  }
 });

@@ -208,16 +208,20 @@
     border: 1px solid rgb(192, 192, 192);
     line-height: 1;
   }
-  .rec_labs {
+  .rec_labs,
+  .pod_labs {
     width: 45%;
     background-color: #fff;
     font-size: 1.5rem;
     padding: 0.4rem;
     border: 1px solid rgb(192, 192, 192);
     line-height: 1;
-    cursor: pointer;
     text-align: right;
   }
+    .rec_labs{
+      cursor: pointer;
+    }
+
   .cn_cname,
   .cn_add1,
   .cn_add2 {
