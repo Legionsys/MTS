@@ -6,10 +6,8 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
 session_start();
-$usr = $_SESSION["userid"];
-$uid = $_SESSION["useruid"];
-$mrkr = new DateTime();
-$mrkr = $mrkr->format('Y-m-d H:i:s');
+define("FS_ROOT", realpath(dirname(__FILE__)));
+require_once FS_ROOT . '/dbh.inc.php';
 
 // Check if job number is provided
 if (isset($_POST['jobno'])) {
@@ -32,9 +30,6 @@ if ($jb == '' || $jb == null) {
     exit();
 }
 
-// Connect to database
-require_once 'dbh.inc.php';
-
 // Start transaction
 mysqli_begin_transaction($conn);
 
@@ -42,7 +37,7 @@ try {
     // Retrieve column names from jobList table
     $sql = "SELECT GROUP_CONCAT(COLUMN_NAME) AS columns
             FROM INFORMATION_SCHEMA.COLUMNS
-            WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'jobList' AND COLUMN_NAME not in ('jobID','jobDate','jobFin')";
+            WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'jobList' AND COLUMN_NAME not in ('jobID','jobDate','jobFin','jobComp','jobInv','invNum')";
 
     $stmt = mysqli_stmt_init($conn);
     if (!mysqli_stmt_prepare($stmt, $sql)) {

@@ -156,13 +156,16 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
                     <div class="ind_labs">Received</div>
                     <div id='rec' class='rec_labs'></div>
                 </div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
-                <div class="ind_r"></div>
+                <div class="ind_r">
+                    <div class="ind_labs">POD Uploaded</div>
+                    <div id='pod_ind' class='pod_labs'></div>
+                </div>
+                <div class="ind_r">
+                    <div class="drop-zone" id="dropZone">Drop POD files here or click to select files
+                        <input type="file" id="fileInput" multiple style="display: none;" accept="image/jpeg,image/png,application/pdf">
+                    </div>
+                </div>
+
             </div>
         </div>
         <div id="onspco" class="cnblock">

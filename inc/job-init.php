@@ -21,6 +21,8 @@ if ($indi == "job") {
     $sql = "SELECT * FROM conDets where cnID in (Select cnID from conNotes where jobID = ?) and frtDie is Null order by class desc,itID;";
 } elseif ($indi == "cslnk") {
     $sql = "SELECT * FROM jobConSupLnk where cnID in (Select cnID from conNotes where jobID = ?) and deltime is Null order by cnid desc;";
+} elseif ($indi == "files") {
+    $sql = "SELECT ftl.id,ftl.entity_type,ftl.entity_id,ftl.upload_date,ftl.download_token,ftl.uplusr,ftl.file_class,ftl.notes FROM files ftl LEFT JOIN conNotes cn ON ftl.entity_id = cn.cnID AND ftl.entity_type = 'con-note' LEFT JOIN jobSup sp ON ftl.entity_id = sp.jsID AND ftl.entity_type = 'supplier' LEFT JOIN jobList jl ON ftl.entity_id = jl.jobID AND ftl.entity_type = 'job' WHERE ? IN (cn.jobID, sp.jobID, jl.jobID);";
 }
 
 
