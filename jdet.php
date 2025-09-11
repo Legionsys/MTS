@@ -225,7 +225,7 @@ require_once FS_ROOT . '/inc/dbh.inc.php';
             </div>
 
         </div>
-        <div id="cnhl" class="cnblock hideme">
+        <div id="cnhl" class="cnblock">
             <div class="cntitle">
                 <p>Con Note Highlights</p>
             </div>

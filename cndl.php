@@ -33,7 +33,11 @@ if (mysqli_num_rows($resultData) > 0){
         } else {
             $fnam = "MTS_CN_Pack";
         }
-
+        if (is_null($row['hl'])) {
+            $MKR = '';
+        } else {
+            $MKR = $row['hl'];
+        }
         //Reused Vars
         $cnote = $row['cnNum'];
 
@@ -492,7 +496,7 @@ if (mysqli_num_rows($resultData) > 0){
                     $pdf->Cell(13,7,safeStrReplace("&nbsp;"," ",$frln['pkDes']),0,1,'C',false,'',0,false,'T','C');
                     //update vars
                     $titm = $titm + $frln['noItem'];//item total
-                    $twgt = $twgt + $frln['itWgt'];//weight total
+                    $twgt = $twgt + $frln['itWgt']*$frln['itQty'];//weight total
                     $tcub = $tcub + (($frln['itLen']*$frln['itWid']*$frln['itHei'])/1000000)*$frln['itQty'];//cubic total
                     $hei = $hei + 7;        
 
