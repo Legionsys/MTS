@@ -62,9 +62,9 @@ $sql = "UPDATE jobList set pmrk = NOW() where jobID in (select a.jobID from jobL
 $where = ' where ';
 foreach ($con_arr as $key => $val) {
     if ($val == '') {
-        $where .= $mkr . $key . ' IS NULL AND ';
+        $where .= $key . ' IS NULL AND ';
     } else {
-        $where .= $mkr . $key . '="' . safeStrReplace('"', '""', $val) . '" AND ';
+        $where .= $key . '="' . safeStrReplace('"', '""', $val) . '" AND ';
     }
 }
 $where = substr($where, 0, strlen($where) - 5);
