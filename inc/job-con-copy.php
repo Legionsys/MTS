@@ -7,8 +7,8 @@
     require_once 'dbh.inc.php';
     
 //Copy main details and get new ID#
-$sql = "INSERT INTO conNotes (jobID,snam,sadd1,sadd2,sadd3,sst,spc,sCtc,sPh,rnam,radd1,radd2,radd3,rst,rpc,rCtc,rPh,Pb,pAcc,pQuo,onam,oadd1,oadd2,oadd3,ost,opc,oCtc,oPh,osc)
-select jobID,snam,sadd1,sadd2,sadd3,sst,spc,sCtc,sPh,rnam,radd1,radd2,radd3,rst,rpc,rCtc,rPh,Pb,pAcc,pQuo,onam,oadd1,oadd2,oadd3,ost,opc,oCtc,oPh,osc from conNotes where cnID =? ;";
+$sql = "INSERT INTO conNotes (jobID,snam,sadd1,sadd2,sadd3,sst,spc,sCtc,sPh,smrk,rnam,radd1,radd2,radd3,rst,rpc,rCtc,rPh,rmrk,Pb,pAcc,pQuo,onam,oadd1,oadd2,oadd3,ost,opc,oCtc,oPh,omrk,osc,hl)
+select jobID,snam,sadd1,sadd2,sadd3,sst,spc,sCtc,sPh,smrk,rnam,radd1,radd2,radd3,rst,rpc,rCtc,rPh,rmrk,Pb,pAcc,pQuo,onam,oadd1,oadd2,oadd3,ost,opc,oCtc,oPh,omrk,osc,hl from conNotes where cnID =? ;";
 $stmt = mysqli_stmt_init($conn);
 if (!mysqli_stmt_prepare($stmt,$sql)) {
     return "ERROR";
