@@ -52,20 +52,55 @@ function fileDetails($fnam)
 
     <?php
     if ($pName == "jdet") {
-        //echo '<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>';
-
-
         echo '<link rel="stylesheet" href="' . fileDetails("/css/jdet.css") . '">';
         echo '<link rel="stylesheet" href="' . fileDetails("/css/cnote.css") . '">';
     } elseif ($pName == "jsumm") {
         echo '<link rel="stylesheet" href="' . fileDetails("/css/jsumm.css") . '">';
     } elseif ($pName == "uman") {
         echo '<link rel="stylesheet" href="' . fileDetails("/css/uman.css") . '">';
+    } elseif ($pName == "jboard") {
+        echo '<link rel="stylesheet" href="' . fileDetails("/css/jboard.css") . '">';
     } else {
         echo '<link rel="stylesheet" href="' . fileDetails("/css/style.css") . '">';
     }
 
     ?>
+<script>
+    // Heartbeat to keep session alive
+    document.addEventListener('DOMContentLoaded', function() {
+        // Send heartbeat every 10 minutes (600,000 ms)
+        setInterval(function() {
+            fetch('/inc/keepalive.php', {
+                method: 'GET',
+                credentials: 'same-origin' // Include cookies for session
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // Get status and try to extract response text for more details
+                    const errorMessage = `Keepalive failed with status: ${response.status} (${response.statusText})`;
+                    // Attempt to parse response text for additional error details
+                    return response.text().then(text => {
+                        console.error(errorMessage, text);
+                        alert(
+                            'Your server session has unexpectedly ended. Please send this to the site admin:\n\n' +
+                            `${errorMessage}\nResponse: ${text || 'No additional details available'}`
+                        );
+                    });
+                }
+                return response; // Continue if response is OK
+            })
+            .catch(error => {
+                // Handle network or fetch errors (e.g., no connection)
+                const errorMessage = `Keepalive error: ${error.message}`;
+                console.error(errorMessage);
+                alert(
+                    'Your server session has unexpectedly ended. Please send this to the site admin:\n\n' +
+                    `${errorMessage}\nDetails: Network error or server unreachable`
+                );
+            });
+        }, 600000); // 10 minutes
+    });
+</script>
 </head>
 
 <body>
@@ -84,6 +119,9 @@ function fileDetails($fnam)
                     case "uman":
                         echo 'User Management';
                         break;
+                    case "jboard":
+                        echo 'Job Board';
+                        break;                    
                     default:
                         echo 'Transport System';
                         break;
@@ -101,6 +139,7 @@ function fileDetails($fnam)
 
         <div class="nav-links">
             <a href="jsumm.php?wild=null&cli=null&inv=All&job=Act">Job Summary</a>
+            <a href="jobboard.php">Job Board</a>
             <!-- <a href="reports.php">Reports</a> -->
             <a href="uman.php">User Management</a>
             <a href="/inc/logout.inc.php">Log out</a>

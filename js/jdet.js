@@ -1639,6 +1639,8 @@ function clrcnt() {
   if (podInd) {
     podInd.classList.remove('dl');
     podInd.textContent = '';
+    delete podInd.dataset.fileId;
+    delete podInd.dataset.downloadToken;
   }
   actcn = null;
 }
@@ -1674,6 +1676,7 @@ function cn_check() {
     document.querySelector('#conswtch').classList.add('hideme');
     cn_marking('enable');
   } else {
+
     document.querySelector('#conswtch').classList.remove('hideme');
   }
 
@@ -1708,15 +1711,16 @@ function cn_close() {
   document.getElementById('boscr').classList.add('hideme');
   document.getElementById('Conlink').classList.add('hideme');
   document.getElementById('cn-frame').classList.add('hideme');
-  /*var upd2 = upd;
+  var upd2 = upd;
   startRotation();
   upd = "y";
-  document.getElementById("contlst").innerHTML = "";
+  document.querySelectorAll('#contlst .ccnt_card').forEach(div => div.remove());
+  //document.getElementById("contlst").innerHTML = "";
   jbcon();
   confrt();
   upd = upd2;
   stopRotation();
-  cn_check();*/
+  cn_check();
 }
 // Function to display the input form
 function showTagInput() {
