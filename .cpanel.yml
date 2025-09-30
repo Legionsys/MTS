@@ -16,4 +16,3 @@ deployment:
     - /bin/cp signup.php $DEPLOYPATH
     - /bin/cp uman.php $DEPLOYPATH
     - /bin/cp underconstruction.php $DEPLOYPATH
-    - /bin/cp jobboard.php $DEPLOYPATH
